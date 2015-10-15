@@ -6,6 +6,8 @@
 
 %include "imprimir.mac"
 extern GDT_DESC
+extern IDT_DESC
+extern idt_inicializar
 extern game_inicializar
 extern screen_inicializar
 
@@ -75,7 +77,6 @@ BITS 32
 	mov esp, 0x2700 ;lo pide el tp
 
     ; Imprimir mensaje de bienvenida
-	xchg bx, bx
 
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
@@ -90,7 +91,6 @@ BITS 32
     ; Inicializar el directorio de paginas
 
     ; Cargar directorio de paginas
-
     ; Habilitar paginacion
 
     ; Inicializar tss
@@ -100,8 +100,9 @@ BITS 32
     ; Inicializar el scheduler
 
     ; Inicializar la IDT
-
+	call idt_inicializar
     ; Cargar IDT
+	lidt [IDT_DESC]
 
     ; Configurar controlador de interrupciones
 
