@@ -19,3 +19,12 @@
 
 /* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
 /* -------------------------------------------------------------------------- */
+
+short int ultimaPagina = 0;
+const int K_PDT = 0x28000;
+const int BASE_PAG_USER = 0x100000;
+
+void mmu_inicializar(){
+	
+
+}

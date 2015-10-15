@@ -1,4 +1,4 @@
-;asmsyntax=nasm
+; asmsyntax=nasm
 ; ** por compatibilidad se omiten tildes **
 ; ==============================================================================
 ; TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
@@ -6,6 +6,8 @@
 
 %include "imprimir.mac"
 extern GDT_DESC
+extern game_inicializar
+extern screen_inicializar
 
 global start
 
@@ -47,7 +49,6 @@ start:
 	call habilitar_A20
 
     ; Cargar la GDT
-	xchg bx, bx
 	lgdt [GDT_DESC]
 
     ; Setear el bit PE del registro CR0
@@ -74,12 +75,15 @@ BITS 32
 	mov esp, 0x2700 ;lo pide el tp
 
     ; Imprimir mensaje de bienvenida
+	xchg bx, bx
 
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
     ; Inicializar el juego
+	call game_inicializar
 
     ; Inicializar pantalla
+	call screen_inicializar
 
     ; Inicializar el manejador de memoria
 
