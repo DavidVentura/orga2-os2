@@ -10,8 +10,10 @@ extern IDT_DESC
 extern idt_inicializar
 extern game_inicializar
 extern screen_inicializar
+extern kmain
 
 global start
+global idt_cargar
 
 
 ;; Saltear seccion de datos
@@ -76,41 +78,14 @@ BITS 32
     ; Establecer la base de la pila
 	mov esp, 0x2700 ;lo pide el tp
 
+
     ; Imprimir mensaje de bienvenida
 
     imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
-    ; Inicializar el juego
-	call game_inicializar
 
-    ; Inicializar pantalla
-	call screen_inicializar
+	call kmain
 
-    ; Inicializar el manejador de memoria
-
-    ; Inicializar el directorio de paginas
-
-    ; Cargar directorio de paginas
-    ; Habilitar paginacion
-
-    ; Inicializar tss
-
-    ; Inicializar tss de la tarea Idle
-
-    ; Inicializar el scheduler
-
-    ; Inicializar la IDT
-	call idt_inicializar
-    ; Cargar IDT
-	lidt [IDT_DESC]
-
-    ; Configurar controlador de interrupciones
-
-    ; Cargar tarea inicial
-
-    ; Habilitar interrupciones
-
-    ; Saltar a la primera tarea: Idle
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
@@ -121,5 +96,10 @@ BITS 32
     jmp $
 
 ;; -------------------------------------------------------------------------- ;;
+
+idt_cargar:
+	mov eax, [esp+4]
+	lidt [eax]
+	ret
 
 %include "a20.asm"
