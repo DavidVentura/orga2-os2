@@ -19,6 +19,13 @@
 void mmu_inicializar();
 
 
+typedef struct str_linear_address{
+	unsigned int directory:10;
+	unsigned int table:10;
+	unsigned int offset:12;
+} __attribute__((__packed__)) linear_address;
+
+
 // devuelve la proxima pagina libre del area libre del kernel
 uint mmu_proxima_pagina_fisica_libre();
 

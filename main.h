@@ -13,6 +13,7 @@ main
 #include "idt.h"
 #include "game.h"
 #include "screen.h"
+#include "mmu.h"
 
 void kmain();
 
