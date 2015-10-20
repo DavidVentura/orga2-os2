@@ -38,10 +38,11 @@ idt_descriptor IDT_DESC = {
 
 #define IDT_ENTRY(numero, dpl)                                                                                   \
     idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
-    idt[numero].segsel = (unsigned short) 0x09;                                                                  \
-    idt[numero].attr = (unsigned short) 0b100011110000000 | (((unsigned short)(dpl & 0x3)) << 13);               \
+    idt[numero].segsel = (unsigned short) 0x08 << 3;                                                                  \
+    idt[numero].attr = (unsigned short) 0b1000111000000000 | (((unsigned short)(dpl & 0x3)) << 13);             \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
+    /*idt[numero].attr = (unsigned short) 0x8E00 | (((unsigned short)(dpl & 0x3)) << 13);             \*/
 
 void idt_inicializar() {
     // Excepciones

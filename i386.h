@@ -25,6 +25,8 @@ LS_INLINE void ltr(unsigned short sel);
 LS_INLINE unsigned short rtr(void);
 LS_INLINE void hlt(void);
 LS_INLINE void breakpoint(void);
+LS_INLINE void interrupciones_desactivar(void);
+LS_INLINE void interrupciones_activar(void);
 
 /*
  * Implementaciones
@@ -104,4 +106,13 @@ LS_INLINE void breakpoint(void) {
     __asm __volatile("xchg %%bx, %%bx" : :);
 }
 
+
+// Agregadas por nosotros
+LS_INLINE void interrupciones_desactivar(void) {
+    __asm __volatile("cli" : :);
+}
+
+LS_INLINE void interrupciones_activar(void) {
+    __asm __volatile("sti" : :);
+}
 #endif  /* !__i386_H__ */

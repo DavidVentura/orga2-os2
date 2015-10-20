@@ -20,11 +20,18 @@ void kmain() {
     // Inicializar tss de la tarea Idle
 
     // Inicializar el scheduler
+	
+	// Inicializar la IDT
+	idt_inicializar(); 
 
-	idt_inicializar(); // Inicializar la IDT
-	idt_cargar(IDT_DESC); // Cargar IDT
+	// Cargar IDT
+	idt_cargar(IDT_DESC);
 
     // Configurar controlador de interrupciones
+	//resetear_pic();
+	//habilitar_pic();
+	//	interrupciones_activar();
+	breakpoint();
 
     // Cargar tarea inicial
 
