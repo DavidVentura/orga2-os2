@@ -28,36 +28,39 @@ uint ultimaPagina = 0;
 
 void mmu_inicializar(){
 	mmu_inicializar_dir_kernel();
-	cosa_loca_paginacion();
+	//cosa_loca_paginacion();
 }
 
 uint mmu_inicializar_dir_kernel() {
 	pde* K_PDT=(pde*)0x27000; 
 	cr3_cargar(&K_PDT);
-	cr3_cargar(0x27000000);
+	cr3_cargar(0x27000);
 
 
 	int curPage=0;
 	pde pde_entry;
-	pde_entry.dir=0x0;
 	pde_entry.todos_los_flags_cero=0;
 	pde_entry.us=0;
 	pde_entry.rw=1;
-	pde_entry.p=0; //Ninguna presente salvo la primera.
+	pde_entry.p=1; //Ninguna presente salvo la primera.
+	pde_entry.dir=0x100;//(mmu_proxima_pagina_fisica_libre()>>20);
 
-	while(curPage<1024){
-		K_PDT[curPage]=pde_entry;
+	*K_PDT=pde_entry;
+	K_PDT++;
+
+	pde_entry.dir=0xFFFFF;
+	pde_entry.p=0; //Ninguna presente salvo la primera.
+	while(curPage<1023){
+		*K_PDT=pde_entry;
+		K_PDT++;
 		curPage++;
 	}
+
 	breakpoint();
-	K_PDT[0].p=1; //Presente
-	K_PDT[0].dir=BASE_PAG_USER>>20;//(mmu_proxima_pagina_fisica_libre()>>20);
 	//todas las pag son 01 0000000000000.... 1
 	//pero la primeraes 11 000000000000..... 1
 
-	int dir = K_PDT[0].dir;
-	dir=dir<<12;
-	pte* table = (pte*)dir;
+	pte* table = (pte*)0x100000;
 
 	pte pt_entry;
 	pt_entry.todos_los_flags_cero=0;
@@ -66,12 +69,12 @@ uint mmu_inicializar_dir_kernel() {
 	pt_entry.p=1;
 
 	curPage=0;
-	while(curPage<1){
-		pt_entry.dir=curPage*0x1000;
-		table[curPage]=pt_entry;
+	while(curPage<1024){
+		pt_entry.dir=(curPage*0x1000)>>12;
+		*table=pt_entry;
+		table++;
 		curPage++;
 	}
-	breakpoint();
 
 	return 0;
 

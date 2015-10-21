@@ -10,6 +10,7 @@
 
 #include "defines.h"
 #include "game.h"
+#include "screen.h"
 
 #define CODIGO_BASE       0X401000
 
@@ -25,6 +26,7 @@ typedef struct str_linear_address{
 	unsigned int offset:12;
 } __attribute__((__packed__)) linear_address;
 
+/*
 typedef struct str_pde {
 	unsigned int dir:20;
 	unsigned int todos_los_flags_cero:9;
@@ -32,13 +34,32 @@ typedef struct str_pde {
 	unsigned int rw:1;
 	unsigned int p:1;
 }__attribute__((__packed__)) pde;
+*/
 
+typedef struct str_pde {
+	unsigned int p:1;
+	unsigned int rw:1;
+	unsigned int us:1;
+	unsigned int todos_los_flags_cero:9;
+	unsigned int dir:20;
+}__attribute__((__packed__)) pde;
+
+/*
 typedef struct str_pte {
 	unsigned int dir:20;
 	unsigned int todos_los_flags_cero:9;
 	unsigned int us:1;
 	unsigned int rw:1;
 	unsigned int p:1;
+}__attribute__((__packed__)) pte;
+
+*/
+typedef struct str_pte {
+	unsigned int p:1;
+	unsigned int rw:1;
+	unsigned int us:1;
+	unsigned int todos_los_flags_cero:9;
+	unsigned int dir:20;
 }__attribute__((__packed__)) pte;
 
 
