@@ -24,18 +24,18 @@ uint ultimaPagina = 0;
 
 #define BASE_PAG_USER 0x100000
 #define IDENTITY_MAPPING 0x3FFFFF
-
+#define KERNEL_PDIR	0x27000	
 
 void mmu_inicializar(){
 	mmu_inicializar_dir_kernel();
-	//cosa_loca_paginacion();
+	paginacion_activar();
+	mmu_mapear_pagina(0x200000,KERNEL_PDIR,0xB8000,1,1);
 }
 
-uint mmu_inicializar_dir_kernel() {
-	pde* K_PDT=(pde*)0x27000; 
-	cr3_cargar(&K_PDT);
-	cr3_cargar(0x27000);
-
+void mmu_inicializar_dir_kernel() {
+	pde* K_PDT=(pde*)KERNEL_PDIR; 
+	cr3_cargar(KERNEL_PDIR);
+	const int PAGE_TABLE=0x100000; //mmu_proxima_pagina_fisica_libre();
 
 	int curPage=0;
 	pde pde_entry;
@@ -43,7 +43,7 @@ uint mmu_inicializar_dir_kernel() {
 	pde_entry.us=0;
 	pde_entry.rw=1;
 	pde_entry.p=1; //Ninguna presente salvo la primera.
-	pde_entry.dir=0x100;//(mmu_proxima_pagina_fisica_libre()>>20);
+	pde_entry.dir=PAGE_TABLE>>12; 
 
 	*K_PDT=pde_entry;
 	K_PDT++;
@@ -55,12 +55,8 @@ uint mmu_inicializar_dir_kernel() {
 		K_PDT++;
 		curPage++;
 	}
-
-	breakpoint();
-	//todas las pag son 01 0000000000000.... 1
-	//pero la primeraes 11 000000000000..... 1
-
-	pte* table = (pte*)0x100000;
+	
+	pte* table = (pte*)PAGE_TABLE;
 
 	pte pt_entry;
 	pt_entry.todos_los_flags_cero=0;
@@ -75,32 +71,28 @@ uint mmu_inicializar_dir_kernel() {
 		table++;
 		curPage++;
 	}
-
-	return 0;
-
 }
 
 void mmu_inicializar_pagina(uint* pagina){
 	int i =0;
-	while(i<1024){
-		*(pagina+i)=0x0; //32bit
-		i++;
-	}
+	for(i=0;i<1024;i++)
+		*(pagina+i)=0x0;
 }
 
 uint mmu_proxima_pagina_fisica_libre(){
-	breakpoint();
 	int ret=BASE_PAG_USER+(ultimaPagina*0x1000);
 	ultimaPagina++;
 	return ret;
 }
 
-void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint attrs){
-	/*
+void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint rw, uint p){
 	uint PD_OFFSET=(virtual & 0xFFC00000 ) >> 22;
 	uint PT_OFFSET=(virtual & 0x003FF000 ) >> 12;
-	uint PG_OFFSET=(virtual & 0x00000FFF );
 
-	//&(cr3+PD_OFFSET)=
-	*/
+	pde* PDT=(pde*)(cr3); 
+	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
+	PT[PT_OFFSET].p=p;
+	PT[PT_OFFSET].rw=rw;
+	PT[PT_OFFSET].dir=fisica&0xFFFFF000;
+
 }

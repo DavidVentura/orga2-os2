@@ -26,16 +26,6 @@ typedef struct str_linear_address{
 	unsigned int offset:12;
 } __attribute__((__packed__)) linear_address;
 
-/*
-typedef struct str_pde {
-	unsigned int dir:20;
-	unsigned int todos_los_flags_cero:9;
-	unsigned int us:1;
-	unsigned int rw:1;
-	unsigned int p:1;
-}__attribute__((__packed__)) pde;
-*/
-
 typedef struct str_pde {
 	unsigned int p:1;
 	unsigned int rw:1;
@@ -44,16 +34,6 @@ typedef struct str_pde {
 	unsigned int dir:20;
 }__attribute__((__packed__)) pde;
 
-/*
-typedef struct str_pte {
-	unsigned int dir:20;
-	unsigned int todos_los_flags_cero:9;
-	unsigned int us:1;
-	unsigned int rw:1;
-	unsigned int p:1;
-}__attribute__((__packed__)) pte;
-
-*/
 typedef struct str_pte {
 	unsigned int p:1;
 	unsigned int rw:1;
@@ -73,7 +53,7 @@ void mmu_inicializar_pagina(uint * pagina);
 void mmu_copiar_pagina    (uint src, uint dst);
 
 // pide una pagina para usar de directorio. Luego inicializa las entradas que iran con identity mapping.
-uint mmu_inicializar_dir_kernel();
+void mmu_inicializar_dir_kernel();
 
 // transforma coordenadas (x,y) en direcciones fisicas
 uint mmu_xy2fisica(uint x, uint y);
@@ -88,10 +68,11 @@ uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 void mmu_mover_perro(perro_t *perro, int viejo_x, int viejo_y);
 
 
-void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint attrs);
+void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint rw, uint p);
 uint mmu_unmapear_pagina(uint virtual, uint cr3);
 
 extern void cosa_loca_paginacion();
 extern void cr3_cargar();
+extern void paginacion_activar();
 
 #endif	/* !__MMU_H__ */

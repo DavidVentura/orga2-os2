@@ -13,6 +13,8 @@ extern screen_inicializar
 extern kmain
 
 
+
+global paginacion_activar
 global cosa_loca_paginacion
 global start
 global idt_cargar
@@ -99,6 +101,12 @@ BITS 32
     jmp $
 
 ;; -------------------------------------------------------------------------- ;;
+
+paginacion_activar:
+	mov eax, cr0
+	or eax, 0x80000000
+	mov cr0, eax
+	ret
 
 cosa_loca_paginacion:
 
