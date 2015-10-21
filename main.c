@@ -31,7 +31,6 @@ void kmain() {
 	//resetear_pic();
 	//habilitar_pic();
 	//	interrupciones_activar();
-	breakpoint();
 
     // Cargar tarea inicial
 

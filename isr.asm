@@ -1,3 +1,4 @@
+; asmsyntax=nasm
 ; ** por compatibilidad se omiten tildes **
 ; ==============================================================================
 ; TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
@@ -10,6 +11,9 @@ BITS 32
 
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
+
+;; Atendedor externo
+extern interrupcion_atender
 
 ;; PIC
 extern fin_intr_pic1
@@ -27,9 +31,14 @@ extern sched_tarea_actual
 global _isr%1
 
 _isr%1:
+	pusha
     mov eax, %1
-    jmp $
+	push eax
 
+	call interrupcion_atender
+
+	popa
+	iret
 %endmacro
 
 ;;
