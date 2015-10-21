@@ -73,7 +73,7 @@ void mmu_inicializar_dir_kernel() {
 	}
 }
 
-void mmu_inicializar_pagina(uint* pagina){
+void mmu_inicializar_pagina(uint* pagina){ //No testeado
 	int i =0;
 	for(i=0;i<1024;i++)
 		*(pagina+i)=0x0;
@@ -96,3 +96,12 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint rw, uint p){
 	PT[PT_OFFSET].dir=fisica&0xFFFFF000;
 
 }
+void mmu_copiar_pagina(uint src, uint dst){ //No testeado
+	uint  i =0;
+	uint* s =(uint*)src;
+	uint* d =(uint*)dst;
+	for(i=0;i<1024;i++)
+		*(d++)=*(s++);
+}
+
+//uint mmu_unmapear_pagina(uint virtual, uint cr3);
