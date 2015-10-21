@@ -12,8 +12,11 @@ extern game_inicializar
 extern screen_inicializar
 extern kmain
 
+
+global cosa_loca_paginacion
 global start
 global idt_cargar
+global cr3_cargar
 
 
 ;; Saltear seccion de datos
@@ -97,8 +100,31 @@ BITS 32
 
 ;; -------------------------------------------------------------------------- ;;
 
+cosa_loca_paginacion:
+
+	xchg bx, bx
+
+	xor ebx, ebx
+	mov ebx, 0xDEADBEEF 
+	mov [0x123], ebx
+
+	mov eax, cr0
+	or eax, 0x80000000
+	mov cr0, eax
+
+	xor ebx, ebx
+	mov ebx, [0x123]
+
+	and eax, 0x7FFFFFFF
+	mov cr0, eax
+	ret
 idt_cargar:
 	lidt [esp+4]
 	ret
 
+cr3_cargar:
+	xchg bx,bx
+	mov eax,[esp+4]
+	mov cr3, eax
+	ret
 %include "a20.asm"

@@ -25,6 +25,22 @@ typedef struct str_linear_address{
 	unsigned int offset:12;
 } __attribute__((__packed__)) linear_address;
 
+typedef struct str_pde {
+	unsigned int dir:20;
+	unsigned int todos_los_flags_cero:9;
+	unsigned int us:1;
+	unsigned int rw:1;
+	unsigned int p:1;
+}__attribute__((__packed__)) pde;
+
+typedef struct str_pte {
+	unsigned int dir:20;
+	unsigned int todos_los_flags_cero:9;
+	unsigned int us:1;
+	unsigned int rw:1;
+	unsigned int p:1;
+}__attribute__((__packed__)) pte;
+
 
 // devuelve la proxima pagina libre del area libre del kernel
 uint mmu_proxima_pagina_fisica_libre();
@@ -54,5 +70,7 @@ void mmu_mover_perro(perro_t *perro, int viejo_x, int viejo_y);
 void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint attrs);
 uint mmu_unmapear_pagina(uint virtual, uint cr3);
 
+extern void cosa_loca_paginacion();
+extern void cr3_cargar();
 
 #endif	/* !__MMU_H__ */
