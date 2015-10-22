@@ -69,7 +69,7 @@ void mmu_mover_perro(perro_t *perro, int viejo_x, int viejo_y);
 
 
 void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint rw, uint p);
-uint mmu_unmapear_pagina(uint virtual, uint cr3);
+void mmu_unmapear_pagina(uint virtual, uint cr3);
 
 extern void cr3_cargar();
 extern void paginacion_activar();

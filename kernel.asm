@@ -131,7 +131,6 @@ idt_cargar:
 	ret
 
 cr3_cargar:
-	xchg bx,bx
 	mov eax,[esp+4]
 	mov cr3, eax
 	ret

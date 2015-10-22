@@ -94,6 +94,7 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint rw, uint p){
 	PT[PT_OFFSET].p=p;
 	PT[PT_OFFSET].rw=rw;
 	PT[PT_OFFSET].dir=fisica&0xFFFFF000;
+	tlbflush();
 
 }
 void mmu_copiar_pagina(uint src, uint dst){ //No testeado
@@ -104,4 +105,18 @@ void mmu_copiar_pagina(uint src, uint dst){ //No testeado
 		*(d++)=*(s++);
 }
 
-//uint mmu_unmapear_pagina(uint virtual, uint cr3);
+void mmu_unmapear_pagina(uint virtual, uint cr3){
+	uint PD_OFFSET=(virtual & 0xFFC00000 ) >> 22;
+	uint PT_OFFSET=(virtual & 0x003FF000 ) >> 12;
+
+	pde* PDT=(pde*)(cr3); 
+	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
+	PT[PT_OFFSET].p=0;
+	tlbflush();
+}
+
+uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo){
+
+return 0;
+
+}
