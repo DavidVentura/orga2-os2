@@ -73,5 +73,7 @@ void mmu_unmapear_pagina(uint virtual, uint cr3);
 
 extern void cr3_cargar();
 extern void paginacion_activar();
+void inicializar_pdir(pde* base,uint us, uint rw, uint p);
+void inicializar_ptab(pte* base,uint us, uint rw, uint p);
 
 #endif	/* !__MMU_H__ */
