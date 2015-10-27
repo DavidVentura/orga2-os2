@@ -5,3 +5,4 @@ task*
 *sym
 *tsk
 bochs.log
+*.swp
