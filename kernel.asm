@@ -19,6 +19,7 @@ global cosa_loca_paginacion
 global start
 global idt_cargar
 global cr3_cargar
+global teclado_leer
 
 
 ;; Saltear seccion de datos
@@ -133,5 +134,10 @@ idt_cargar:
 cr3_cargar:
 	mov eax,[esp+4]
 	mov cr3, eax
+	ret
+
+teclado_leer:
+	in al, 0x60
+	push eax
 	ret
 %include "a20.asm"

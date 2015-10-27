@@ -28,9 +28,11 @@ void kmain() {
 	idt_cargar(IDT_DESC);
 
     // Configurar controlador de interrupciones
-	//resetear_pic();
-	//habilitar_pic();
-	//	interrupciones_activar();
+	resetear_pic();
+	habilitar_pic();
+
+	// Habilito interrupciones
+	interrupciones_activar();
 
     // Cargar tarea inicial
 
