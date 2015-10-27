@@ -26,7 +26,7 @@ void kmain() {
 
 	// Cargar IDT
 	idt_cargar(IDT_DESC);
-
+	
     // Configurar controlador de interrupciones
 	resetear_pic();
 	habilitar_pic();
