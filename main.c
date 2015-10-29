@@ -25,7 +25,8 @@ void kmain() {
 	idt_inicializar(); 
 
 	// Cargar IDT
-	idt_cargar(IDT_DESC);
+	// FIXME: Pasar por parametro el puntero al descriptor no funciona bien
+	idt_cargar();
 	
     // Configurar controlador de interrupciones
 	resetear_pic();

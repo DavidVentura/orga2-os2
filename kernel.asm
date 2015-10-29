@@ -127,8 +127,9 @@ cosa_loca_paginacion:
 	and eax, 0x7FFFFFFF
 	mov cr0, eax
 	ret
+
 idt_cargar:
-	lidt [esp+4]
+	lidt [IDT_DESC]
 	ret
 
 cr3_cargar:
@@ -138,6 +139,7 @@ cr3_cargar:
 
 teclado_leer:
 	in al, 0x60
-	push eax
 	ret
+
+
 %include "a20.asm"
