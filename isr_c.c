@@ -21,6 +21,8 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 
 void teclado_atender(){
 	unsigned char scancode = teclado_leer();
-	if (scancode <= 53)
-		screen_pintar(kb_keys[scancode], 6, 6, 15);
+	tecla_actualizar(scancode);
+	if (scancode <= 128 && scancode != LSHIFT && scancode != BKSP)
+//		breakpoint();
+		screen_pintar(get_ascii(scancode), 6, 6, 15);
 }

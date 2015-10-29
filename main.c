@@ -28,6 +28,9 @@ void kmain() {
 	// FIXME: Pasar por parametro el puntero al descriptor no funciona bien
 	idt_cargar();
 	
+	// Cargo el teclado en memoria
+	teclado_inicializar();
+
     // Configurar controlador de interrupciones
 	resetear_pic();
 	habilitar_pic();
