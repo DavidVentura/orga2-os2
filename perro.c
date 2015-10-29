@@ -8,6 +8,7 @@
 // realiza inicialización básica de un perro. El perro aun no está vivo ni por lanzarse. Setea jugador, indice, etc
 void game_perro_inicializar(perro_t *perro, jugador_t *j, uint index, uint id)
 {
+	mmu_inicializar_memoria_perro(perro,j->index,index,j->x_cucha,j->y_cucha);
 	perro->id   = id;
     perro->index = index;
     perro->jugador = j;

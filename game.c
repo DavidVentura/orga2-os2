@@ -51,7 +51,7 @@ void game_inicializar()
 	game_jugador_inicializar(&jugadorA);
 	game_jugador_inicializar(&jugadorB);
 
-    screen_pintar_puntajes();
+//    screen_pintar_puntajes();
 }
 
 

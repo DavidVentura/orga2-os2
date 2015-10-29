@@ -34,6 +34,7 @@ void kmain() {
 
     // Cargar tarea inicial
 
+
     // Habilitar interrupciones
 
     // Saltar a la primera tarea: Idle

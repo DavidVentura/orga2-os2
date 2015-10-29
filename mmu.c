@@ -22,17 +22,17 @@
 
 uint ultimaPagina = 0;
 uint id_ultima_tarea=0;
+uint CODIGO_PERROS[4] = { 0x10000, 0x11000, 0x12000, 0x13000 };
 
 #define BASE_PAG_USER 0x100000
 #define IDENTITY_MAPPING 0x3FFFFF
 #define KERNEL_PDIR	0x27000	
-#define USER_PDIR 0x3FE000
-//USER_PDIR es la ante-ultima pagina posible de pag libres
 
 void mmu_inicializar(){
 	mmu_inicializar_dir_kernel();
 	paginacion_activar();
 	mmu_mapear_pagina(0x200000,KERNEL_PDIR,0xB8000,1,1);
+
 }
 
 void mmu_inicializar_dir_kernel() {
@@ -106,16 +106,26 @@ void mmu_unmapear_pagina(uint virtual, uint cr3){
 uint id_nueva_tarea(){
 	return id_ultima_tarea++;
 }
-uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo){
-	perro->id=id_nueva_tarea();
-	perro->tipo=index_tipo;
-	perro->jugador->index=index_jugador;
+uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay){
+	//Si index_jugador>1 se va todo a la mierda
 	pde* pdir = (pde*)mmu_proxima_pagina_fisica_libre();
 	pte* ptab = (pte*)mmu_proxima_pagina_fisica_libre();
 	inicializar_pdir(pdir, 0,0,0);
 	inicializar_ptab(ptab,0,0,0);
 
-	return 0;
+
+	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],mmu_xy2virtual(cuchax,cuchay));
+	//Pag 0 a kernel
+	pte mem_rw; 
+	mem_rw.p=1;
+	mem_rw.rw=1;
+	mem_rw.us=0;
+	mem_rw.dir=0x0401; // >> 12 
+	mem_rw.todos_los_flags_cero=0;
+
+	ptab[0]=mem_rw;
+
+	return (uint) pdir;
 }
 
 
@@ -152,4 +162,8 @@ void inicializar_ptab(pte* base, uint us, uint rw, uint p){
 		base++;
 		curPage++;
 	}
+}
+
+uint mmu_xy2virtual(uint x, uint y){
+	return 0x800000+(y*MAPA_ANCHO+x)*0x1000;
 }
