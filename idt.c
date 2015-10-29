@@ -19,24 +19,7 @@ idt_descriptor IDT_DESC = {
     (unsigned int) &idt
 };
 
-/*
-    La siguiente es una macro de EJEMPLO para ayudar a armar entradas de
-    interrupciones. Para usar, descomentar y completar CORRECTAMENTE los
-    atributos y el registro de segmento. Invocarla desde idt_inicializar() de
-    la siguiene manera:
-
-    void idt_inicializar() {
-        IDT_ENTRY(0, 0);
-        ...
-        IDT_ENTRY(19, 0);
-
-        ...
-    }
-*/
-
-// descomentar para usar, seteando segsel y attr segun corresponda
-
-
+// Nueva entrada de IDT mejorada, se entiende mas
 #define IDT_ENTRY(numero, _dpl, type)                                                                        \
     idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);   \
     idt[numero].segsel = (unsigned short) 0x08 ;                                                            \
@@ -44,6 +27,7 @@ idt_descriptor IDT_DESC = {
     idt[numero].dpl = _dpl;                                                                                  \
     idt[numero].p = 1;                                                                                      \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
+
 
 void idt_inicializar() {
     // Excepciones
@@ -67,5 +51,13 @@ void idt_inicializar() {
 	IDT_ENTRY(17, 0, idt_entry_int);
 	IDT_ENTRY(18, 0, idt_entry_int);
 	IDT_ENTRY(19, 0, idt_entry_int);
-	// llamar a IDT_ENTRY una vez por cada entrada a configurar (es una macro que no soporta loops)
+	
+	// Clock
+	IDT_ENTRY(32, 0, idt_entry_int);
+
+	// Teclado
+	IDT_ENTRY(33, 0, idt_entry_int);
+
+	// Syscall
+	IDT_ENTRY(70, 0, idt_entry_int);
 }

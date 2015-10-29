@@ -29,6 +29,7 @@ typedef struct str_idt_entry_fld {
     unsigned int offset_16_31:16;
 } __attribute__((__packed__, aligned (8))) idt_entry;
 
+
 extern idt_entry idt[];
 extern idt_descriptor IDT_DESC;
 
