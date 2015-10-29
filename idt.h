@@ -8,6 +8,8 @@
 #ifndef __IDT_H__
 #define __IDT_H__
 
+static const unsigned char idt_entry_int  = 0b01110;
+static const unsigned char idt_entry_task = 0b00101;
 
 /* Struct de descriptor de IDT */
 typedef struct str_idt_descriptor {
@@ -17,11 +19,16 @@ typedef struct str_idt_descriptor {
 
 /* Struct de una entrada de la IDT */
 typedef struct str_idt_entry_fld {
-    unsigned short offset_0_15;
-    unsigned short segsel;
-    unsigned short attr;
-    unsigned short offset_16_31;
+    unsigned int offset_0_15:16;
+	unsigned int ceros:3;
+    unsigned int segsel:13;
+    unsigned int ceros2:8;
+	unsigned int tipo:5;
+	unsigned int dpl:2;
+	unsigned int p:1;
+    unsigned int offset_16_31:16;
 } __attribute__((__packed__, aligned (8))) idt_entry;
+
 
 extern idt_entry idt[];
 extern idt_descriptor IDT_DESC;

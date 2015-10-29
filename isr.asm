@@ -1,4 +1,5 @@
 ; asmsyntax=nasm
+
 ; ** por compatibilidad se omiten tildes **
 ; ==============================================================================
 ; TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
@@ -38,6 +39,7 @@ _isr%1:
 	call interrupcion_atender
 
 	popa
+	add esp, 4
 	iret
 %endmacro
 
@@ -73,13 +75,15 @@ ISR 20
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
+ISR 32
 
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
+ISR 33
 
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-
+ISR 70
 

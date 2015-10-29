@@ -17,10 +17,10 @@ DEPEND = Makefile \
 	sched.c sched.h screen.c screen.h \
 	game.c game.h syscall.h \
 	perro.c jugador.c game_isr.c \
-	main.c main.h \
+	main.c main.h keyboard.c keyboard.h \
 	printf.c 
 
-OBJ=$(KERNEL_OBJ) gdt.o pic.o idt.o isr.o isr_c.o mmu.o sched.o tss.o screen.o game.o perro.o jugador.o game_isr.o printf.o main.o
+OBJ=$(KERNEL_OBJ) gdt.o pic.o idt.o isr.o isr_c.o mmu.o sched.o tss.o screen.o game.o perro.o jugador.o game_isr.o printf.o keyboard.o main.o
 DISK_IMG=diskette.img
 DISK_IMG_BZ=diskette.img.bz2
 

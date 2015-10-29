@@ -115,4 +115,5 @@ LS_INLINE void interrupciones_desactivar(void) {
 LS_INLINE void interrupciones_activar(void) {
     __asm __volatile("sti" : :);
 }
+
 #endif  /* !__i386_H__ */

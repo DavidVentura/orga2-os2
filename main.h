@@ -15,11 +15,13 @@ main
 #include "screen.h"
 #include "mmu.h"
 #include "i386.h"
-//#include "pic.h"
+#include "keyboard.h"
+
+
+extern void idt_cargar();
 extern void resetear_pic();
 extern void habilitar_pic();
 
 void kmain();
 
-extern void idt_cargar();
 #endif
