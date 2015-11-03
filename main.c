@@ -39,7 +39,7 @@ void kmain() {
 	interrupciones_activar();
 
     // Cargar tarea inicial
-
+	tss_inicializar();
 
     // Habilitar interrupciones
 

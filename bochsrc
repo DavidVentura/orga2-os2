@@ -152,7 +152,7 @@ cpu: count=1, ips=5000000, reset_on_triple_fault=0,  msrs="msrs.def"
 # The maximum amount of memory supported is 2048Mb.
 #=======================================================================
 #megs: 256
-megs: 128
+megs: 512
 #megs: 64
 #megs: 32
 #megs: 16
@@ -389,8 +389,8 @@ floppy_bootsig_check: disabled=0
 #   log: ./bochs.out
 #   log: /dev/tty
 #=======================================================================
-#log: /dev/null
-log: bochs.log
+log: /dev/null
+#log: bochs.log
 
 #=======================================================================
 # LOGPREFIX:

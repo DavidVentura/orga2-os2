@@ -15,6 +15,56 @@ tss tss_idle;
 tss tss_jugadorA[MAX_CANT_PERROS_VIVOS];
 tss tss_jugadorB[MAX_CANT_PERROS_VIVOS];
 
-void tss_inicializar() {
-}
+extern void tarea_idle();
 
+const uint INICIO_TSS=0x180000; //FIXME
+const uint DTSS_IDLE=14; //defines.h?
+void tss_inicializar() {
+
+	uint base = (uint)&tss_idle;
+	uint limit = sizeof(gdt_entry)+base;
+	
+	gdt_entry g;
+	g.limit_0_15= limit&0xFFFF;
+	g.base_0_15=base & 0x7FFF;
+	g.base_23_16=(base & 0xFF8000) >>15;
+	g.type=0b1001;
+	g.s=0;
+	g.dpl=3;
+	g.p=1;
+	g.limit_16_19=(limit&0xF0000)>>16; //No es tan grande
+	g.l=0;
+	g.db=0;
+	g.g=0;
+	g.base_31_24=(base >> 24);
+
+	gdt[DTSS_IDLE]=g;
+
+	base = (uint)&tss_inicial;
+	limit = sizeof(gdt_entry)+base;
+	g.limit_0_15= limit&0xFFFF;
+	g.limit_16_19=(limit&0xF0000)>>16; //No es tan grande
+	g.base_0_15=base & 0x7FFF;
+	g.base_23_16=(base & 0xFF8000) >>15;
+	g.base_31_24=(base >> 24);
+	gdt[DTSS_IDLE-1]=g;
+
+
+
+	tss_idle.ss0 = GDT_IDX_KDATA_DESC;
+	tss_idle.esp0 = 0x2700; //KERNEL_STACK;
+	tss_idle.cr3=0x27000;
+	tss_idle.eflags=0x202;
+	tss_idle.eip=0x16000; //IDLE_CODE
+	tss_idle.esp=0x2700; //FIXME: Kernel stackpointer
+	tss_idle.ebp=0x2700; //FIXME: Kernel stackbase
+	tss_idle.cs=GDT_IDX_KCODE_DESC;
+	tss_idle.ds=GDT_IDX_KDATA_DESC;
+	tss_idle.ss=GDT_IDX_KDATA_DESC;
+
+	tss_inicial=tss_idle;
+
+	ltr((DTSS_IDLE-1)<<3);
+	ltr(DTSS_IDLE<<3);
+
+}

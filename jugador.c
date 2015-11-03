@@ -37,7 +37,7 @@ void game_jugador_inicializar(jugador_t *j)
 		game_perro_inicializar(&j->perros[i], j, i, gdt_index + i*8);
 	}
 
-	breakpoint();
+	//breakpoint();
 }
 
 

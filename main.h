@@ -16,6 +16,7 @@ main
 #include "mmu.h"
 #include "i386.h"
 #include "keyboard.h"
+#include "tss.h"
 
 
 extern void idt_cargar();

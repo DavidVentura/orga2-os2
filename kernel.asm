@@ -14,6 +14,8 @@ extern kmain
 
 
 
+global tarea_idle
+
 global paginacion_activar
 global cosa_loca_paginacion
 global start
@@ -140,6 +142,5 @@ cr3_cargar:
 teclado_leer:
 	in al, 0x60
 	ret
-
 
 %include "a20.asm"
