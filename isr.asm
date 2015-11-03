@@ -38,8 +38,8 @@ _isr%1:
 
 	call interrupcion_atender
 
-	popa
 	add esp, 4
+	popa
 	iret
 %endmacro
 
