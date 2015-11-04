@@ -57,7 +57,12 @@ uint sched_proxima_a_ejecutar() {
 	short currentPlayer = scheduler.tasks[scheduler.current].perro->jugador->index;
 
 	// Busco el siguiente
-	while (next != scheduler.current && (scheduler.tasks[next].gdt_index == 0 || currentPlayer == scheduler.tasks[next].perro->jugador->index)) {
+	// TODO: NO
+	while (next != scheduler.current && scheduler.tasks[next].gdt_index == 0) {
+		if(currentPlayer != scheduler.tasks[next].perro->jugador->index) {
+			//TODO: Ver si el perro está vivo
+			// Break
+		}
 		next = (next + 1) % MAX_CANT_TAREAS_VIVAS;
 	}
 	return next;
