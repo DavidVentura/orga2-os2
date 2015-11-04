@@ -9,6 +9,8 @@ definicion de funciones del scheduler
 #include "i386.h"
 #include "screen.h"
 
+#define GDT_BASE_INDEX = 48;
+
 sched_t scheduler;
 
 void sched_inicializar() {
@@ -28,8 +30,7 @@ int sched_buscar_indice_tarea(uint gdt_index) {
 }
 
 
-int sched_buscar_tarea_libre()
-{
+int sched_buscar_tarea_libre() {
 	int i = 0;
 
     return i;
@@ -37,17 +38,18 @@ int sched_buscar_tarea_libre()
 
 
 
-perro_t* sched_tarea_actual()
-{
+perro_t* sched_tarea_actual() {
     return scheduler.tasks[scheduler.current].perro;
 }
 
-void sched_agregar_tarea(perro_t *perro)
-{
+void sched_agregar_tarea(perro_t *perro) {
+	int libre = sched_buscar_tarea_libre();
+
+	scheduler.tasks[libre].perro = perro;
+	scheduler.tasks[libre].gdt_index = GDT_BASE_INDEX + libre;
 }
 
-void sched_remover_tarea(unsigned int gdt_index)
-{
+void sched_remover_tarea(unsigned int gdt_index) {
 }
 
 
@@ -68,8 +70,7 @@ uint sched_proxima_a_ejecutar() {
 }
 
 
-ushort sched_atender_tick()
-{
+ushort sched_atender_tick() {
     return scheduler.tasks[scheduler.current].gdt_index;
 }
 
