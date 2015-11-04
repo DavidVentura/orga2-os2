@@ -14,11 +14,13 @@ sched_t scheduler;
 void sched_inicializar() {
 	sched_task_t task = (sched_task_t) { 0, NULL };
 
+	// TODO: En el typedef tiene MAX_CANT_TAREAS_VIVAS+1
 	for (int i = 0; i < MAX_CANT_TAREAS_VIVAS; i++) {
 		scheduler.tasks[i] = task;
 	}
 	scheduler.current = NULL;
 }
+
 
 
 int sched_buscar_indice_tarea(uint gdt_index) {
@@ -49,9 +51,16 @@ void sched_remover_tarea(unsigned int gdt_index)
 }
 
 
-uint sched_proxima_a_ejecutar()
-{
-    return MAX_CANT_TAREAS_VIVAS;
+uint sched_proxima_a_ejecutar() {
+	// TODO: En el struct pone MAX_CANT_TAREAS_VIVAS+1
+	unsigned short next = (scheduler.current + 1) % MAX_CANT_TAREAS_VIVAS;
+	short currentPlayer = scheduler.tasks[scheduler.current].perro->jugador->index;
+
+	// Busco el siguiente
+	while (next != scheduler.current && (scheduler.tasks[next].gdt_index == 0 || currentPlayer == scheduler.tasks[next].perro->jugador->index)) {
+		next = (next + 1) % MAX_CANT_TAREAS_VIVAS;
+	}
+	return next;
 }
 
 
