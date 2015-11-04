@@ -54,6 +54,8 @@ typedef struct str_tss {
     unsigned short  iomap;
 } __attribute__((__packed__, aligned (8))) tss;
 
+void completar_tss(tss* entry, uint ss0, uint esp0, uint cr3, uint eflags, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss);
+void cargar_tss_en_gdt(uint t_entry, char dpl);
 void tss_inicializar();
 extern void tarea(uint);
 #endif  /* !__TSS_H__ */

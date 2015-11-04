@@ -22,6 +22,7 @@ main
 extern void idt_cargar();
 extern void resetear_pic();
 extern void habilitar_pic();
+extern void tarea_idle();
 
 void kmain();
 

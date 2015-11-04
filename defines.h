@@ -48,5 +48,7 @@ typedef unsigned int   uint;
 /* Selectores de segmentos */
 /* -------------------------------------------------------------------------- */
 
+#define DTSS_INIT 13
+#define DTSS_IDLE 14
 
 #endif  /* !__DEFINES_H__ */

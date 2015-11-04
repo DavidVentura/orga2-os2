@@ -144,9 +144,6 @@ teclado_leer:
 	ret
 
 tarea:
-	xchg bx,bx
-;	14<<3=1110 000
-;	jmp 0b0111 0000:0
 	jmp 0x70:0
 
 %include "a20.asm"

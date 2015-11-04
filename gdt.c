@@ -8,6 +8,7 @@
 #include "gdt.h"
 
 
+uint cur_gdt_entry=13;
 
 
 /* Definicion de la GDT */
@@ -121,3 +122,10 @@ gdt_descriptor GDT_DESC = {
     sizeof(gdt) - 1,
     (unsigned int) &gdt
 };
+
+
+uint prox_gdt_libre(){
+	uint ret = cur_gdt_entry;
+	cur_gdt_entry++;
+	return ret; 
+}
