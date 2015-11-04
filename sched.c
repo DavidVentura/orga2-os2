@@ -9,7 +9,7 @@ definicion de funciones del scheduler
 #include "i386.h"
 #include "screen.h"
 
-#define GDT_BASE_INDEX = 48;
+static const int GDT_BASE_INDEX = 48;
 
 sched_t scheduler;
 
