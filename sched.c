@@ -11,8 +11,13 @@ definicion de funciones del scheduler
 
 sched_t scheduler;
 
-void sched_inicializar()
-{
+void sched_inicializar() {
+	sched_task_t task = (sched_task_t) { 0, NULL };
+
+	for (int i = 0; i < MAX_CANT_TAREAS_VIVAS; i++) {
+		scheduler.tasks[i] = task;
+	}
+	scheduler.current = NULL;
 }
 
 
