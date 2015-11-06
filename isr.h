@@ -8,7 +8,7 @@
 #include "i386.h"
 #include "screen.h"
 #include "keyboard.h"
-
+#include "game.h"
 
 #ifndef __ISR_H__
 #define __ISR_H__
@@ -49,4 +49,5 @@ void _isr33();
 void _isr70();
 void int70();
 
+extern perro_t* game_jugador_dame_perro_libre(jugador_t *j);
 #endif  /* !__ISR_H__ */

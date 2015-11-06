@@ -90,8 +90,3 @@ perro_t* game_perro_en_posicion(uint x, uint y)
 void game_terminar_si_es_hora()
 {
 }
-
-
-
-
-

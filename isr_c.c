@@ -41,7 +41,19 @@ void int70() {
 void teclado_atender(){
 	unsigned char scancode = teclado_leer();
 	tecla_actualizar(scancode);
+	unsigned char ascii = get_ascii(scancode);
+	/*
 	if (scancode <= 128 && scancode != LSHIFT && scancode != BKSP)
-//		breakpoint();
-		screen_pintar(get_ascii(scancode), 6, 6, 15);
+		screen_pintar(ascii, 6, 6, 15);
+	*/
+	switch(ascii){
+		case 'o':
+		case 'O':
+			sched_agregar_tarea(game_jugador_dame_perro_libre(&jugadorA));
+			break;
+		case 'q':
+		case 'Q':
+			sched_agregar_tarea(game_jugador_dame_perro_libre(&jugadorB));
+			break;
+	}
 }
