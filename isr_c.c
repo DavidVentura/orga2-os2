@@ -11,12 +11,31 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 			teclado_atender();
 			fin_intr_pic1();
 			break;
-		// TODO: case 70: SYSCAL
+		case 70:
+			int70();
 		default:
 			screen_pintar(num+48, 4, 4, 15);
 			break;
 	}
 
+}
+
+void int70() {
+	uint tipo, ecx;
+    __asm __volatile("movl %%eax,%0" : "=r" (tipo));
+    __asm __volatile("movl %%ecx,%0" : "=r" (ecx));
+	switch(tipo){
+		case 0x1: //Moverse
+			//en ECX: 4 arriba, 7 abajo, 10 derecha, 13 izquierda
+			break;
+		case 0x2: //Cavar
+			break;
+		case 0x3: //Olfatear
+			break;
+		case 0x4: //Recibir orden
+			break;
+	}
+	//scheduler_desalojame_pls()
 }
 
 void teclado_atender(){

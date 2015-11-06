@@ -47,5 +47,6 @@ void _isr33();
 
 // Software
 void _isr70();
+void int70();
 
 #endif  /* !__ISR_H__ */

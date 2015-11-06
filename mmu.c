@@ -21,7 +21,6 @@
 /* -------------------------------------------------------------------------- */
 
 uint ultimaPagina = 0;
-uint id_ultima_tarea=0;
 uint CODIGO_PERROS[4] = { 0x10000, 0x11000, 0x12000, 0x13000 };
 
 #define BASE_PAG_USER 0x100000
@@ -102,9 +101,6 @@ void mmu_unmapear_pagina(uint virtual, uint cr3){
 	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
 	PT[PT_OFFSET].p=0;
 	tlbflush();
-}
-uint id_nueva_tarea(){
-	return id_ultima_tarea++;
 }
 uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay){
 	//Si index_jugador>1 se va todo a la mierda

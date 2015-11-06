@@ -9,15 +9,14 @@ definicion de funciones del scheduler
 #include "i386.h"
 #include "screen.h"
 
-static const int GDT_BASE_INDEX = 48;
-
 sched_t scheduler;
 
 void sched_inicializar() {
 	sched_task_t task = (sched_task_t) { 0, NULL };
 
 	// TODO: En el typedef tiene MAX_CANT_TAREAS_VIVAS+1
-	for (int i = 0; i < MAX_CANT_TAREAS_VIVAS; i++) {
+	int i;
+	for (i = 0; i < MAX_CANT_TAREAS_VIVAS; i++) {
 		scheduler.tasks[i] = task;
 	}
 	scheduler.current = NULL;
@@ -43,10 +42,17 @@ perro_t* sched_tarea_actual() {
 }
 
 void sched_agregar_tarea(perro_t *perro) {
+	//cargar un tss
+	uint t = 0; //completar_tss();
+	//cargar un descriptor de tss y meterlo en gdt
+	uint gdt_index=cargar_tss_en_gdt(t,3);
+	//pasarle al scheduler la entrada de la gdt
 	int libre = sched_buscar_tarea_libre();
 
 	scheduler.tasks[libre].perro = perro;
-	scheduler.tasks[libre].gdt_index = GDT_BASE_INDEX + libre;
+	scheduler.tasks[libre].gdt_index = gdt_index;
+
+	//Inicializar mem_perro
 }
 
 void sched_remover_tarea(unsigned int gdt_index) {

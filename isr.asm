@@ -33,8 +33,8 @@ global _isr%1
 
 _isr%1:
 	pusha
-    mov eax, %1
-	push eax
+    mov ebx, %1
+	push ebx
 
 	call interrupcion_atender
 

@@ -9,6 +9,7 @@
 #define __SCHED_H__
 
 #include "game.h"
+#include "tss.h"
 
 #define MAX_CANT_TAREAS_VIVAS   (MAX_CANT_PERROS_VIVOS * 2)
 

@@ -9,51 +9,57 @@
 #include "mmu.h"
 
 
-tss tss_inicial;
-tss tss_idle;
 
 tss tss_jugadorA[MAX_CANT_PERROS_VIVOS];
 tss tss_jugadorB[MAX_CANT_PERROS_VIVOS];
 
-const uint INICIO_TSS=0x180000; //FIXME
+uint INICIO_TSS=0x180000;
+
 void tss_inicializar() {
-
-	cargar_tss_en_gdt((uint)&tss_idle,0);
-	cargar_tss_en_gdt((uint)&tss_inicial,0);
-
-	completar_tss(&tss_idle,GDT_IDX_KDATA_DESC<<3, 0x2700, 0x27000, 0x202, 0x16000, 0x2700, 0x2700,GDT_IDX_KCODE_DESC<<3,GDT_IDX_KDATA_DESC<<3,GDT_IDX_KDATA_DESC<<3);
+	uint tss_inicial=crear_tss(GDT_IDX_KDATA_DESC<<3, 0x2700, 0x27000, 0x202, 0x16000, 0x2700, 0x2700,GDT_IDX_KCODE_DESC<<3,GDT_IDX_KDATA_DESC<<3,GDT_IDX_KDATA_DESC<<3);
+	uint tss_idle   =crear_tss(GDT_IDX_KDATA_DESC<<3, 0x2700, 0x27000, 0x202, 0x16000, 0x2700, 0x2700,GDT_IDX_KCODE_DESC<<3,GDT_IDX_KDATA_DESC<<3,GDT_IDX_KDATA_DESC<<3);
 	//Magic number?
 
-	tss_inicial=tss_idle;
+	breakpoint();
+	cargar_tss_en_gdt(tss_inicial,0);
+	cargar_tss_en_gdt(tss_idle,0);
 	ltr(DTSS_INIT<<3);
 
 }
 
 
-void completar_tss(tss* entry, uint ss0, uint esp0, uint cr3, uint eflags, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss){
-	tss_idle.ss0 = ss0;
-	tss_idle.esp0 = esp0;
-	tss_idle.cr3=cr3; 
-	tss_idle.eflags=eflags;
-	tss_idle.eip=eip;
-	tss_idle.esp=esp;
-	tss_idle.ebp=ebp;
-	tss_idle.cs=cs;
-	tss_idle.ds=ds;
-	tss_idle.ss=ss;
+uint crear_tss(uint ss0, uint esp0, uint cr3, uint eflags, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss){
+	uint p =proxima_tss_libre();
+	tss* entry=(tss*)p;
+	entry->ss0 = ss0;
+	entry->esp0 = esp0;
+	entry->cr3=cr3; 
+	entry->eflags=eflags;
+	entry->eip=eip;
+	entry->esp=esp;
+	entry->ebp=ebp;
+	entry->cs=cs;
+	entry->ds=ds;
+	entry->ss=ss;
 
+	return p;
 }
 
+uint proxima_tss_libre(){
+	uint ret=INICIO_TSS;
+	INICIO_TSS+=sizeof(tss);
+	breakpoint();
+	return ret;
+}
 
 //Dame la posicion de memoria de la base 
-void cargar_tss_en_gdt(uint t_entry, char dpl) {
-	//uint base = (uint)&t_entry;
+uint cargar_tss_en_gdt(uint t_entry, char dpl) {
 	uint base = t_entry;
 	gdt_entry g;
 	
 	g.limit_0_15=0x67;
 	g.base_0_15=(base & 0xFFFF);
-	g.base_23_16=(base & 0xFF0000) >>15;
+	g.base_23_16=(base & 0xFF0000) >>16;
 	g.type=0b1001;
 	g.s=0;
 	g.dpl=dpl;
@@ -66,4 +72,5 @@ void cargar_tss_en_gdt(uint t_entry, char dpl) {
 
 	uint p=prox_gdt_libre();
 	gdt[p]=g;
+	return p;
 }
