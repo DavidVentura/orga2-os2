@@ -48,10 +48,10 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 {
 	switch (dir)
 	{
-		case IZQ: *x = -1; *y =  0; break;
-		case DER: *x =  1; *y =  0; break;
-		case ABA: *x =  0; *y =  1; break;
-		case ARR: *x =  0; *y = -1; break;
+		case IZQ: *x = *x > 0 ? -1 : 0; *y =  0; break;
+		case DER: *x = *x < MAPA_ANCHO ? 1 : 0; *y =  0; break;
+		case ABA: *x =  0; *y = *y > MAPA_ALTO ? 1 : 0; break;
+		case ARR: *x =  0; *y = *y > 0 ? -1 : 0; break;
     	default: return -1;
 	}
 

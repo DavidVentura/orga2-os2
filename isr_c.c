@@ -21,12 +21,23 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 }
 
 void int70() {
-	uint tipo, ecx;
-    __asm __volatile("movl %%eax,%0" : "=r" (tipo));
-    __asm __volatile("movl %%ecx,%0" : "=r" (ecx));
-	switch(tipo){
+	uint tipo, dir;
+	uint xOrig, yOrig;
+	__asm __volatile("movl %%eax,%0" : "=r" (tipo));
+	__asm __volatile("movl %%ecx,%0" : "=r" (dir));
+
+	// Consigo el perro actual
+	perro_t* aPerro = scheduler.tasks[scheduler.current].perro;
+	
+	switch(tipo) {
 		case 0x1: //Moverse
-			//en ECX: 4 arriba, 7 abajo, 10 derecha, 13 izquierda
+			xOrig = aPerro->x;
+			yOrig = aPerro->y;
+			game_perro_mover(aPerro, dir);
+			if (xOrig != aPerro->x || yOrig != aPerro->y) {
+				mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
+				mmu_mapear_pagina(mmu_xy2virtual(aPerro->x, aPerro->y), rcr3(), mmu_xy2fisica(aPerro->x, aPerro->y), 1, 1);
+			}
 			break;
 		case 0x2: //Cavar
 			break;

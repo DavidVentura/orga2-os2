@@ -163,3 +163,8 @@ void inicializar_ptab(pte* base, uint us, uint rw, uint p){
 uint mmu_xy2virtual(uint x, uint y){
 	return 0x800000+(y*MAPA_ANCHO+x)*0x1000;
 }
+
+
+uint mmu_xy2fisica(uint x, uint y){
+	return 0x500000+(y*MAPA_ANCHO+x)*0x1000;
+}
