@@ -17,12 +17,12 @@ main
 #include "i386.h"
 #include "keyboard.h"
 #include "tss.h"
-
-
 extern void idt_cargar();
 extern void resetear_pic();
 extern void habilitar_pic();
 extern void tarea_idle();
+extern perro_t* game_jugador_dame_perro_libre(jugador_t *j);
+
 
 void kmain();
 

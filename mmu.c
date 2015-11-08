@@ -27,7 +27,6 @@ uint CODIGO_PERROS[4] = { 0x10000, 0x11000, 0x12000, 0x13000 };
 #define K_PAGE_TABLE 0x100000
 #define BASE_PAG_USER 0x101000
 #define IDENTITY_MAPPING 0x3FFFFF
-#define KERNEL_PDIR	0x27000	
 
 void mmu_inicializar(){
 	mmu_inicializar_dir_kernel();

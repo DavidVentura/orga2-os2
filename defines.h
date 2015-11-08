@@ -28,11 +28,13 @@ typedef unsigned int   uint;
 #define BOOTSECTOR              0x00001000 /* direccion fisica de comienzo del bootsector (copiado) */
 #define KERNEL                  0x00001200 /* direccion fisica de comienzo del kernel */
 
+#define KERNEL_PDIR				0x28000
 
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
 #define GDT_COUNT 30
 
+#define KSTACK							0x27000
 #define GDT_IDX_NULL_DESC				0
 
 #define GDT_IDX_KCODE_DESC				8
