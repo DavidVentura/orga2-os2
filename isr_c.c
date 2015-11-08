@@ -16,6 +16,20 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 		default:
 			print("ERROR: ", 0, 0, 0xF);
 			print_dec(num, 7, 0, 0x4);
+
+			print(" - Eflags: ", 9, 0, 0xF);
+			print_hex(eflags, 20, 0, 0x4);
+
+			print(" - CS: ", 30, 0, 0xF);
+			print_dec(cs, 7, 37, 0x4);
+
+			print(" - EIP: ", 47, 0, 0xF);
+			print_hex(eip, 55, 9, 0x4);
+
+			if (num >= 10 && num <= 14) {
+				print(" - Error Cod: ", 0, 1, 0xF);
+				print_dec(errorCd, 9, 1, 0x4);
+			}
 			break;
 	}
 
@@ -51,6 +65,7 @@ void int70() {
 }
 
 void teclado_atender(){
+//	breakpoint();
 	unsigned char scancode = teclado_leer();
 	tecla_actualizar(scancode);
 	if (scancode > 128 || scancode == LSHIFT || scancode == BKSP)
@@ -70,4 +85,9 @@ void teclado_atender(){
 		sched_agregar_tarea(p);
 		return;
 	}
+	if(scancode==Y){
+		//screen_pintar_rect('A', 15, 25, 7, 10, 10);
+		return;
+	}
+	screen_pintar(get_ascii(scancode), 15, 15, 15);
 }

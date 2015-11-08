@@ -91,7 +91,7 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	(*ptab).todos_los_flags_cero=0;
 
 	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],mmu_xy2virtual(cuchax,cuchay));
-	perro->cr3=pdir;
+	perro->cr3=(uint) pdir;
 }
 
 
