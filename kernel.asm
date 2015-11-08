@@ -15,6 +15,7 @@ extern kmain
 
 
 global tarea
+global tarea_p
 
 global paginacion_activar
 global cosa_loca_paginacion
@@ -30,6 +31,8 @@ jmp start
 ;;
 ;; Seccion de datos.
 ;; -------------------------------------------------------------------------- ;;
+offset: dd 0
+selector: dw 0
 iniciando_mr_msg db     'Iniciando kernel (Modo Real)...'
 iniciando_mr_len equ    $ - iniciando_mr_msg
 
@@ -88,11 +91,9 @@ BITS 32
 	mov ebp, 0x27000 ;lo pide el tp
 	mov esp, 0x27000 ;lo pide el tp
 
-	xchg bx,bx
-
     ; Imprimir mensaje de bienvenida
 
-;    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
+    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
 
 	call kmain
@@ -129,7 +130,8 @@ teclado_leer:
 tarea:
 	jmp 0x70:0
 tarea_p:
-	mov al, [esp+4]
-	jmp  0x0:0
+	mov ax, [esp+4]
+	mov [selector], ax
+	jmp far [offset]
 
 %include "a20.asm"

@@ -55,5 +55,5 @@ perro_t* sched_tarea_actual();
 // debe avisar al juego que hubo un tick (para que haga cosas del juego) y luego configurarse
 // para pasar a la siguiente tarea (devuelve su indice en la gdt)
 ushort sched_atender_tick();
-
+extern void tarea_p(uint);
 #endif	/* !__SCHED_H__ */

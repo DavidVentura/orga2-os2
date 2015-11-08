@@ -49,8 +49,7 @@ void sched_agregar_tarea(perro_t *perro) {
 
 	//(uint ss0, uint esp0, uint cr3, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss){
 	print_hex(perro->cr3, 5, 5, 15);
-	breakpoint();
-	uint tss_new = crear_tss(GDT_IDX_UDATA_DESC<<3, KSTACK, perro->cr3, 0x16000, 0x402000-12, 0x402000-12,GDT_IDX_UCODE_DESC<<3,GDT_IDX_UDATA_DESC<<3,GDT_IDX_UDATA_DESC<<3);
+	uint tss_new = crear_tss(GDT_IDX_UDATA_DESC<<3, mmu_proxima_pagina_fisica_libre(), perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_UCODE_DESC<<3,GDT_IDX_UDATA_DESC<<3,GDT_IDX_UDATA_DESC<<3);
 
 	//cargar un descriptor de tss y meterlo en gdt
 	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
@@ -60,6 +59,8 @@ void sched_agregar_tarea(perro_t *perro) {
 	scheduler.tasks[libre].perro = perro;
 	scheduler.tasks[libre].gdt_index = gdt_index;
 
+	breakpoint();
+	tarea_p(gdt_index<<3);
 	//tarea_p(gdt_index<<3);
 	//Inicializar mem_perro
 }
