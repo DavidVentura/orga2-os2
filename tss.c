@@ -38,7 +38,12 @@ uint crear_tss(uint ss0, uint esp0, uint cr3, uint eip, uint esp, uint ebp, uint
 	entry->esp=esp;
 	entry->ebp=ebp;
 	entry->cs=cs;
+
 	entry->ds=ds;
+	entry->es=ds;
+	entry->fs=ds;
+	entry->gs=ds;
+
 	entry->ss=ss;
 
 	return p;

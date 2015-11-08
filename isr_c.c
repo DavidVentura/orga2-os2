@@ -4,8 +4,9 @@
 void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short cs, unsigned int eip, unsigned short errorCd) {
 	switch (num){
 		case 32:
-			screen_actualizar_reloj_global();
 			fin_intr_pic1();
+			sched_atender_tick();
+			screen_actualizar_reloj_global();
 			break;
 		case 33:
 			teclado_atender();
@@ -31,6 +32,7 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 				print(" - Error Cod: ", 0, 1, 0xF);
 				print_dec(errorCd, 9, 1, 0x4);
 			}
+//			breakpoint();
 			break;
 	}
 
