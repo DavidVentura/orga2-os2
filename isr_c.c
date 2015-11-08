@@ -60,14 +60,14 @@ void teclado_atender(){
 		screen_pintar(ascii, 6, 6, 15);
 	*/
 	perro_t* p;
-	switch(scancode){
-		case O:
-			p=game_jugador_dame_perro_libre(&jugadorA);
-			sched_agregar_tarea(p);
-			break;
-		case Q:
-			p=game_jugador_dame_perro_libre(&jugadorB);
-			sched_agregar_tarea(p);
-			break;
+	if(scancode==O){
+		p=game_jugador_dame_perro_libre(&jugadorA);
+		sched_agregar_tarea(p);
+		return;
+	}
+	if(scancode==Q){
+		p=game_jugador_dame_perro_libre(&jugadorB);
+		sched_agregar_tarea(p);
+		return;
 	}
 }
