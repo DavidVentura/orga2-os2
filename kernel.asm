@@ -75,21 +75,24 @@ BITS 32
 
     ; Establecer selectores de segmentos
 	xor eax,eax
-	mov ax, 1001000b ; { index:  | gdt (0) | rpl: 00 }
+	mov ax, 1001000b ; { index: 9 | gdt (0) | rpl: 00 }
 	mov ds, ax ;data
 	mov es, ax
+	mov ss, ax
 	mov gs, ax
 
 	mov ax, 1100000b ; { index: 12 | gdt(0) | rpl: 00 }
 	mov fs, ax ;video
 
     ; Establecer la base de la pila
-	mov esp, 0x2700 ;lo pide el tp
+	mov ebp, 0x27000 ;lo pide el tp
+	mov esp, 0x27000 ;lo pide el tp
 
+	xchg bx,bx
 
     ; Imprimir mensaje de bienvenida
 
-    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
+;    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 2, 0
 
 
 	call kmain
@@ -110,26 +113,6 @@ paginacion_activar:
 	or eax, 0x80000000
 	mov cr0, eax
 	ret
-
-cosa_loca_paginacion:
-
-	xchg bx, bx
-
-	xor ebx, ebx
-	mov ebx, 0xDEADBEEF 
-	mov [0x123], ebx
-
-	mov eax, cr0
-	or eax, 0x80000000
-	mov cr0, eax
-
-	xor ebx, ebx
-	mov ebx, [0x123]
-
-	and eax, 0x7FFFFFFF
-	mov cr0, eax
-	ret
-
 idt_cargar:
 	lidt [IDT_DESC]
 	ret
@@ -145,5 +128,8 @@ teclado_leer:
 
 tarea:
 	jmp 0x70:0
+tarea_p:
+	mov al, [esp+4]
+	jmp  0x0:0
 
 %include "a20.asm"
