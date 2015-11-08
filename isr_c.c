@@ -13,6 +13,7 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 			break;
 		case 70:
 			int70();
+			break;
 		default:
 			print("ERROR: ", 0, 0, 0xF);
 			print_dec(num, 7, 0, 0x4);
@@ -62,19 +63,14 @@ void int70() {
 			break;
 	}
 	//scheduler_desalojame_pls()
+	return;
 }
 
 void teclado_atender(){
-//	breakpoint();
 	unsigned char scancode = teclado_leer();
 	tecla_actualizar(scancode);
 	if (scancode > 128 || scancode == LSHIFT || scancode == BKSP)
 		return;
-	/*
-	if (scancode <= 128 && scancode != LSHIFT && scancode != BKSP)
-		screen_pintar(ascii, 6, 6, 15);
-	*/
-	breakpoint();
 	perro_t* p;
 	if(scancode==O){
 		p=game_jugador_dame_perro_libre(&jugadorA);
