@@ -21,10 +21,10 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 			print_hex(eflags, 20, 0, 0x4);
 
 			print(" - CS: ", 30, 0, 0xF);
-			print_dec(cs, 7, 37, 0x4);
+			print_dec(cs, 37, 0, 0x4);
 
 			print(" - EIP: ", 47, 0, 0xF);
-			print_hex(eip, 55, 9, 0x4);
+			print_hex(eip, 0, 55, 0x4);
 
 			if (num >= 10 && num <= 14) {
 				print(" - Error Cod: ", 0, 1, 0xF);
