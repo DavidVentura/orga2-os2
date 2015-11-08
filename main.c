@@ -31,9 +31,6 @@ void kmain() {
 	// Cargo el teclado en memoria
 	teclado_inicializar();
 
-	int cero = 0;
-	cero = cero / cero;
-
     // Configurar controlador de interrupciones
 	resetear_pic();
 	habilitar_pic();

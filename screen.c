@@ -17,7 +17,7 @@ extern jugador_t jugadorA, jugadorB;
 
 
 static ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
-
+const char letras[16] = "0123456789ABCDEF";
 const char reloj[] = "|/-\\";
 #define reloj_size 4
 
@@ -56,10 +56,11 @@ void print(const char * text, uint x, uint y, unsigned short attr) {
     }
 }
 
-void print_hex(uint numero, int size, uint x, uint y, unsigned short attr) {
+void print_hex(uint numero, uint x, uint y, unsigned short attr) {
     int i;
     char hexa[8];
-    char letras[16] = "0123456789ABCDEF";
+	int size = getSize(numero, 16);
+
     hexa[0] = letras[ ( numero & 0x0000000F ) >> 0  ];
     hexa[1] = letras[ ( numero & 0x000000F0 ) >> 4  ];
     hexa[2] = letras[ ( numero & 0x00000F00 ) >> 8  ];
@@ -74,16 +75,27 @@ void print_hex(uint numero, int size, uint x, uint y, unsigned short attr) {
     }
 }
 
-void print_dec(uint numero, int size, uint x, uint y, unsigned short attr) {
+void print_dec(uint numero, uint x, uint y, unsigned short attr) {
     int i;
-    char letras[16] = "0123456789";
+	int size = getSize(numero, 10);
 
     for(i = 0; i < size; i++) {
-        int resto  = numero % 10;
+        int resto = numero % 10;
         numero = numero / 10;
         p[y][x + size - i - 1].c = letras[resto];
         p[y][x + size - i - 1].a = attr;
     }
+}
+
+
+unsigned int getSize(unsigned int numero, unsigned int base) {
+	int i = 1;
+
+	while (numero > base - 1) {
+		i++;
+		numero = numero / base;
+	}
+	return i;
 }
 
 
@@ -127,8 +139,8 @@ void screen_inicializar()
 
 void screen_pintar_puntajes()
 {
-    print_dec(jugadorA.puntos, 3, 33+2, 45+2, C_BG_RED  | C_FG_WHITE);
-    print_dec(jugadorB.puntos, 3, 40+2, 45+2, C_BG_BLUE | C_FG_WHITE);
+    print_dec(jugadorA.puntos, 33+2, 45+2, C_BG_RED  | C_FG_WHITE);
+    print_dec(jugadorB.puntos, 40+2, 45+2, C_BG_BLUE | C_FG_WHITE);
 }
 
 uchar screen_color_jugador(jugador_t *j)

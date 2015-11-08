@@ -14,7 +14,8 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 		case 70:
 			int70();
 		default:
-			screen_pintar(num+48, 4, 4, 15);
+			print("ERROR: ", 0, 0, 0xF);
+			print_dec(num, 7, 0, 0x4);
 			break;
 	}
 

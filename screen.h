@@ -42,9 +42,13 @@ void screen_pintar(unsigned char c, unsigned char color, uint fila, uint columna
 // imprime un string en pantalla
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
 
-// imprime un numero en hexa en pantalla
-void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr);
+unsigned int getSize(unsigned int numero, unsigned int base);
 
+// imprime un numero en hexa en pantalla
+void print_hex(unsigned int numero, unsigned int x, unsigned int y, unsigned short attr);
+
+// imprime un numero dec en pantalla
+void print_dec(uint numero, uint x, uint y, unsigned short attr);
 
 // pinta un rectangulo en pantalla
 void screen_pintar_rect(unsigned char c, unsigned char color, int fila, int columna, int alto, int ancho);
