@@ -74,6 +74,7 @@ void teclado_atender(){
 	if (scancode <= 128 && scancode != LSHIFT && scancode != BKSP)
 		screen_pintar(ascii, 6, 6, 15);
 	*/
+	breakpoint();
 	perro_t* p;
 	if(scancode==O){
 		p=game_jugador_dame_perro_libre(&jugadorA);
