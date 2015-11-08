@@ -45,7 +45,7 @@ typedef struct perro_t
 
 	uint huesos;
     uint indice_reloj;
-
+	uint cr3;
 } perro_t;
 
 

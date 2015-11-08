@@ -51,8 +51,7 @@ uint proxima_tss_libre(){
 }
 
 //Dame la posicion de memoria de la base 
-uint cargar_tss_en_gdt(uint t_entry, char dpl) {
-	uint base = t_entry;
+uint cargar_tss_en_gdt(uint base, char dpl) {
 	gdt_entry g;
 	
 	g.limit_0_15=0x67;

@@ -62,7 +62,7 @@ uint mmu_xy2fisica(uint x, uint y);
 uint mmu_xy2virtual(uint x, uint y);
 
 // crea el directorio, las paginas, copia el codigo e inicializa el stack
-uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay);
+void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay);
 
 
 // debe remapear y copiar el codigo

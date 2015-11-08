@@ -23,7 +23,9 @@
 uint ultimaPagina = 0;
 uint CODIGO_PERROS[4] = { 0x10000, 0x11000, 0x12000, 0x13000 };
 
-#define BASE_PAG_USER 0x100000
+//tomo la primer pag para kernel
+#define K_PAGE_TABLE 0x100000
+#define BASE_PAG_USER 0x101000
 #define IDENTITY_MAPPING 0x3FFFFF
 #define KERNEL_PDIR	0x27000	
 
@@ -36,16 +38,14 @@ void mmu_inicializar(){
 
 void mmu_inicializar_dir_kernel() {
 	cr3_cargar(KERNEL_PDIR);
-	const int PAGE_TABLE=0x100000; //mmu_proxima_pagina_fisica_libre();
-
 	pde* pdir = (pde*)KERNEL_PDIR;
 	inicializar_pdir(pdir, 0,1,0);
 
-	(*pdir).dir=PAGE_TABLE>>12;
+	(*pdir).dir=K_PAGE_TABLE>>12;
 	(*pdir).p=1;
 
 	int curPage=0;
-	pte* table = (pte*)PAGE_TABLE;
+	pte* table = (pte*)K_PAGE_TABLE;
 
 	pte pt_entry;
 	pt_entry.todos_los_flags_cero=0;
@@ -60,6 +60,40 @@ void mmu_inicializar_dir_kernel() {
 		curPage++;
 	}
 }
+
+//void identity_map_ptab(uint
+void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay){
+	//Si index_jugador>1 se va todo a la mierda
+	pde* pdir = (pde*)mmu_proxima_pagina_fisica_libre();
+	pte* ptab = (pte*)mmu_proxima_pagina_fisica_libre();
+	inicializar_pdir(pdir,0,1,0);
+	inicializar_ptab(ptab,0,0,0);
+
+	(*pdir).dir=K_PAGE_TABLE>>12;
+	(*pdir).p=1;
+	pdir++;
+	(*pdir).dir=((uint)ptab)>>12;
+	(*pdir).p=1;
+
+	//TODO: Mapear cucha
+	//Pag compartida
+	(*ptab).p=1;
+	(*ptab).rw=1;
+	(*ptab).us=0;
+	(*ptab).dir=0x0400; // >>12;
+	(*ptab).todos_los_flags_cero=0;
+	ptab++;
+	//Pag con codigo actual
+	(*ptab).p=1;
+	(*ptab).rw=1;
+	(*ptab).us=0;
+	(*ptab).dir=0x0401; // >>12;
+	(*ptab).todos_los_flags_cero=0;
+
+	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],mmu_xy2virtual(cuchax,cuchay));
+	perro->cr3=pdir;
+}
+
 
 void mmu_inicializar_pagina(uint* pagina){ //No testeado
 	int i =0;
@@ -102,28 +136,6 @@ void mmu_unmapear_pagina(uint virtual, uint cr3){
 	PT[PT_OFFSET].p=0;
 	tlbflush();
 }
-uint mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay){
-	//Si index_jugador>1 se va todo a la mierda
-	pde* pdir = (pde*)mmu_proxima_pagina_fisica_libre();
-	pte* ptab = (pte*)mmu_proxima_pagina_fisica_libre();
-	inicializar_pdir(pdir, 0,0,0);
-	inicializar_ptab(ptab,0,0,0);
-
-
-	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],mmu_xy2virtual(cuchax,cuchay));
-	//Pag 0 a kernel
-	pte mem_rw; 
-	mem_rw.p=1;
-	mem_rw.rw=1;
-	mem_rw.us=0;
-	mem_rw.dir=0x0401; // >> 12 
-	mem_rw.todos_los_flags_cero=0;
-
-	ptab[0]=mem_rw;
-
-	return (uint) pdir;
-}
-
 
 void inicializar_pdir(pde* base,uint us, uint rw, uint p){
 	int curPage=0;
@@ -148,9 +160,9 @@ void inicializar_ptab(pte* base, uint us, uint rw, uint p){
 	int curPage=0;
 	pte pt_entry;
 	pt_entry.todos_los_flags_cero=0;
-	pt_entry.us=0;
-	pt_entry.rw=1;
-	pt_entry.p=1;
+	pt_entry.us=us;
+	pt_entry.rw=rw;
+	pt_entry.p=p;
 
 	while(curPage<1024){
 		pt_entry.dir=0xFFFFF;

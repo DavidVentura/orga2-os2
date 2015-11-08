@@ -10,6 +10,7 @@
 
 #include "game.h"
 #include "tss.h"
+#include "mmu.h"
 
 #define MAX_CANT_TAREAS_VIVAS   (MAX_CANT_PERROS_VIVOS * 2)
 

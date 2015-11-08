@@ -45,11 +45,16 @@ void sched_agregar_tarea(perro_t *perro) {
 	//cargar un tss
 
 	//esp0,cr3,eip,esp,ebp?????????
-	/*
-	uint tss_new=crear_tss(GDT_IDX_UDATA_DESC<<3, 0x2700, 0x27000, 0x16000, 0x2700, 0x2700,GDT_IDX_UCODE_DESC<<3,GDT_IDX_UDATA_DESC<<3,GDT_IDX_UDATA_DESC<<3);
+	//print_hex(perro->cr3, 10, 5, 5, 15);
+	cr3_cargar(perro->cr3);
+	breakpoint();
+
+	//(uint ss0, uint esp0, uint cr3, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss){
+	//uint tss_new=crear_tss(GDT_IDX_UDATA_DESC<<3, 0x2700, perro->cr3, 0x16000, 0x402000-12, 0x402000-12,GDT_IDX_UCODE_DESC<<3,GDT_IDX_UDATA_DESC<<3,GDT_IDX_UDATA_DESC<<3);
 	//cargar un descriptor de tss y meterlo en gdt
-	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
+	//uint gdt_index=cargar_tss_en_gdt(tss_new,3);
 	//pasarle al scheduler la entrada de la gdt
+	/*
 	int libre = sched_buscar_tarea_libre();
 
 	scheduler.tasks[libre].perro = perro;

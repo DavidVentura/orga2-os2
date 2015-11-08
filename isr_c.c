@@ -59,12 +59,15 @@ void teclado_atender(){
 	if (scancode <= 128 && scancode != LSHIFT && scancode != BKSP)
 		screen_pintar(ascii, 6, 6, 15);
 	*/
+	perro_t* p;
 	switch(scancode){
 		case O:
-			sched_agregar_tarea(game_jugador_dame_perro_libre(&jugadorA));
+			p=game_jugador_dame_perro_libre(&jugadorA);
+			sched_agregar_tarea(p);
 			break;
 		case Q:
-			sched_agregar_tarea(game_jugador_dame_perro_libre(&jugadorB));
+			p=game_jugador_dame_perro_libre(&jugadorB);
+			sched_agregar_tarea(p);
 			break;
 	}
 }
