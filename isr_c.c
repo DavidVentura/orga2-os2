@@ -70,7 +70,7 @@ void int70() {
 			game_perro_mover(aPerro, dir);
 			if (xOrig != aPerro->x || yOrig != aPerro->y) {
 				mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
-				mmu_mapear_pagina(mmu_xy2virtual(aPerro->x, aPerro->y), rcr3(), mmu_xy2fisica(aPerro->x, aPerro->y), 1, 1);
+				mmu_mapear_pagina(mmu_xy2virtual(aPerro->x, aPerro->y), rcr3(), mmu_xy2fisica(aPerro->x, aPerro->y), 0,1, 1);
 			}
 			break;
 		case 0x2: //Cavar
@@ -185,7 +185,8 @@ void printDebug() {
 	print_hex(rcr2(), startX + 20, startY + 5, 0x7F);
 	print_hex(rcr3(), startX + 20, startY + 7, 0x7F);
 	print_hex(rcr4(), startX + 20, startY + 9, 0x7F);
-	for (int i = 0; i <= 10; i++)
+	int i;
+	for (i = 0; i <= 10; i++)
 		print_hex(rstack(i*4), startX + 22, startY + 19 + i, 0x7F);
 }
 

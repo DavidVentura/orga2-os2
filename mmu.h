@@ -69,7 +69,7 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 void mmu_mover_perro(perro_t *perro, int viejo_x, int viejo_y);
 
 
-void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint rw, uint p);
+void mmu_mapear_pagina  (uint virtual, uint cr3, uint fisica, uint us,uint rw, uint p);
 void mmu_unmapear_pagina(uint virtual, uint cr3);
 
 extern void cr3_cargar();

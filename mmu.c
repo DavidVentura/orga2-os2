@@ -31,7 +31,7 @@ uint CODIGO_PERROS[4] = { 0x10000, 0x11000, 0x12000, 0x13000 };
 void mmu_inicializar(){
 	mmu_inicializar_dir_kernel();
 	paginacion_activar();
-	mmu_mapear_pagina(0x200000,KERNEL_PDIR,0xB8000,1,1);
+	mmu_mapear_pagina(0x200000,KERNEL_PDIR,0xB8000,0,1,1);
 
 }
 
@@ -65,8 +65,8 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	//Si index_jugador>1 se va todo a la mierda
 	pde* pdir = (pde*)mmu_proxima_pagina_fisica_libre();
 	pte* ptab = (pte*)mmu_proxima_pagina_fisica_libre();
-	inicializar_pdir(pdir,0,1,0);
-	inicializar_ptab(ptab,0,0,0);
+	inicializar_pdir(pdir,1,1,0);
+	inicializar_ptab(ptab,1,0,0);
 
 	(*pdir).dir=K_PAGE_TABLE>>12;
 	(*pdir).p=1;
@@ -93,10 +93,10 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	//breakpoint();
 	uint dircucha=mmu_xy2fisica(cuchax,cuchay);
 	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],dircucha);
-	mmu_mapear_pagina(0x401000, (uint)pdir, 0x10000,0,1); 
+	mmu_mapear_pagina(0x401000, (uint)pdir, 0x10000,1,1,1); 
 	//mmu_mapear_pagina(0x401000, (uint)pdir, mmu_xy2fisica(cuchax,cuchay),0,1);
 	//El primer perro lo deja ok, los siguientes rompen dest
-	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000, 0,1); //FIXME
+	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000,1,1,1); //FIXME
 
 	perro->cr3=(uint) pdir;
 }
@@ -114,14 +114,15 @@ uint mmu_proxima_pagina_fisica_libre(){
 	return ret;
 }
 
-void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint rw, uint p){
+void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint us, uint rw, uint p){
 	uint PD_OFFSET=virtual >> 22;
 	uint PT_OFFSET=(virtual & 0x003FF000 ) >> 12;
 
 	pde* PDT=(pde*)(cr3 & 0xFFFFF000); 
 	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
-	PT[PT_OFFSET].p=p;
+	PT[PT_OFFSET].us=us;
 	PT[PT_OFFSET].rw=rw;
+	PT[PT_OFFSET].p=p;
 	PT[PT_OFFSET].dir=(fisica&0xFFFFF000)>>12;
 	tlbflush();
 

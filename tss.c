@@ -26,7 +26,7 @@ void tss_inicializar() {
 
 }
 
-
+//eip es virtual
 uint crear_tss(uint ss0, uint esp0, uint cr3, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss){
 	uint p =proxima_tss_libre();
 	tss* entry=(tss*)p;

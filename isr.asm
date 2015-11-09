@@ -15,7 +15,6 @@ sched_tarea_selector:   dw 0x00
 
 ;; Atendedor externo
 extern interrupcion_atender
-
 ;; PIC
 extern fin_intr_pic1
 
@@ -88,4 +87,3 @@ ISR 33
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 ISR 70
-
