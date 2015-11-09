@@ -1,8 +1,10 @@
 #include "isr.h"
 
 static char debugEnabled;
+static cpu cpuStatus;
 
 void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short cs, unsigned int eip, unsigned short errorCd) {
+
 	switch (num){
 		case 32:
 			fin_intr_pic1();
@@ -35,23 +37,32 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 			}
 
 			// Si está activado el debug, muestro mensaje
+			// FIXME: Esto muestra los eflags, eip, etc de la interrupción.
+			// Tengo que pasar por parámetro los datos de la interrupción.
 			if (debugEnabled) {
 				printDebug();
 			}
 			break;
 	}
-
 }
 
 void int70() {
 	uint tipo, dir;
 	uint xOrig, yOrig;
-	__asm __volatile("movl %%eax,%0" : "=r" (tipo));
-	__asm __volatile("movl %%ecx,%0" : "=r" (dir));
+	
+	tipo = cpuStatus.eax;
+	dir = cpuStatus.ecx;
 
 	// Consigo el perro actual
 	perro_t* aPerro = scheduler.tasks[scheduler.current].perro;
-	
+
+
+	// TODO: Temporal, acciones del perro
+	print("TIPO: ", 0, 2, 15);
+	print_dec(tipo, 5, 2, 15);
+	print("DIR: ", 0, 3, 15);
+	print_dec(dir, 5, 3, 15);
+
 	switch(tipo) {
 		case 0x1: //Moverse
 			xOrig = aPerro->x;
@@ -117,7 +128,7 @@ void teclado_atender(){
 
 void printDebug() {
 	int startX, startY, ancho, alto;
-	startY = 7; startX = 25; ancho = 30; alto  = 34;
+	startY = 5; startX = 25; ancho = 30; alto  = 36;
 
 	// Imprimo cuadrado raro
 	screen_pintar_rect(0, 0x77, startY, startX, alto, ancho);
@@ -131,17 +142,18 @@ void printDebug() {
 	print("ebx", startX + 2, startY + 5, 0x70);
 	print("ecx", startX + 2, startY + 7, 0x70);
 	print("edx", startX + 2, startY + 9, 0x70);
-	print("edi", startX + 2, startY + 11, 0x70);
-	print("ebp", startX + 2, startY + 13, 0x70);
-	print("esp", startX + 2, startY + 15, 0x70);
-	print("eip", startX + 2, startY + 17, 0x70);
-	print("cs", startX + 2, startY + 19, 0x70);
-	print("ds", startX + 2, startY + 21, 0x70);
-	print("es", startX + 2, startY + 23, 0x70);
-	print("fs", startX + 2, startY + 25, 0x70);
-	print("gs", startX + 2, startY + 27, 0x70);
-	print("ss", startX + 2, startY + 29, 0x70);
-	print("eflags", startX + 2, startY + 31, 0x70);
+	print("esi", startX + 2, startY + 11, 0x70);
+	print("edi", startX + 2, startY + 13, 0x70);
+	print("ebp", startX + 2, startY + 15, 0x70);
+	print("esp", startX + 2, startY + 17, 0x70);
+	print("eip", startX + 2, startY + 19, 0x70);
+	print("cs", startX + 2, startY + 21, 0x70);
+	print("ds", startX + 2, startY + 23, 0x70);
+	print("es", startX + 2, startY + 25, 0x70);
+	print("fs", startX + 2, startY + 27, 0x70);
+	print("gs", startX + 2, startY + 29, 0x70);
+	print("ss", startX + 2, startY + 31, 0x70);
+	print("eflags", startX + 2, startY + 33, 0x70);
 
 	// Columna 2
 	print("cr0", startX + 16, startY + 3, 0x70);
@@ -152,21 +164,21 @@ void printDebug() {
 
 
 	// Imprimo valores de los registros
-	print_hex(reax(), startX + 6, startY + 3, 0x7F);
-	print_hex(rebx(), startX + 6, startY + 5, 0x7F);
-	print_hex(recx(), startX + 6, startY + 7, 0x7F);
-	print_hex(redx(), startX + 6, startY + 9, 0x7F);
-	print_hex(resi(), startX + 6, startY + 11, 0x7F);
-	print_hex(redi(), startX + 6, startY + 13, 0x7F);
-	print_hex(rebp(), startX + 6, startY + 15, 0x7F);
-	print_hex(resp(), startX + 6, startY + 17, 0x7F);
-	print_hex(reip(), startX + 6, startY + 19, 0x7F);
-	print_hex(rcs(), startX + 6, startY + 21, 0x7F);
-	print_hex(rds(), startX + 6, startY + 23, 0x7F);
-	print_hex(rfs(), startX + 6, startY + 25, 0x7F);
-	print_hex(rgs(), startX + 6, startY + 27, 0x7F);
-	print_hex(rss(), startX + 6, startY + 29, 0x7F);
-	print_hex(reflags(), startX + 9, startY + 31, 0x7F);
+	print_hex(cpuStatus.eax, startX + 6, startY + 3, 0x7F);
+	print_hex(cpuStatus.ebx, startX + 6, startY + 5, 0x7F);
+	print_hex(cpuStatus.ecx, startX + 6, startY + 7, 0x7F);
+	print_hex(cpuStatus.edx, startX + 6, startY + 9, 0x7F);
+	print_hex(cpuStatus.esi, startX + 6, startY + 11, 0x7F);
+	print_hex(cpuStatus.edi, startX + 6, startY + 13, 0x7F);
+	print_hex(cpuStatus.ebp, startX + 6, startY + 15, 0x7F);
+	print_hex(cpuStatus.esp, startX + 6, startY + 17, 0x7F);
+	print_hex(cpuStatus.eip, startX + 6, startY + 19, 0x7F);
+	print_hex(cpuStatus.cs, startX + 6, startY + 21, 0x7F);
+	print_hex(cpuStatus.ds, startX + 6, startY + 23, 0x7F);
+	print_hex(cpuStatus.fs, startX + 6, startY + 25, 0x7F);
+	print_hex(cpuStatus.gs, startX + 6, startY + 27, 0x7F);
+	print_hex(cpuStatus.ss, startX + 6, startY + 29, 0x7F);
+	print_hex(cpuStatus.eflags, startX + 9, startY + 31, 0x7F);
 
 	// Segunda columna
 	print_hex(rcr0(), startX + 20, startY + 3, 0x7F);
@@ -175,4 +187,29 @@ void printDebug() {
 	print_hex(rcr4(), startX + 20, startY + 9, 0x7F);
 	for (int i = 0; i <= 10; i++)
 		print_hex(rstack(i*4), startX + 22, startY + 19 + i, 0x7F);
+}
+
+// Guardo estado de los registros
+void guardar_estado_cpu() {
+	// TODO: Pierdo estado del ebp
+	cpuStatus.eax = reax();
+	cpuStatus.ebx = rebx();
+	cpuStatus.ecx = recx();
+	cpuStatus.edx = redx();
+	cpuStatus.esi = resi();
+	cpuStatus.edi = redi();
+	cpuStatus.ebp = rebp();
+	cpuStatus.esp = resp();
+	cpuStatus.eip = reip();
+	cpuStatus.cs = rcs();
+	cpuStatus.ds = rds();
+	cpuStatus.es = res();
+	cpuStatus.fs = rfs();
+	cpuStatus.gs = rgs();
+	cpuStatus.ss = rss();
+	cpuStatus.eflags = reflags();
+	cpuStatus.cr0 = rcr0();
+	cpuStatus.cr2 = rcr2();
+	cpuStatus.cr3 = rcr3();
+	cpuStatus.cr4 = rcr4();
 }

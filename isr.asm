@@ -23,6 +23,7 @@ extern fin_intr_pic1
 extern sched_atender_tick
 extern sched_tarea_actual
 
+extern guardar_estado_cpu
 
 ;;
 ;; Definición de MACROS
@@ -36,6 +37,7 @@ _isr%1:
     mov ebx, %1
 	push ebx
 
+	call guardar_estado_cpu
 	call interrupcion_atender
 
 	add esp, 4

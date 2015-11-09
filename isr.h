@@ -13,13 +13,37 @@
 
 #ifndef __ISR_H__
 #define __ISR_H__
-extern unsigned int teclado_leer();
 extern void fin_intr_pic1();
 extern void fin_intr_pic2();
+
+typedef struct str_cpu {
+	unsigned int eax;
+	unsigned int ebx;
+	unsigned int ecx;
+	unsigned int edx;
+	unsigned int esi;
+	unsigned int edi;
+	unsigned int ebp;
+	unsigned int esp;
+	unsigned int eip;
+	unsigned short cs;
+	unsigned short ds;
+	unsigned short es;
+	unsigned short fs;
+	unsigned short gs;
+	unsigned short ss;
+	unsigned int eflags;
+
+	unsigned int cr0;
+	unsigned int cr2;
+	unsigned int cr3;
+	unsigned int cr4;
+} cpu;
 
 void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short cs, unsigned int eip, unsigned short errorCd);
 void teclado_atender();
 void printDebug();
+void guardar_estado_cpu();
 
 void _isr0();
 void _isr1();

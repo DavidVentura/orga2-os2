@@ -195,8 +195,8 @@ LS_INLINE unsigned int resp(void) {
 LS_INLINE unsigned int reip(void) {
     unsigned int reg;
     __asm __volatile("push %eax");						// Salvo eax
-    __asm __volatile("call eip");						// Llamo a eip
-    __asm __volatile("eip: pop %eax");					// Levanto el valor de retorno
+    __asm __volatile("call leer_eip");					// Llamo a eip
+    __asm __volatile("leer_eip: pop %eax");				// Levanto el valor de retorno
     __asm __volatile("mov %%eax,%0" : "=r" (reg));		// Lo cargo en la variable
     __asm __volatile("pop %eax");						// Recupero eax
     return reg;
