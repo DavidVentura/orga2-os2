@@ -12,8 +12,8 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 			screen_actualizar_reloj_global();
 			break;
 		case 33:
-			teclado_atender();
 			fin_intr_pic1();
+			teclado_atender();
 			break;
 		case 70:
 			int70();
