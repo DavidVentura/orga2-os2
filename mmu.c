@@ -90,10 +90,14 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	(*ptab).dir=0x0401; // >>12;
 	(*ptab).todos_los_flags_cero=0;
 	*/
-	mmu_mapear_pagina(0x401000, (uint)pdir, 0x16000, 0,1);
-	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000, 0,1);
+	//breakpoint();
+	uint dircucha=mmu_xy2fisica(cuchax,cuchay);
+	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],dircucha);
+	mmu_mapear_pagina(0x401000, (uint)pdir, 0x10000,0,1); 
+	//mmu_mapear_pagina(0x401000, (uint)pdir, mmu_xy2fisica(cuchax,cuchay),0,1);
+	//El primer perro lo deja ok, los siguientes rompen dest
+	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000, 0,1); //FIXME
 
-	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],mmu_xy2virtual(cuchax,cuchay));
 	perro->cr3=(uint) pdir;
 }
 
@@ -122,6 +126,7 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint rw, uint p){
 	tlbflush();
 
 }
+//Fisica a fisica
 void mmu_copiar_pagina(uint src, uint dst){ //No testeado
 	uint  i =0;
 	uint* s =(uint*)src;

@@ -47,13 +47,20 @@ void sched_agregar_tarea(perro_t *perro) {
 
 	//(uint ss0, uint esp0, uint cr3, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss){
 //	print_hex(perro->cr3, 5, 5, 15);
-	uint ud=GDT_IDX_UDATA_DESC<<3;
+//	uint ud=
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
-//	mmu_mapear_pagina(
-	uint tss_new = crear_tss(GDT_IDX_KDATA_DESC<<3, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_UCODE_DESC<<3,ud,ud);
+	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,1,1); //Map
+
+	//Deberiamos usar este pero da error:
+	//uint tss_new =crear_tss(GDT_IDX_KDATA_DESC<<3, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_UCODE_DESC<<3,GDT_IDX_UDATA_DESC<<3,GDT_IDX_UDATA_DESC<<3);
+
+	//Esto anda
+	//uint tss_new =crear_tss(GDT_IDX_KDATA_DESC<<3, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_KCODE_DESC<<3,GDT_IDX_KDATA_DESC<<3,GDT_IDX_KDATA_DESC<<3);
+	uint tss_new =crear_tss(GDT_IDX_KDATA_DESC<<3, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_KCODE_DESC<<3,GDT_IDX_KDATA_DESC<<3,GDT_IDX_KDATA_DESC<<3);
 
 	//cargar un descriptor de tss y meterlo en gdt
-	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
+	uint gdt_index=cargar_tss_en_gdt(tss_new,3); //No cambia 0<->3 isr10
+
 	//pasarle al scheduler la entrada de la gdt
 	int libre = sched_buscar_tarea_libre();
 
