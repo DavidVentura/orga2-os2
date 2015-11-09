@@ -11,6 +11,7 @@ definicion de funciones del scheduler
 
 sched_t scheduler;
 
+uint prox_tarea=1;
 void sched_inicializar() {
 	sched_task_t task = (sched_task_t) { 0, NULL };
 
@@ -30,9 +31,9 @@ int sched_buscar_indice_tarea(uint gdt_index) {
 
 
 int sched_buscar_tarea_libre() {
-	int i = 0;
-
-    return i;
+	int ret=prox_tarea;
+	prox_tarea=(prox_tarea+1)%MAX_CANT_TAREAS_VIVAS;
+    return ret;
 }
 
 
@@ -51,11 +52,12 @@ void sched_agregar_tarea(perro_t *perro) {
 	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
 
 	//pasarle al scheduler la entrada de la gdt
-	int libre = sched_buscar_tarea_libre();
+	uint libre = sched_buscar_tarea_libre();
 
 	scheduler.tasks[libre].perro = perro;
 	scheduler.tasks[libre].gdt_index = gdt_index;
 
+	scheduler.current=libre;
 	cr3_cargar(perro->cr3);
 	tarea_p(gdt_index<<3);
 }
@@ -82,11 +84,15 @@ uint sched_proxima_a_ejecutar() {
 
 
 ushort sched_atender_tick() {
+	if (scheduler.current==NULL)
+		return 0;
 //	uint prox = sched_proxima_a_ejecutar();
 //	if (prox == scheduler.current)
 //		return 0;
 //	scheduler.current=prox;
 //	tarea_p(scheduler.current<<3);
+	screen_pintar_perro(scheduler.tasks[scheduler.current].perro);
+	screen_pintar_reloj_perro(scheduler.tasks[scheduler.current].perro);
     return scheduler.tasks[scheduler.current].gdt_index;
 //	return 1;
 }

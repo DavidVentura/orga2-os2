@@ -68,10 +68,14 @@ void int70() {
 			xOrig = aPerro->x;
 			yOrig = aPerro->y;
 			game_perro_mover(aPerro, dir);
-			if (xOrig != aPerro->x || yOrig != aPerro->y) {
-				mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
-				mmu_mapear_pagina(mmu_xy2virtual(aPerro->x, aPerro->y), rcr3(), mmu_xy2fisica(aPerro->x, aPerro->y), 0,1, 1);
-			}
+			uint virt  =mmu_xy2virtual(aPerro->x, aPerro->y);
+			uint fisica=mmu_xy2fisica(aPerro->x, aPerro->y);
+
+			breakpoint();
+			print_hex(virt, 6, 3, 0x7F);
+			print_hex(fisica, 6, 4, 0x7F); //Page fault
+			mmu_mapear_pagina(virt, rcr3(), fisica, 1,1, 1);
+			mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
 			break;
 		case 0x2: //Cavar
 			break;

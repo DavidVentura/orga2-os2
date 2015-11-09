@@ -63,6 +63,7 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 uint game_perro_mover(perro_t *perro, direccion dir)
 {
 	int x, y;
+	
 	uint res = game_dir2xy(dir, &x, &y);
 	int nuevo_x = perro->x + x;
 	int nuevo_y = perro->y + y;
@@ -70,7 +71,12 @@ uint game_perro_mover(perro_t *perro, direccion dir)
     int viejo_y = perro->y;
 
     // ~~~ completar ~~~
-    return nuevo_x + nuevo_y + viejo_x + viejo_y + res; // uso todas las variables para que no tire warning->error.
+
+//	screen_borrar_perro(perro);
+	perro->x=nuevo_x;
+	perro->y=nuevo_y;
+//	screen_pintar_perro(perro);
+    return res+nuevo_x + nuevo_y + viejo_x + viejo_y; // uso todas las variables para que no tire warning->error.
 }
 
 // recibe un perro, el cual debe cavar en su posición

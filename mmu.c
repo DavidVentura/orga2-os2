@@ -76,21 +76,7 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 
 	//TODO: Mapear cucha
 	//Pag compartida
-	/*
-	(*ptab).p=1;
-	(*ptab).rw=1;
-	(*ptab).us=0;
-	(*ptab).dir=0x0400; // >>12;
-	(*ptab).todos_los_flags_cero=0;
-	ptab++;
-	//Pag con codigo actual
-	(*ptab).p=1;
-	(*ptab).rw=1;
-	(*ptab).us=0;
-	(*ptab).dir=0x0401; // >>12;
-	(*ptab).todos_los_flags_cero=0;
-	*/
-	//breakpoint();
+
 	uint dircucha=mmu_xy2fisica(cuchax,cuchay);
 	mmu_copiar_pagina(CODIGO_PERROS[index_jugador*2+index_tipo],dircucha);
 	mmu_mapear_pagina(0x401000, (uint)pdir, 0x10000,1,1,1); 
