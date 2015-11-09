@@ -19,6 +19,7 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 			int70();
 			break;
 		default:
+			//breakpoint();
 			print("ERROR: ", 0, 0, 0xF);
 			print_dec(num, 7, 0, 0x4);
 
@@ -68,14 +69,14 @@ void int70() {
 			xOrig = aPerro->x;
 			yOrig = aPerro->y;
 			game_perro_mover(aPerro, dir);
-			uint virt  =mmu_xy2virtual(aPerro->x, aPerro->y);
-			uint fisica=mmu_xy2fisica(aPerro->x, aPerro->y);
+			uint virt  =mmu_xy2virtual(xOrig, yOrig);
+			uint fisica=mmu_xy2fisica (xOrig, yOrig);
 
-			breakpoint();
 			print_hex(virt, 6, 3, 0x7F);
 			print_hex(fisica, 6, 4, 0x7F); //Page fault
-			mmu_mapear_pagina(virt, rcr3(), fisica, 1,1, 1);
-			mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
+			breakpoint();
+			mmu_mapear_pagina(virt, aPerro->cr3, fisica, 1, 1, 1);
+			//mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
 			break;
 		case 0x2: //Cavar
 			break;

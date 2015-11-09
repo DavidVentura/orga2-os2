@@ -82,7 +82,7 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	mmu_mapear_pagina(0x401000, (uint)pdir, 0x10000,1,1,1); 
 	//mmu_mapear_pagina(0x401000, (uint)pdir, mmu_xy2fisica(cuchax,cuchay),0,1);
 	//El primer perro lo deja ok, los siguientes rompen dest
-	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000,1,1,1); //FIXME
+	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000,1,1,1); //FIXME a donde va esto?
 
 	perro->cr3=(uint) pdir;
 }
@@ -106,7 +106,15 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint us, uint rw, ui
 
 	pde* PDT=(pde*)(cr3 & 0xFFFFF000); 
 	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
+
+	asm("nop");
+	print_hex((uint)PD_OFFSET, 8, 3, 0x7F);
+	print_hex((uint)PT_OFFSET, 9, 3, 0x7F);
+	print_hex((uint)PDT, 10, 3, 0x7F);
+	print_hex((uint)PT, 11, 3, 0x7F);
+
 	PT[PT_OFFSET].us=us;
+	asm("nop");
 	PT[PT_OFFSET].rw=rw;
 	PT[PT_OFFSET].p=p;
 	PT[PT_OFFSET].dir=(fisica&0xFFFFF000)>>12;
