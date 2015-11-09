@@ -180,10 +180,11 @@ void printDebug() {
 	print_hex(cpuStatus.eip, startX + 6, startY + 19, 0x7F);
 	print_hex(cpuStatus.cs, startX + 6, startY + 21, 0x7F);
 	print_hex(cpuStatus.ds, startX + 6, startY + 23, 0x7F);
-	print_hex(cpuStatus.fs, startX + 6, startY + 25, 0x7F);
-	print_hex(cpuStatus.gs, startX + 6, startY + 27, 0x7F);
-	print_hex(cpuStatus.ss, startX + 6, startY + 29, 0x7F);
-	print_hex(cpuStatus.eflags, startX + 9, startY + 31, 0x7F);
+	print_hex(cpuStatus.es, startX + 6, startY + 25, 0x7F);
+	print_hex(cpuStatus.fs, startX + 6, startY + 27, 0x7F);
+	print_hex(cpuStatus.gs, startX + 6, startY + 29, 0x7F);
+	print_hex(cpuStatus.ss, startX + 6, startY + 31, 0x7F);
+	print_hex(cpuStatus.eflags, startX + 9, startY + 33, 0x7F);
 
 	// Segunda columna
 	print_hex(rcr0(), startX + 20, startY + 3, 0x7F);
