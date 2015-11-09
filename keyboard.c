@@ -13,24 +13,31 @@ key keyboard[128] = { };
     keyboard[_scancode].value = _value;                  \
     keyboard[_scancode].mValue = _mValue;                \
     keyboard[_scancode].scancode = _scancode;            \
-    keyboard[_scancode].status = 0;                      \
+    keyboard[_scancode].pressed = 0;                     \
 
 
 
-unsigned char get_ascii(unsigned char scancode) {
-	if (keyboard[LSHIFT].status == 1) {
-		return keyboard[scancode].mValue;	
+unsigned char get_ascii(keys tecla) {
+	if (keyboard[LSHIFT].pressed) {
+		return keyboard[tecla].mValue;	
 	} else {
-		return keyboard[scancode].value;
+		return keyboard[tecla].value;
 	}
 }
 
-void tecla_actualizar(unsigned char scancode) {
+keys teclado_leer() {
+	keys tecla;
+	unsigned char scancode = teclado_l();
+
+	// Actualizo el estado de la tecla
 	if (scancode > 128){
-		keyboard[scancode - 128].status = 0;
+		tecla = scancode - 128;
+		keyboard[tecla].pressed = 0;
 	}else{
-		keyboard[scancode].status = 1;
+		tecla = scancode;
+		keyboard[tecla].pressed = 1;
 	}
+	return tecla;
 }
 
 void teclado_inicializar() {

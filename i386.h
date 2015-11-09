@@ -27,6 +27,26 @@ LS_INLINE void hlt(void);
 LS_INLINE void breakpoint(void);
 LS_INLINE void interrupciones_desactivar(void);
 LS_INLINE void interrupciones_activar(void);
+LS_INLINE unsigned char teclado_l(void);
+
+// Leo registros varios
+LS_INLINE unsigned int reax(void);
+LS_INLINE unsigned int rebx(void);
+LS_INLINE unsigned int recx(void);
+LS_INLINE unsigned int redx(void);
+LS_INLINE unsigned int resi(void);
+LS_INLINE unsigned int redi(void);
+LS_INLINE unsigned int rebp(void);
+LS_INLINE unsigned int resp(void);
+LS_INLINE unsigned int reip(void);
+LS_INLINE unsigned int rcs(void);
+LS_INLINE unsigned int rds(void);
+LS_INLINE unsigned int res(void);
+LS_INLINE unsigned int rfs(void);
+LS_INLINE unsigned int rgs(void);
+LS_INLINE unsigned int rss(void);
+LS_INLINE unsigned int reflags(void);
+LS_INLINE unsigned int rstack(int offset);
 
 /*
  * Implementaciones
@@ -116,4 +136,126 @@ LS_INLINE void interrupciones_activar(void) {
     __asm __volatile("sti" : :);
 }
 
+LS_INLINE unsigned char teclado_l(void) {
+    unsigned char scancode;
+	__asm __volatile("push %eax");
+	__asm __volatile("in $0x60, %al");
+    __asm __volatile("movb %%al,%0" : "=r" (scancode));
+	__asm __volatile("pop %eax");
+	return scancode;
+}
+LS_INLINE unsigned int reax(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%eax,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int rebx(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%ebx,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int recx(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%ecx,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int redx(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%edx,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int resi(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%esi,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int redi(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%edi,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int rebp(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%ebp,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int resp(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%esp,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int reip(void) {
+    unsigned int reg;
+    __asm __volatile("push %eax");						// Salvo eax
+    __asm __volatile("call eip");						// Llamo a eip
+    __asm __volatile("eip: pop %eax");					// Levanto el valor de retorno
+    __asm __volatile("mov %%eax,%0" : "=r" (reg));		// Lo cargo en la variable
+    __asm __volatile("pop %eax");						// Recupero eax
+    return reg;
+}
+
+LS_INLINE unsigned int rcs(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%cs,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int rds(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%ds,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int res(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%es,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int rfs(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%fs,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int rgs(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%gs,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int rss(void) {
+    unsigned int reg;
+    __asm __volatile("mov %%ss,%0" : "=r" (reg));
+    return reg;
+}
+
+LS_INLINE unsigned int reflags(void) {
+    unsigned int reg;
+    __asm __volatile("push %eax");						// Salvo eax
+    __asm __volatile("pushf");							// Push eflags
+    __asm __volatile("pop %eax");						// Lo leo en eax
+    __asm __volatile("mov %%eax, %0" : "=r" (reg));		// Lo cargo en la variable
+    __asm __volatile("pop %eax");						// Recupero el valor de eax
+    return reg;
+}
+
+
+LS_INLINE unsigned int rstack(int offset) {
+	unsigned int value;
+	__asm __volatile("push %eax");						// Salvo eax
+    __asm __volatile("movl %0,%%eax" : : "r" (offset));	// Cargo en eax el offset (negativo o positivo)
+	__asm __volatile("add %esp, %eax");					// Sumo el valor del esp en eax
+    __asm __volatile("mov (%%eax),%0" : "=r" (value));	// Cargo el valor de eax en la variable
+    __asm __volatile("pop %eax");						// Recupero el valor de eax
+	return value;
+}
 #endif  /* !__i386_H__ */

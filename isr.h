@@ -19,6 +19,7 @@ extern void fin_intr_pic2();
 
 void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short cs, unsigned int eip, unsigned short errorCd);
 void teclado_atender();
+void printDebug();
 
 void _isr0();
 void _isr1();

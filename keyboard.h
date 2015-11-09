@@ -5,6 +5,8 @@
   definicion de las rutinas de teclado 
 */
 
+#include "i386.h"
+
 #ifndef __KEYBOARD_H__
 #define __KEYBOARD_H__
 
@@ -12,7 +14,7 @@ typedef struct str_key {
 	unsigned char value;
 	unsigned char mValue;
 	unsigned char scancode;
-	unsigned char status;
+	unsigned char pressed;
 } key;
 
 extern key keyboard[];
@@ -28,6 +30,6 @@ typedef enum {
 
 
 void teclado_inicializar();
-void tecla_actualizar(unsigned char scancode);
-unsigned char get_ascii(unsigned char scancode);
+keys teclado_leer();
+unsigned char get_ascii(keys key);
 #endif
