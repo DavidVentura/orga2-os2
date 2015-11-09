@@ -46,13 +46,8 @@ void sched_agregar_tarea(perro_t *perro) {
 
 
 	//(uint ss0, uint esp0, uint cr3, uint eip, uint esp, uint ebp, uint cs, uint ds, uint ss){
-//	print_hex(perro->cr3, 5, 5, 15);
-//	uint ud=
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
-	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,1,1,1); //Map
-
-	//Deberiamos usar este pero da error:
-	//uint tss_new =crear_tss(GDT_IDX_KDATA_DESC<<3, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_UCODE_DESC<<3,GDT_IDX_UDATA_DESC<<3,GDT_IDX_UDATA_DESC<<3);
+	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,0,1,1); //Map
 
 	//Esto anda
 	//uint tss_new =crear_tss(GDT_IDX_KDATA_DESC<<3, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_KCODE_DESC<<3,GDT_IDX_KDATA_DESC<<3,GDT_IDX_KDATA_DESC<<3);

@@ -59,5 +59,5 @@ void idt_inicializar() {
 	IDT_ENTRY(33, 0, idt_entry_int);
 
 	// Syscall
-	IDT_ENTRY(70, 0, idt_entry_int);
+	IDT_ENTRY(70, 3, idt_entry_int);
 }

@@ -63,12 +63,12 @@ uint cargar_tss_en_gdt(uint base, char dpl) {
 	g.base_0_15=(base & 0xFFFF);
 	g.base_23_16=(base & 0xFF0000) >>16;
 	g.type=0b1001;
-	g.s=0;
+	g.s=0; //Siempre 0
 	g.dpl=dpl;
 	g.p=1;
-	g.limit_16_19=0;
-	g.l=0;
-	g.db=0;
+	g.limit_16_19=0; //No necesito tanto tamaño
+	g.l=0; //Siempre 0
+	g.db=0; //Siempre 0
 	g.g=0;
 	g.base_31_24=(base >> 24);
 
