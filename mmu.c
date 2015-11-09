@@ -118,7 +118,7 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint rw, uint p){
 	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
 	PT[PT_OFFSET].p=p;
 	PT[PT_OFFSET].rw=rw;
-	PT[PT_OFFSET].dir=fisica&0xFFFFF000;
+	PT[PT_OFFSET].dir=(fisica&0xFFFFF000)>>12;
 	tlbflush();
 
 }
