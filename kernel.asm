@@ -15,7 +15,6 @@ extern kmain
 
 
 global tarea
-global tarea_p
 
 global paginacion_activar
 global cosa_loca_paginacion
@@ -123,12 +122,6 @@ cr3_cargar:
 	ret
 
 tarea:
-	mov ax, [esp+4]
-	mov [selector], ax
-	jmp far [offset]
-;	jmp 0x70:0
-
-tarea_p:
 	mov ax, [esp+4]
 	mov [selector], ax
 	jmp far [offset]

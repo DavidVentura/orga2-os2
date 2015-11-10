@@ -46,7 +46,7 @@ void sched_agregar_tarea(perro_t *perro) {
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
 	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,0,1,1); //Map
 
-	uint tss_new =crear_tss(GDT_IDX_KDATA_DESC<<3, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_IDX_UCODE_DESC<<3|3,GDT_IDX_UDATA_DESC<<3|3,GDT_IDX_UDATA_DESC<<3|3);
+	uint tss_new =crear_tss(GDT_OFF_KDATA_DESC, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_OFF_UCODE_DESC|3,GDT_OFF_UDATA_DESC|3,GDT_OFF_UDATA_DESC|3);
 
 	//cargar un descriptor de tss y meterlo en gdt
 	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
@@ -56,10 +56,11 @@ void sched_agregar_tarea(perro_t *perro) {
 
 	scheduler.tasks[libre].perro = perro;
 	scheduler.tasks[libre].gdt_index = gdt_index;
+	scheduler.tasks[libre].gdt_offset = gdt_index<<3;
 
 	scheduler.current=libre;
 	cr3_cargar(perro->cr3);
-	tarea_p(gdt_index<<3);
+	tarea(gdt_index<<3);
 }
 
 void sched_remover_tarea(unsigned int gdt_index) {
@@ -90,7 +91,7 @@ ushort sched_atender_tick() {
 //	if (prox == scheduler.current)
 //		return 0;
 //	scheduler.current=prox;
-//	tarea_p(scheduler.current<<3);
+//	tarea(scheduler.current<<3);
 	screen_pintar_perro(scheduler.tasks[scheduler.current].perro);
 	screen_pintar_reloj_perro(scheduler.tasks[scheduler.current].perro);
     return scheduler.tasks[scheduler.current].gdt_index;

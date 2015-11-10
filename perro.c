@@ -49,16 +49,16 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 	switch (dir)
 	{
 		case IZQ:
-			*x = (*x > 0 ? -1 : 0);
+			*x = -1;
 			break;
 		case DER:
-			*x = (*x < MAPA_ANCHO ? 1 : 0);
+			*x = 1;
 			break;
 		case ABA:
-			*y = *y > MAPA_ALTO ? 1 : 0;
+			*y = 1;
 			break;
 		case ARR:
-			*y = *y > 0 ? -1 : 0;
+			*y = -1;
 			break;
     	default:
 			return -1;
@@ -74,6 +74,7 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 	int x, y;
 	
 	//uint res =
+	
 	game_dir2xy(dir, &x, &y);
 	int nuevo_x = perro->x + x;
 	int nuevo_y = perro->y + y;
@@ -81,10 +82,10 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 		nuevo_x=MAPA_ANCHO-1;
 	if (nuevo_y>MAPA_ALTO-1)
 		nuevo_y=MAPA_ALTO-1;
-	
 	screen_borrar_perro(perro);
 	perro->x=nuevo_x;
 	perro->y=nuevo_y;
+	
 	screen_pintar_perro(perro);
     return 0; //res+nuevo_x + nuevo_y + viejo_x + viejo_y; // uso todas las variables para que no tire warning->error.
 }

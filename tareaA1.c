@@ -26,6 +26,7 @@ void task(int x_origen, int y_origen) {
 
 	while (TRUE)
 	{
+		breakpoint();
 		int direccion = syscall_olfatear();
 		if (direccion == AQUI)
 			break;

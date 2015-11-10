@@ -93,10 +93,12 @@ void int70() {
 			uint virt  =mmu_xy2virtual(xOrig, yOrig);
 			uint fisica=mmu_xy2fisica (xOrig, yOrig);
 
-			print_hex(virt, 6, 3, 0x7F);
-			print_hex(fisica, 6, 4, 0x7F); //Page fault
-			breakpoint();
-			mmu_mapear_pagina(virt, aPerro->cr3, fisica, 1, 1, 1);
+			print_hex(virt, 		6, 3, 0x7F);
+			print_hex(fisica, 		6, 4, 0x7F);
+			print_hex(aPerro->cr3, 	6, 5, 0x7F);
+			print_hex(resp(), 6, 6, 0x7F);
+			//breakpoint();
+			//mmu_mapear_pagina(virt, aPerro->cr3, fisica, 1, 1, 1);
 			//mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
 			break;
 		case 0x2: //Cavar

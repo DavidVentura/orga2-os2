@@ -60,7 +60,6 @@ void mmu_inicializar_dir_kernel() {
 	}
 }
 
-//void identity_map_ptab(uint
 void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay){
 	//Si index_jugador>1 se va todo a la mierda
 	pde* pdir = (pde*)mmu_proxima_pagina_fisica_libre();
@@ -101,6 +100,7 @@ uint mmu_proxima_pagina_fisica_libre(){
 }
 
 void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint us, uint rw, uint p){
+
 	uint PD_OFFSET=virtual >> 22;
 	uint PT_OFFSET=(virtual & 0x003FF000 ) >> 12;
 
@@ -108,11 +108,6 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint us, uint rw, ui
 	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
 
 	asm("nop");
-	print_hex((uint)PD_OFFSET, 8, 3, 0x7F);
-	print_hex((uint)PT_OFFSET, 9, 3, 0x7F);
-	print_hex((uint)PDT, 10, 3, 0x7F);
-	print_hex((uint)PT, 11, 3, 0x7F);
-
 	PT[PT_OFFSET].us=us;
 	asm("nop");
 	PT[PT_OFFSET].rw=rw;
