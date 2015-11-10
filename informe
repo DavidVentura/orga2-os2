@@ -1,0 +1,9 @@
+mmu.c:	mmu_mapear_pagina(dircucha, (uint)pdir, dircuchaf,1,1,1);  //FIXME: esto ejecuta antes que paginacion
+=> El llamado a mmu_inicializar_memoria_perro es previo al del kernel, etc. Por lo que no mapeo un carajo bien ahi adentro
+
+mmu.c:	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //FIXME a donde va esto? compartida
+=> 0x300000 esta en el cacho libre.. que compartan ahi?
+
+sched.c:	// TODO: En el typedef tiene MAX_CANT_TAREAS_VIVAS+1
+sched.c:	// TODO: En el struct pone MAX_CANT_TAREAS_VIVAS+1
+sched.c:			//TODO: Ver si el perro está vivo
