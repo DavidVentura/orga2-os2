@@ -15,7 +15,7 @@ sched_tarea_selector:   dw 0x00
 
 
 global _isr_generico
-
+extern int70
 
 ;; Atendedor externo
 extern interrupcion_atender
@@ -112,4 +112,11 @@ ISR 33
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-ISR 70
+global _isr70
+_isr70:
+	push ecx
+	push eax
+	call int70
+	add esp, 8
+	iret
+

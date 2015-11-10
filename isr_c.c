@@ -68,13 +68,9 @@ void interrupcion_atender(int_stack* interrupcion) {
 	}
 }
 
-void int70() {
-	uint tipo, dir;
+uint int70(uint tipo, uint dir){
 	uint xOrig, yOrig;
 	
-	tipo = cpuStatus.eax;
-	dir = cpuStatus.ecx;
-
 	// Consigo el perro actual
 	perro_t* aPerro = scheduler.tasks[scheduler.current].perro;
 
@@ -103,13 +99,12 @@ void int70() {
 		case 0x2: //Cavar
 			break;
 		case 0x3: //Olfatear
-			game_perro_olfatear(aPerro);
-			break;
+			return game_perro_olfatear(aPerro);
 		case 0x4: //Recibir orden
 			break;
 	}
 	//scheduler_desalojame_pls()
-	return;
+	return 0;
 }
 
 void teclado_atender(){

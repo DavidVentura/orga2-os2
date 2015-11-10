@@ -84,8 +84,8 @@ void _isr32();
 void _isr33();
 
 // Software
-void _isr70();
-void int70();
+uint _isr70();
+uint int70();
 
 extern perro_t* game_jugador_dame_perro_libre(jugador_t *j);
 #endif  /* !__ISR_H__ */

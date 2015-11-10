@@ -27,8 +27,6 @@ void task(int x_origen, int y_origen) {
 		if (direccion == AQUI)
 			break;
 		
-		breakpoint();
-		direccion=ABA; //WTF???
 		actualizar(&x_actual, &y_actual, direccion);
 		syscall_moverse(direccion);
 	}
