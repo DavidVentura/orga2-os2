@@ -10,10 +10,8 @@
 #include "syscall.h"
 #include "i386.h"
 
-
 void ir_hacia_desde(char x_dest, char y_dest, char x_actual, char y_actual);
 void actualizar(int *x, int *y, int direccion);
-
 
 void task(int x_origen, int y_origen) {
     /* Tarea */
@@ -22,20 +20,20 @@ void task(int x_origen, int y_origen) {
 	int x_actual = x_origen;
 	int y_actual = y_origen;
 
-	//breakpoint();
 
 	while (TRUE)
 	{
-		breakpoint();
 		int direccion = syscall_olfatear();
 		if (direccion == AQUI)
 			break;
 		
+		breakpoint();
+		direccion=ABA; //WTF???
 		actualizar(&x_actual, &y_actual, direccion);
 		syscall_moverse(direccion);
 	}
-	while (syscall_cavar() != 0)
-	{}
+	while (syscall_cavar() != 0) {
+	}
 	
 
 	ir_hacia_desde(x_origen, y_origen, x_actual, y_actual);

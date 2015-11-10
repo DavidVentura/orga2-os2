@@ -71,13 +71,13 @@ uint game_dir2xy(/* in */ direccion dir, /* out */ int *x, /* out */ int *y)
 // *** viene del syscall mover ***
 uint game_perro_mover(perro_t *perro, direccion dir)
 {
-	int x, y;
-	
-	//uint res =
+	int x=0, y=0;
 	
 	game_dir2xy(dir, &x, &y);
 	int nuevo_x = perro->x + x;
 	int nuevo_y = perro->y + y;
+
+
 	if (nuevo_x>MAPA_ANCHO-1)
 		nuevo_x=MAPA_ANCHO-1;
 	if (nuevo_y>MAPA_ALTO-1)
@@ -120,6 +120,7 @@ uint game_perro_olfatear(perro_t *perro)
 		}
    	}
 
+	breakpoint();
 	if (x_actual_diff == 0 && y_actual_diff == 0)
 		return AQUI;
 

@@ -44,7 +44,7 @@ perro_t* sched_tarea_actual() {
 
 void sched_agregar_tarea(perro_t *perro) {
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
-	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,0,1,1); //Map
+	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,0,1,1); //pagina de stack para nivel 0 (int)
 
 	uint tss_new =crear_tss(GDT_OFF_KDATA_DESC, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_OFF_UCODE_DESC|3,GDT_OFF_UDATA_DESC|3,GDT_OFF_UDATA_DESC|3);
 
@@ -56,7 +56,6 @@ void sched_agregar_tarea(perro_t *perro) {
 
 	scheduler.tasks[libre].perro = perro;
 	scheduler.tasks[libre].gdt_index = gdt_index;
-	scheduler.tasks[libre].gdt_offset = gdt_index<<3;
 
 	scheduler.current=libre;
 	cr3_cargar(perro->cr3);

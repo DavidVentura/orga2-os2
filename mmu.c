@@ -88,15 +88,15 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 
 
 void mmu_inicializar_pagina(uint* pagina){ //No testeado
-	int i =0;
-	for(i=0;i<1024;i++)
-		*(pagina+i)=0x0;
+		int i =0;
+		for(i=0;i<1024;i++)
+			*(pagina+i)=0x0;
 }
 
 uint mmu_proxima_pagina_fisica_libre(){
-	int ret=BASE_PAG_USER+(ultimaPagina*0x1000);
-	ultimaPagina++;
-	return ret;
+		int ret=BASE_PAG_USER+(ultimaPagina*0x1000);
+		ultimaPagina++;
+		return ret;
 }
 
 void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint us, uint rw, uint p){
@@ -106,10 +106,18 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint us, uint rw, ui
 
 	pde* PDT=(pde*)(cr3 & 0xFFFFF000); 
 	pte* PT=(pte*)(PDT[PD_OFFSET].dir<<12);
+	if ((uint)PT==0xFFFFF000){ //Nunca hice el ptab
+		PT=(pte*)mmu_proxima_pagina_fisica_libre();
+		inicializar_ptab(PT,us,rw,0);
+		PDT[PD_OFFSET].todos_los_flags_cero=0;
+		PDT[PD_OFFSET].us=us;
+		PDT[PD_OFFSET].rw=rw;
+		PDT[PD_OFFSET].p=0; 
+		PDT[PD_OFFSET].dir=((uint)PT)>>12;
+		PDT[PD_OFFSET].p=1; 
+	}
 
-	asm("nop");
 	PT[PT_OFFSET].us=us;
-	asm("nop");
 	PT[PT_OFFSET].rw=rw;
 	PT[PT_OFFSET].p=p;
 	PT[PT_OFFSET].dir=(fisica&0xFFFFF000)>>12;
@@ -142,7 +150,7 @@ void inicializar_pdir(pde* base,uint us, uint rw, uint p){
 	pde_entry.us=us;
 	pde_entry.rw=rw;
 	pde_entry.p=p; 
-	pde_entry.dir=0xFFFFF;
+	pde_entry.dir=0xFFFFF; //Lee algo no inicializado al mapear durante int70
 
 	while(curPage<1024){
 		*base=pde_entry;
@@ -154,7 +162,6 @@ void inicializar_pdir(pde* base,uint us, uint rw, uint p){
 }
 
 void inicializar_ptab(pte* base, uint us, uint rw, uint p){
-
 	int curPage=0;
 	pte pt_entry;
 	pt_entry.todos_los_flags_cero=0;
