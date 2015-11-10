@@ -13,6 +13,10 @@ BITS 32
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
+
+global _isr_generico
+
+
 ;; Atendedor externo
 extern interrupcion_atender
 ;; PIC
@@ -23,17 +27,34 @@ extern sched_atender_tick
 extern sched_tarea_actual
 
 extern guardar_estado_cpu
-extern recuperar_estado_cpu
 
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
 
+
+; -------------------------------------------------
+; Macro para interrupciones con errorCd
+%macro ISRE 1
+global _isr%1
+_isr%1:
+	push dword %1				; Pusheo numero de int
+	jmp _isr_generico
+%endmacro
+
+
+; --------------------------------------------------
+; Macro para interrupciones sin errorCd
 %macro ISR 1
 global _isr%1
-
 _isr%1:
-	push dword %1					; Pusheo codigo de error
+	push dword 0x0				; Pusheo codError 0
+	push dword %1				; Pusheo numero de int
+	jmp _isr_generico
+%endmacro
+
+
+_isr_generico:
 	pushad							; Salvo todos los registros grales
 	
 	push ebp						; Parametro ebp
@@ -46,9 +67,8 @@ _isr%1:
 	add esp, 4
 
 	popad
-	add esp, 4
+	add esp, 8						; Elimino numero de int y erroCode
 	iret
-%endmacro
 
 ;;
 ;; Datos
@@ -66,16 +86,16 @@ ISR 4
 ISR 5
 ISR 6
 ISR 7
-ISR 8
+ISRE 8
 ISR 9
-ISR 10
-ISR 11
-ISR 12
-ISR 13
-ISR 14
+ISRE 10
+ISRE 11
+ISRE 12
+ISRE 13
+ISRE 14
 ISR 15
 ISR 16
-ISR 17
+ISRE 17
 ISR 18
 ISR 19
 ISR 20

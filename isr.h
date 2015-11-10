@@ -46,8 +46,8 @@ typedef struct str_int {
 	unsigned int eip;
 	unsigned int cs;
 	unsigned int eflags;
-	unsigned int esp;
-	unsigned int ss;
+//	unsigned int esp;
+//	unsigned int ss;
 } __attribute__((__packed__)) int_stack;
 
 

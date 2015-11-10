@@ -7,8 +7,8 @@ static cpu cpuStatus;
 void interrupcion_atender(int_stack* interrupcion) {
 	unsigned int num = interrupcion->num;
 
-	cpuStatus.ss = interrupcion->ss;
-	cpuStatus.esp = interrupcion->esp;
+//	cpuStatus.ss = interrupcion->ss;
+//	cpuStatus.esp = interrupcion->esp;
 	cpuStatus.eflags = interrupcion->eflags;
 	cpuStatus.cs = interrupcion->cs;
 	cpuStatus.eip = interrupcion->eip;
@@ -103,6 +103,7 @@ void int70() {
 		case 0x2: //Cavar
 			break;
 		case 0x3: //Olfatear
+			game_perro_olfatear(aPerro);
 			break;
 		case 0x4: //Recibir orden
 			break;
