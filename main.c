@@ -7,20 +7,11 @@ void kmain() {
 	screen_inicializar(); // Inicializar pantalla
 
     // Inicializar el manejador de memoria
+    // Inicializar el directorio de paginas
+    // Cargar directorio de paginas
+    // Habilitar paginacion
 	mmu_inicializar();
 
-    // Inicializar el directorio de paginas
-
-    // Cargar directorio de paginas
-
-    // Habilitar paginacion
-
-    // Inicializar tss
-
-    // Inicializar tss de la tarea Idle
-
-    // Inicializar el scheduler
-	
 	// Inicializar la IDT
 	idt_inicializar(); 
 
@@ -38,14 +29,15 @@ void kmain() {
 	// Habilito interrupciones
 	interrupciones_activar();
 
-    // Cargar tarea inicial
+    // Inicializar tss
+    // Inicializar tss de la tarea Idle
+    // Inicializar el scheduler
 	tss_inicializar();
+    // Cargar tarea inicial
+    // Saltar a la primera tarea: Idle
 	tarea(DTSS_IDLE<<3);
 
 //	__asm("int $0x46");
-    // Habilitar interrupciones
-
-    // Saltar a la primera tarea: Idle
 
 
 }

@@ -69,32 +69,35 @@ void interrupcion_atender(int_stack* interrupcion) {
 }
 
 uint int70(uint tipo, uint dir){
-	uint xOrig, yOrig;
 	
 	// Consigo el perro actual
 	perro_t* aPerro = scheduler.tasks[scheduler.current].perro;
 
 
 	// TODO: Temporal, acciones del perro
+	/*
 	print("TIPO: ", 0, 2, 15);
 	print_dec(tipo, 5, 2, 15);
 	print("DIR: ", 0, 3, 15);
 	print_dec(dir, 5, 3, 15);
+	*/
 
+	uint virt_o;
+	uint fisica_o;
+	uint virt_n,fisica_n;
 	switch(tipo) {
 		case 0x1: //Moverse
-			xOrig = aPerro->x;
-			yOrig = aPerro->y;
-			game_perro_mover(aPerro, dir);
-			uint virt  =mmu_xy2virtual(xOrig, yOrig);
-			uint fisica=mmu_xy2fisica (xOrig, yOrig);
+			virt_o  =mmu_xy2virtual(aPerro->x, aPerro->y);
+			fisica_o=mmu_xy2fisica (aPerro->x, aPerro->y);
 
-			print_hex(virt, 		6, 3, 0x7F);
-			print_hex(fisica, 		6, 4, 0x7F);
-			print_hex(aPerro->cr3, 	6, 5, 0x7F);
-			print_hex(resp(), 6, 6, 0x7F);
-			mmu_mapear_pagina(virt, aPerro->cr3, fisica, 1, 1, 1);
-			//mmu_copiar_pagina(mmu_xy2fisica(xOrig, yOrig), mmu_xy2fisica(aPerro->x, aPerro->y));
+			game_perro_mover(aPerro, dir);
+
+			virt_n  =mmu_xy2virtual(aPerro->x, aPerro->y);
+			fisica_n=mmu_xy2fisica (aPerro->x, aPerro->y);
+
+			mmu_mapear_pagina(virt_o, aPerro->cr3, fisica_o, 1, 1, 1); //Esto porque la pos inicial no esta mapeada
+			mmu_mapear_pagina(virt_n, aPerro->cr3, fisica_n, 1, 1, 1);
+			mmu_copiar_pagina(virt_o, virt_n);
 			break;
 		case 0x2: //Cavar
 			break;

@@ -120,7 +120,6 @@ uint game_perro_olfatear(perro_t *perro)
 		}
    	}
 
-	breakpoint();
 	if (x_actual_diff == 0 && y_actual_diff == 0)
 		return AQUI;
 
