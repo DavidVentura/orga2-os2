@@ -123,7 +123,11 @@ cr3_cargar:
 	ret
 
 tarea:
-	jmp 0x70:0
+	mov ax, [esp+4]
+	mov [selector], ax
+	jmp far [offset]
+;	jmp 0x70:0
+
 tarea_p:
 	mov ax, [esp+4]
 	mov [selector], ax

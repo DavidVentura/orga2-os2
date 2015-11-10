@@ -40,7 +40,7 @@ void kmain() {
 
     // Cargar tarea inicial
 	tss_inicializar();
-	tarea(DTSS_IDLE);
+	tarea(DTSS_IDLE<<3);
 
 //	__asm("int $0x46");
     // Habilitar interrupciones
