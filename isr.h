@@ -40,10 +40,22 @@ typedef struct str_cpu {
 	unsigned int cr4;
 } cpu;
 
-void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short cs, unsigned int eip, unsigned short errorCd);
+typedef struct str_int {
+	unsigned int num;
+	unsigned int errorCd;
+	unsigned int eip;
+	unsigned int cs;
+	unsigned int eflags;
+	unsigned int esp;
+	unsigned int ss;
+} __attribute__((__packed__)) int_stack;
+
+
+void interrupcion_atender(int_stack* interrupcion);
 void teclado_atender();
+
+void guardar_estado_cpu(unsigned int ebp);
 void printDebug();
-void guardar_estado_cpu();
 
 void _isr0();
 void _isr1();

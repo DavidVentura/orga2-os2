@@ -23,6 +23,7 @@ extern sched_atender_tick
 extern sched_tarea_actual
 
 extern guardar_estado_cpu
+extern recuperar_estado_cpu
 
 ;;
 ;; Definición de MACROS
@@ -32,15 +33,20 @@ extern guardar_estado_cpu
 global _isr%1
 
 _isr%1:
-	pusha
-    mov ebx, %1
-	push ebx
+	push dword %1					; Pusheo codigo de error
+	pushad							; Salvo todos los registros grales
+	
+	push ebp						; Parametro ebp
+	call guardar_estado_cpu			; Salvo registros
+	add esp, 4						; Restauro esp
 
-	call guardar_estado_cpu
+	lea ebp, [esp + 32]				; Cargo puntero a stack switch
+	push ebp
 	call interrupcion_atender
-
 	add esp, 4
-	popa
+
+	popad
+	add esp, 4
 	iret
 %endmacro
 

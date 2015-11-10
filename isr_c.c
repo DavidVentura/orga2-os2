@@ -1,15 +1,25 @@
 #include "isr.h"
 
 static char debugEnabled;
+static char onDebug;
 static cpu cpuStatus;
 
-void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short cs, unsigned int eip, unsigned short errorCd) {
+void interrupcion_atender(int_stack* interrupcion) {
+	unsigned int num = interrupcion->num;
+
+	cpuStatus.ss = interrupcion->ss;
+	cpuStatus.esp = interrupcion->esp;
+	cpuStatus.eflags = interrupcion->eflags;
+	cpuStatus.cs = interrupcion->cs;
+	cpuStatus.eip = interrupcion->eip;
 
 	switch (num){
 		case 32:
 			fin_intr_pic1();
-			sched_atender_tick();
 			screen_actualizar_reloj_global();
+			if (!onDebug){
+				sched_atender_tick();
+			}
 			break;
 		case 33:
 			fin_intr_pic1();
@@ -19,30 +29,41 @@ void interrupcion_atender(unsigned int num, unsigned int eflags, unsigned short 
 			int70();
 			break;
 		default:
-			//breakpoint();
-			print("ERROR: ", 0, 0, 0xF);
-			print_dec(num, 7, 0, 0x4);
+			print("Int: ", 0, 0, 0xF);
+			print_dec(num, 5, 0, 0x4);
 
-			print(" - Eflags: ", 9, 0, 0xF);
-			print_hex(eflags, 20, 0, 0x4);
+			print("Eflags: ", 12, 0, 0xF);
+			print_hex(interrupcion->eflags, 20, 0, 0x4);
 
-			print(" - CS: ", 30, 0, 0xF);
-			print_dec(cs, 37, 0, 0x4);
+			print("CS: ", 30, 0, 0xF);
+			print_hex(interrupcion->cs, 34, 0, 0x4);
 
-			print(" - EIP: ", 47, 0, 0xF);
-			print_hex(eip, 0, 55, 0x4);
+			print("EIP: ", 42, 0, 0xF);
+			print_hex(interrupcion->eip, 47, 0, 0x4);
 
 			if (num >= 10 && num <= 14) {
-				print(" - Error Cod: ", 0, 1, 0xF);
-				print_dec(errorCd, 9, 1, 0x4);
+				print("Error Cod: ", 59, 0, 0xF);
+				print_hex(interrupcion->errorCd, 70, 0, 0x4);
 			}
 
+//			if (interrupcion->ss != NULL) {
+//				print("SS: ", 0, 1, 0xF);
+//				print_hex(interrupcion->ss, 5, 1, 0x4);
+//			}
+//
+//			if (interrupcion->esp != NULL) {
+//				print("ESP: ", 10, 1, 0xF);
+//				print_hex(interrupcion->esp, 14, 1, 0x4);
+//			}
+
 			// Si está activado el debug, muestro mensaje
-			// FIXME: Esto muestra los eflags, eip, etc de la interrupción.
-			// Tengo que pasar por parámetro los datos de la interrupción.
-			if (debugEnabled) {
+			if (debugEnabled && !onDebug) {
+				onDebug = 1;
 				printDebug();
+				breakpoint();
+				tarea(DTSS_IDLE<<3);
 			}
+			
 			break;
 	}
 }
@@ -106,15 +127,26 @@ void teclado_atender(){
 				break;
 			case Y:		// Toggle Debug
 				debugEnabled = !debugEnabled;
-				if (!debugEnabled)
+
+				// Si está el mensaje de debug, lo borro
+				if (onDebug) {
+					onDebug = 0;
 					screen_inicializar();
+				}
+
+				// Borro la 'D' de debug
+				if (!debugEnabled)
+					screen_pintar(0, 0x00, 0, 79);
 				else
 					screen_pintar('D', 0x0A, 0, 79);
 				break;
 			case T:		// Force print Debug
-				printDebug();
+				if (!onDebug) {
+					onDebug = 1;
+					printDebug();
+				}
 				break;
-			case LSHIFT:	// Ignoro shift
+			case LSHIFT:// Ignoro shift
 				break;
 			default:			
 				screen_pintar(get_ascii(tecla), 15, 0, 0);
@@ -123,6 +155,7 @@ void teclado_atender(){
 	} else {	// Si se solto una tecla
 		switch(tecla) {
 			case T:
+				onDebug = 0;
 				screen_inicializar();
 				break;
 			default:
@@ -197,15 +230,14 @@ void printDebug() {
 }
 
 // Guardo estado de los registros
-void guardar_estado_cpu() {
-	// TODO: Pierdo estado del ebp
+inline void guardar_estado_cpu(unsigned int ebp) {
 	cpuStatus.eax = reax();
 	cpuStatus.ebx = rebx();
 	cpuStatus.ecx = recx();
 	cpuStatus.edx = redx();
 	cpuStatus.esi = resi();
 	cpuStatus.edi = redi();
-	cpuStatus.ebp = rebp();
+	cpuStatus.ebp = ebp;
 	cpuStatus.esp = resp();
 	cpuStatus.eip = reip();
 	cpuStatus.cs = rcs();

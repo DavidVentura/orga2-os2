@@ -258,4 +258,5 @@ LS_INLINE unsigned int rstack(int offset) {
     __asm __volatile("pop %eax");						// Recupero el valor de eax
 	return value;
 }
+
 #endif  /* !__i386_H__ */
