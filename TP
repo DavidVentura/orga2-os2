@@ -1,0 +1,56 @@
+Maximo de 16 tareas
+Cada jugador podra tener un maximo de 8 perros en juego de distintas razas.
+Un rato laro sin puntajes => termina el juego
+Jugador da ordenes. el perro decide si las cumple o no.
+Mapa 80x44, cada pos corresp a una pag de 4k
+
+Las tareas tienen:
+Su pos fisica del codigo mapeada como codigo/rw en 0x401000
+Pagina compartida rw en 0x400000
+Para que el kernel escriba en el mapa tiene que mapear la pos primero. No la tiene.
+
+Acciones:
+Jugador:
+Lanza perro (QE | UO)
+....
+Moverse:
+....
+Orden(zxc|bnm)
+guarda tipo y pos de la ultima orden, por si algun perro pregunta.
+
+Perros:
+Moverse(...)
+
+Cavar:
+en caso de estar sobre escondite aumenta en 1 los huesos del perro y baja en 1 los huesos del escondite. Si el perro tiene >=10 huesos se ignora el pedido.
+
+Olfatear:
+...
+
+Recibir orden: Lee la ultima orden emitida por el jugador. Formato id_orden << 16 | y << 8 | x
+
+El scheduler DESALOJA PERROS DEPSUES DE INT70
+
+scheduler:
+quantum=tick de reloj
+va una vez a cada jugador.
+matar perro si hay error.
+al desalojar saltar a idle hasta fin de quantum
+
+
+Clock:
+En cada tick:
+*actualizar relojes
+*chequear si perr_actual en cucha (sumar puntos , etc)
+*scheduler
+
+
+El sistema debe saber:
+info de cada jguador
+posicion de cada perro
+perro/tarea actualmente ejecutada, siguiente tarea a ejecutar
+tareas en ejecucion y slots libres
+paginas mapeadas por cada tarea
+
+
+

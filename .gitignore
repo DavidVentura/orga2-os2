@@ -12,3 +12,5 @@ bochs.log
 *.pdf
 *.toc
 *.synctex.gz
+*expand
+*.ps

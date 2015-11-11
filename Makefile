@@ -24,8 +24,7 @@ OBJ=$(KERNEL_OBJ) gdt.o pic.o idt.o isr.o isr_c.o mmu.o sched.o tss.o screen.o g
 DISK_IMG=diskette.img
 DISK_IMG_BZ=diskette.img.bz2
 
-CFLAGS=-m32 -g -ggdb -Wall -Werror -O0 \
-  -fno-zero-initialized-in-bss -fno-stack-protector -ffreestanding
+CFLAGS=-m32 -g -ggdb -Wall -Werror -O0 -fno-zero-initialized-in-bss -fno-stack-protector -ffreestanding -fdump-rtl-expand
 
 
 TASKIDLE=idle.tsk
@@ -86,6 +85,7 @@ image: kernel.bin $(DEPEND) $(DISK_IMG)
 	@echo 'Copiando el $(KERNEL_BIN) a la imagen de diskette'
 	$(MCOPY) -o -i $(DISK_IMG) $(KERNEL_BIN) ::/
 	@echo ''
+	mv *expand documentacion/
 
 $(DISK_IMG): $(DISK_IMG_BZ)
 	bzip2 -dk $(DISK_IMG_BZ)
@@ -128,6 +128,7 @@ tasks: $(TASKSBINS)
 
 clean:
 	@echo 'Limpiando todo...'
+	rm -f documentacion/*.expand
 	rm -f *.o
 	rm -f *.bin
 	rm -f *.tmp
