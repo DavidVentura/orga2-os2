@@ -33,8 +33,7 @@ void game_jugador_inicializar(jugador_t *j)
 	int i;
 	for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++)
 	{
-		uint gdt_index = 0xd << 3; // CAMBIAR POR ALGO VALIDO
-		game_perro_inicializar(&j->perros[i], j, i, gdt_index + i*8);
+		game_perro_inicializar(&j->perros[i], j, i, i+j->index*8);
 	}
 
 }
@@ -76,7 +75,16 @@ uint game_jugador_moverse(jugador_t *j, int x, int y)
 	j->x+=x;
 	j->y+=y;
 
+	if(j->x>80)
+		j->x=79;
+	if(j->x<0)
+		j->x=0;
+	if(j->y>44)
+		j->y=43;
+	if(j->y<0)
+		j->y=0;
 	screen_pintar_jugador(j);
+
     return 0;
 }
 
@@ -97,7 +105,7 @@ void game_jugador_anotar_punto(jugador_t *j)
 // guarda la orden en el jugador para que los perros puedan preguntarla luego (mediante un syscall)
 void game_jugador_dar_orden(jugador_t *jugador, int orden)
 {
-	
+	jugador->ult_orden=orden;	
 }
 
 

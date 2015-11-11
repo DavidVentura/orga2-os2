@@ -8,7 +8,6 @@
 // realiza inicialización básica de un perro. El perro aun no está vivo ni por lanzarse. Setea jugador, indice, etc
 void game_perro_inicializar(perro_t *perro, jugador_t *j, uint index, uint id)
 {
-	mmu_inicializar_memoria_perro(perro,j->index,index,j->x_cucha,j->y_cucha);
 	perro->id   	= id;
     perro->index 	= index;
     perro->jugador 	= j;
@@ -31,9 +30,10 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 
 	// ahora debo llamar a rutinas que inicialicen un nuevo mapa de
 	// memoria para el nuevo perro, que carguen su tss correspondiente,
+	mmu_inicializar_memoria_perro(perro,j->index,perro->index,j->x_cucha,j->y_cucha);
 	// lo scheduleen y finalmente lo pinten en pantalla
-
-	// ~~~ completar ~~~
+	sched_agregar_tarea(perro);
+	screen_pintar_perro(perro);
 
 }
 
@@ -94,8 +94,14 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 // *** viene del syscall cavar ***
 uint game_perro_cavar(perro_t *perro)
 {
-	// ~~~ completar ~~~
-	return 0;
+	if (game_huesos_en_posicion(perro->x,perro->y)==0)
+		return 0;
+	if(perro->huesos>=10)
+		return 0;
+
+	perro->huesos++;
+	escondites[perro->x][perro->y]--;
+	return 1;
 }
 
 // recibe un perro, devueve la dirección del hueso más cercano

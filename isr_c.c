@@ -86,11 +86,11 @@ uint int70(uint tipo, uint dir){
 			mmu_copiar_pagina(virt_o, virt_n);
 			break;
 		case 0x2: //Cavar
-			break;
+			return game_perro_cavar(aPerro);
 		case 0x3: //Olfatear
 			return game_perro_olfatear(aPerro);
 		case 0x4: //Recibir orden
-			break;
+			return aPerro->jugador->ult_orden;
 	}
 	//scheduler_desalojame_pls()
 	tarea(DTSS_IDLE<<3);
@@ -98,7 +98,6 @@ uint int70(uint tipo, uint dir){
 }
 
 void teclado_atender(){
-	perro_t* p;
 	unsigned char tecla = teclado_leer();
 
 	// Si presiono una tecla
@@ -128,13 +127,17 @@ void teclado_atender(){
 			case L:
 				game_jugador_moverse(&jugadorB,1,0);
 				break;
+			case P:
+				game_jugador_lanzar_perro(&jugadorB, 1, jugadorB.x, jugadorB.y);
+				break;
 			case O:
-				p = game_jugador_dame_perro_libre(&jugadorA);
-				sched_agregar_tarea(p);
+				game_jugador_lanzar_perro(&jugadorB, 0, jugadorB.x, jugadorB.y);
+				break;
+			case E:
+				game_jugador_lanzar_perro(&jugadorA, 1, jugadorA.x, jugadorA.y);
 				break;
 			case Q:
-				p = game_jugador_dame_perro_libre(&jugadorB);
-				sched_agregar_tarea(p);
+				game_jugador_lanzar_perro(&jugadorA, 0, jugadorA.x, jugadorA.y);
 				break;
 			case Y:		// Toggle Debug
 				debugEnabled = !debugEnabled;
