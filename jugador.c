@@ -71,11 +71,13 @@ void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y)
 // recibe un par (x, y) y un jugador, al cual debe mover en esa dirección
 uint game_jugador_moverse(jugador_t *j, int x, int y)
 {
-	int nuevo_x = j->x + x;
-	int nuevo_y = j->y + y;
+	screen_borrar_jugador(j);
 
-    // ~~~ completar ~~~
-    return nuevo_x + nuevo_y; // uso todas las variables locales para que no tire warning -> error
+	j->x+=x;
+	j->y+=y;
+
+	screen_pintar_jugador(j);
+    return 0;
 }
 
 // descarga 1 hueso en la cucha y actualiza el screen

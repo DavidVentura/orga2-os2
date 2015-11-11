@@ -104,6 +104,30 @@ void teclado_atender(){
 	// Si presiono una tecla
 	if (keyboard[tecla].pressed) {
 		switch(tecla) {
+			case W:
+				game_jugador_moverse(&jugadorA,0,-1);
+				break;
+			case A:
+				game_jugador_moverse(&jugadorA,-1,0);
+				break;
+			case S:
+				game_jugador_moverse(&jugadorA,0,1);
+				break;
+			case D:
+				game_jugador_moverse(&jugadorA,1,0);
+				break;
+			case I:
+				game_jugador_moverse(&jugadorB,0,-1);
+				break;
+			case J:
+				game_jugador_moverse(&jugadorB,-1,0);
+				break;
+			case K:
+				game_jugador_moverse(&jugadorB,0,1);
+				break;
+			case L:
+				game_jugador_moverse(&jugadorB,1,0);
+				break;
 			case O:
 				p = game_jugador_dame_perro_libre(&jugadorA);
 				sched_agregar_tarea(p);
