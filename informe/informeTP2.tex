@@ -1,0 +1,224 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template para codigo y esas cosas, lo modifique para agregar lo que necesitamos
+% Lo afané de:
+% http://www.latextemplates.com
+%
+% Original author:
+% Ted Pavlic (http://www.tedpavlic.com)
+%
+% Me afané la caratula de Algo2 que use el año pasado así nos ahorramos cosas
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	CONFIG DEL DOCUMENTO Y PAQUETES
+%----------------------------------------------------------------------------------------
+
+\documentclass[a4paper,10pt]{article}
+\usepackage[paper=a4paper, hmargin=1.5cm, bottom=1.5cm, top=3.5cm]{geometry} % Especifico los margenes a manos
+%\usepackage[latin1]{inputenc}	% Codificacion ISO-8859-1
+\usepackage[spanish]{babel}
+% Colores en los links del índice
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+\usepackage{courier}
+\usepackage{fancyhdr} 		% Custom headers
+\usepackage{lastpage} 		% Para obtener la última pagina para el footer
+\usepackage{extramarks} 	% Headers y footers
+\usepackage[usenames,dvipsnames]{color} % Colores custom
+\usepackage{graphicx} 		% Para insertar imagenes
+\usepackage{listings} 		% Para insertar codigo
+\usepackage{lipsum} 		% 'Lorem ipsum'
+\usepackage[section]{placeins}		% Para impedir que las imagenes y eso se vayan a otras secciones que no corresponden
+\usepackage{mathtools}
+\usepackage{caratula}
+%\usepackage[T1]{fontenc}
+%\usepackage{algorithmicx, algpseudocode, algorithm}
+
+\hypersetup{%
+ % Para que el PDF se abra a pagina completa.
+ pdfstartview= {FitH \hypercalcbp{\paperheight-\topmargin-1in-\headheight}},
+ pdfauthor={Grupo 25 - Carmen Sandiego, Materia Organizaci\'on del Computador II - DC - UBA},
+ pdfkeywords={Informe, TP2, Trabajo, Pr\'actico, II},
+ pdftitle={Informe Trabajo Pr\'actico II},
+ pdfsubject={Informe Trabajo Pr\'actico II}
+}
+
+% Configuración de parrafos
+\setlength{\parskip}{1em}
+
+
+% Margenes
+%\topmargin=-0.45in
+%\evensidemargin=0in
+%\oddsidemargin=0in
+%\textwidth=6.5in
+%\textheight=9.0in
+%\headsep=0.25in
+
+% Line spacing
+\linespread{1.1} 
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{The Mercy Seat} % Header izquierdo
+\chead{Informe Trabajo Pr\'actico II} % Header centro
+\rhead{\firstxmark Organizaci\'on del Computador II} % Header derecha
+\lfoot{\lastxmark}
+\cfoot{P\'agina \thepage\ de \protect\pageref{LastPage}} % Footer centro
+\rfoot{}
+\renewcommand\headrulewidth{0.4pt} % Linea de header
+\renewcommand\footrulewidth{0.4pt} % Linea de footer
+
+%\setlength\parindent{0pt} % Remueve identacion de los parrafos
+
+%----------------------------------------------------------------------------------------
+%	CONFIGURACION DEL CÓDIGO INCLUIDO
+%----------------------------------------------------------------------------------------
+\renewcommand{\lstlistingname}{C\'odigo}
+\definecolor{DarkGreen}{rgb}{0.0,0.4,0.0} % Comentarios
+% Lenguajes soportados: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
+\lstloadlanguages{[x86masm]Assembler, C} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Me robe lo de abajo de otro ejemplo, estaba basado en Perl, ver si hay que cambiar algo
+\lstdefinestyle{asmStyle}{language=[x86masm]Assembler,
+        frame=single,
+        breaklines=true, 					% Saltar de linea si supero el maximo
+        basicstyle=\small\ttfamily,
+        keywordstyle=[1]\color{Blue}\bf,	% Color de las funciones de assembler
+        keywordstyle=[2]\color{Purple},		% Color de parámetros especiales (registros, etc)
+        identifierstyle=,                               
+        commentstyle=\usefont{T1}{pcr}{m}{sl}\color{DarkGreen}\small,
+        stringstyle=\color{Purple}, 		% Strings purpuras
+        showstringspaces=false,
+        tabsize=4,
+        %
+        % Instrucciones no incluidas en el paquete Assembler
+        morekeywords={global, define, section, .rodata, .text, jl, movd, movdqu, mulss, subss, addss, cmpss, pand, cvtss2si, cvttss2si, cvtsi2ss, pxor, pslldq, movq, pshufb, paddb, pmaxub, punpcklbw, punpckhbw},
+        %
+        % Registros y esas otras cosas especiales que no son instrucciones
+        morekeywords=[2]{rax,al,rdx,rcx,rbx,rsi,rdi,rsp,rbp,r8,r9,r10,r11,r12,r13,r14,r15,xmm0,xmm1,xmm2,xmm3,xmm4,xmm5,xmm6,xmm7
+        		xmm8,xmm9,xmm10,xmm11,xmm12,xmm13,xmm14,xmm15,r8b, r9b, r10b, r11b, r8d, r9d, r10d, r11d},
+        morecomment=[l][\color{Blue}]{...}, % Line continuation (...) like blue comment
+        numbers=left,						% Numeros de linea en la izquiera
+        firstnumber=1, 						% Se arranca en la linea 1
+        numberstyle=\tiny\color{Blue}, 		% Numeros de linea en azul y chicos
+        stepnumber=5, 						% Los numerros de linea se muestran cada 5
+        numbers=left	                    % where to put the line-numbers; possible values are (none, left, right)
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Declaro colores y cosas para C
+\lstdefinestyle{cStyle}{language=C,
+        frame=single,
+        breaklines=true, 					% Saltar de linea si supero el maximo
+        basicstyle=\small\ttfamily,
+        keywordstyle=[1]\color{Blue}\bf,	% Color de las funciones de assembler
+        keywordstyle=[2]\color{Purple},		% Color de parámetros especiales (registros, etc)
+        identifierstyle=,                               
+        commentstyle=\usefont{T1}{pcr}{m}{sl}\color{DarkGreen}\small,
+        stringstyle=\color{Purple}, 		% Strings purpuras
+        showstringspaces=false,
+        tabsize=4,
+        %
+        morekeywords={define},
+        %
+        % Cosas especiales
+        morekeywords=[2]{rax},
+        morecomment=[l][\color{Blue}]{...}, % Line continuation (...) like blue comment
+        numbers=left,						% Numeros de linea en la izquiera
+        firstnumber=1, 						% Se arranca en la linea 1
+        numberstyle=\tiny\color{Blue}, 		% Numeros de linea en azul y chicos
+        stepnumber=2, 						% Los numerros de linea se muestran cada 5
+        numbers=left	                    % where to put the line-numbers; possible values are (none, left, right)
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Comando para incluir un archivo de assembler, no hay que poner la extensión
+\newcommand{\asmscript}[5]{
+\\
+\begin{minipage}{\linewidth}
+\lstinputlisting[style=asmStyle,caption=#3,label=#1,firstline=#4,lastline=#5]{include/#2.asm}
+\end{minipage}
+}
+
+% Comando para incluir un archivo C, no hay que poner la extensión
+\newcommand{\cscript}[5]{
+\\
+\begin{minipage}{\linewidth}
+\lstinputlisting[style=cStyle,caption=#3,label=#1,firstline=#4,lastline=#5]{include/#2.c}
+\end{minipage}
+}
+
+\newcommand{\recuadro}[1]{
+\noindent\framebox[\columnwidth][c]{\begin{minipage}{0.98\columnwidth}#1\end{minipage}} % Recuadro simple, pongo lo que pasan por parametro
+}
+%----------------------------------------------------------------------------------------
+
+
+%----------------------------------------------------------------------------------------
+%	ARRANCA EL DOCUMENTO
+%----------------------------------------------------------------------------------------
+\begin{document}
+
+\materia{Organizaci\'on del Computador II}
+\submateria{Segundo Cuatrimestre de 2015}
+\titulo{Trabajo Pr\'actico II}
+\subtitulo{Informe}
+\grupo{The Mercy Seat}
+
+% Puse por orden alfabetico (de nombre), justo queda DFG
+\integrante{Christian Murga}{982/12}{christianmmurga@gmail.com}
+\integrante{David Ventura}{673/13}{davidventura27@gmail.com}
+\integrante{Fabian Alvarez}{674/13}{falvarez.0104@gmail.com}
+
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+% Hay que compilar dos veces el pdf para que pueda armarla!!!
+%----------------------------------------------------------------------------------------
+
+\tableofcontents
+\newpage
+
+
+% Para que no tire conflictos si estamos modificando mucho, separe en distintos archivos el Blur, Merge y HSL
+% Si hace falta se pueden separar más. Para compilar se tiene que hacer desde el "informeTP2.tex"
+
+% Para referencias y eso: http://en.wikibooks.org/wiki/LaTeX/Labels_and_Cross-referencing
+% ------
+% Floatbarrier sirve para que las cosas "flotantes" (imagenes) no se cambien de sección: 
+%      http://tex.stackexchange.com/questions/279/how-do-i-ensure-that-figures-appear-in-the-section-theyre-associated-with
+%
+% --------------------------------------------------------------------------------------------------------------------
+% AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+% http://www.brendangregg.com/perf.html
+
+
+% Introducción
+\input{subIntroduccion}
+\newpage
+
+% Desarrollo
+\section{Desarrollo}
+
+% Diff
+\input{subDiff}
+\newpage
+
+% Blur Gaussiano
+\input{subBlur}
+\newpage
+
+% Conclusion
+\input{subResultados}
+\newpage
+
+% Conclusion
+\input{subConclusion}
+\newpage
+
+\end{document}

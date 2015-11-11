@@ -6,3 +6,9 @@ task*
 *tsk
 bochs.log
 *.swp
+*.aux
+*.out
+*.log
+*.pdf
+*.toc
+*.synctex.gz

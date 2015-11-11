@@ -1,0 +1,31 @@
+\section{Introducci\'on}
+El presente informe resume el comportamiento y algoritmos utilizados para la creaci\'on de los filtros de Diferencia de im\'agenes y Blur Gaussiano en sus impelemtaciones en C y Ensamblador, los resultados de los experimentos que se realizaron para evaluar las diferencias entre ambas
+implementaciones de los filtros de im\'agenes. As\'i como las conclusiones obtenidas y evidencias de qu\'e cambios podr\'ian mejorar el rendimiento en ciertos casos.
+
+\subsection{Descripci\'on de metodolog\'ia de pruebas}
+Las mediciones se realizar\'an mediante un script de python en el cual se ejecuta: \\
+\recuadro{\begin{center}\textit{perf stat -B -e cache-references,cache-misses,cycles,instructions}\end{center}}
+para cada imagen del conjunto de prueba y para cada par\'ametro de entrada. \\
+Esto nos permite, adem\'as de los datos informados por el binario de la c\'atedra, evaluar cantidad de ciclos, instrucciones ejecutadas, estado de cache, etc.
+
+Se planea ejecutar 500 iteraciones de los algoritmos correspondientes, evitando leer/abrir/escribir la imagen en cada iteraci\'on, lo que nos permite medir casi exclusivamente el tiempo de ejecuci\'on del algoritmo. \\
+Para eliminar diferencias en los tiempos de ejecuci\'on debido a temas de clock se realizar\'an todas las pruebas en una misma computadora, utilizamdo el governor del procesador en \textbf{performance} y para descartar que procesos en segundo plano alteren los resultados los tests se ejecutar\'an con un par\'ametro \textbf{\textit{nice}} de $-20$. \\
+En la secci\'on \ref{sec:specs} se detalla la informaci\'on de la computadora donde se corren los tests y sistema operativo de la misma. \\
+Los tests de las implementaci\'on en \emph{C} se corrieron con el nivel de optimizaci\'on "\textbf{-O3}".
+
+En cada prueba particular se definir\'an, si hay, los cambios en las metodolog\'ias de pruebas y se evidenciar\'a con salida de c\'odigo o con diferentes gr\'aficos cuales fueron los resultados obtenidos. \\
+Ya que los algoritmos no dependen del contenido de la im\'agen se generaron imagenes aleatorias con la herramienta \textit{imagemagick}.
+A partir de las im\'agenes aleatorias se crearon copias de distintos tama\~nos: 16x16 [pixeles], 32x32, 64x64, 256x256 y 1024x1024. \\
+Adicionalmente, se crearon algunas im\'agenes de otras dimensiones para evaluar el efecto de ciertas caracter\'isticas en el ejecuci\'on de los algoritmos; por ejemplo, im\'agenes de 128x512 y 512x128 para determinar si la \'unica variable en el tiempo de ejecuci\'on es el tama\~no o si el ancho y el alto (manteniendo una cantidad constante de pixeles) tambi\'en lo afectan.
+
+\subsection{Especificaci\'on t\'ecnica}
+\label{sec:specs}
+Todas las pruebas las corrimos en la misma computadora, con las siguientes especificaciones
+\begin{itemize}
+\item Procesador: AMD FX-8350
+\item Memoria Ram: 8GB
+\item Sistema Operativo: Debian Testing (Linux 4.1.0-2)
+\item Governor: Performance
+\item 'Niceness' del proceso: -20
+\item Archivo de salida: /dev/null
+\end{itemize}
