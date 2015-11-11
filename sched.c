@@ -10,7 +10,7 @@ definicion de funciones del scheduler
 #include "screen.h"
 
 sched_t scheduler;
-
+uint ya_hay_una_puta_tarea=0;
 uint prox_tarea=1;
 void sched_inicializar() {
 	sched_task_t task = (sched_task_t) { 0, NULL };
@@ -57,14 +57,24 @@ void sched_agregar_tarea(perro_t *perro) {
 	scheduler.tasks[libre].gdt_index = gdt_index;
 
 	scheduler.current=libre;
+	ya_hay_una_puta_tarea=1;
 }
 
 void sched_remover_tarea(unsigned int gdt_index) {
 }
 
-
+uint prox_tarea_valida(){
+	uint ret=0;
+	while(scheduler.tasks[ret].gdt_index==0)
+		ret++;
+	ya_hay_una_puta_tarea=1;
+	return ret;
+}
 uint sched_proxima_a_ejecutar() {
 	// TODO: En el struct pone MAX_CANT_TAREAS_VIVAS+1
+	if (ya_hay_una_puta_tarea==0)
+		return prox_tarea_valida();
+
 	unsigned short next = (scheduler.current + 1) % MAX_CANT_TAREAS_VIVAS;
 	short currentPlayer = scheduler.tasks[scheduler.current].perro->jugador->index;
 
@@ -88,16 +98,20 @@ uint sched_proxima_a_ejecutar() {
 
 
 ushort sched_atender_tick() {
-	if (scheduler.current==NULL)
-		return 0;
 //	uint prox = sched_proxima_a_ejecutar();
 //	if (prox == scheduler.current)
 //		return 0;
 //	scheduler.current=prox;
 //	tarea(scheduler.current<<3);
+	if( ya_hay_una_puta_tarea==0)
+		return 0;
+
+	perro_t* p_act=scheduler.tasks[scheduler.current].perro;
+	screen_actualizar_reloj_perro (p_act);
+	screen_pintar_reloj_perro(p_act);
+
 
 	uint proximo=sched_proxima_a_ejecutar();
-	breakpoint();
 	if (proximo==scheduler.current)
 		return 0;
 	perro_t* p=scheduler.tasks[proximo].perro;
