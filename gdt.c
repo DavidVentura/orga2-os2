@@ -8,7 +8,7 @@
 #include "gdt.h"
 
 
-uint cur_gdt_entry=13;
+uint cur_gdt_entry=DTSS_INIT;
 
 
 /* Definicion de la GDT */

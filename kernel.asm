@@ -125,5 +125,6 @@ tarea:
 	mov ax, [esp+4]
 	mov [selector], ax
 	jmp far [offset]
+	ret
 
 %include "a20.asm"

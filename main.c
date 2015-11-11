@@ -35,6 +35,7 @@ void kmain() {
 	tss_inicializar();
     // Cargar tarea inicial
     // Saltar a la primera tarea: Idle
+	breakpoint();
 	tarea(DTSS_IDLE<<3);
 
 //	__asm("int $0x46");

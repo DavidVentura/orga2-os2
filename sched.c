@@ -46,9 +46,8 @@ void sched_agregar_tarea(perro_t *perro) {
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
 	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,0,1,1); //pagina de stack para nivel 0 (int)
 
-	uint tss_new =crear_tss(GDT_OFF_KDATA_DESC, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_OFF_UCODE_DESC|3,GDT_OFF_UDATA_DESC|3,GDT_OFF_UDATA_DESC|3);
-
 	//cargar un descriptor de tss y meterlo en gdt
+	uint tss_new =crear_tss(GDT_OFF_KDATA_DESC, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_OFF_UCODE_DESC|3,GDT_OFF_UDATA_DESC|3,GDT_OFF_UDATA_DESC|3);
 	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
 
 	//pasarle al scheduler la entrada de la gdt
@@ -59,6 +58,7 @@ void sched_agregar_tarea(perro_t *perro) {
 
 	scheduler.current=libre;
 	cr3_cargar(perro->cr3);
+	breakpoint();
 	tarea(gdt_index<<3);
 }
 

@@ -48,7 +48,6 @@ void interrupcion_atender(cpu* status) {
 			if (debugEnabled && !onDebug) {
 				onDebug = 1;
 				printDebug();
-				breakpoint();
 				tarea(DTSS_IDLE<<3);
 			}
 			
@@ -94,6 +93,7 @@ uint int70(uint tipo, uint dir){
 			break;
 	}
 	//scheduler_desalojame_pls()
+	tarea(DTSS_IDLE<<3);
 	return 0;
 }
 

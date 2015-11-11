@@ -32,7 +32,6 @@ void mmu_inicializar(){
 	mmu_inicializar_dir_kernel();
 	paginacion_activar();
 	mmu_mapear_pagina(0x200000,KERNEL_PDIR,0xB8000,0,1,1);
-
 }
 
 void mmu_inicializar_dir_kernel() {
@@ -84,7 +83,7 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	//mmu_mapear_pagina(0x401000, (uint)pdir, mmu_xy2fisica(cuchax,cuchay),1,1,1); //FIXME attrs?
 
 	//El primer perro lo deja ok, los siguientes rompen dest
-	mmu_mapear_pagina(0x402000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //FIXME a donde va esto? compartida
+	mmu_mapear_pagina(0x400000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //FIXME a donde va esto? compartida
 
 	perro->cr3=(uint) pdir;
 }

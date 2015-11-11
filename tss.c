@@ -21,9 +21,8 @@ void tss_inicializar() {
 	//Magic number?
 
 	cargar_tss_en_gdt(tss_inicial,0);
-	cargar_tss_en_gdt(tss_idle,0);
 	ltr(DTSS_INIT<<3);
-
+	cargar_tss_en_gdt(tss_idle,0);
 }
 
 //eip es virtual
@@ -65,7 +64,7 @@ uint cargar_tss_en_gdt(uint base, char dpl) {
 	g.type=0b1001;
 	g.s=0; //Siempre 0
 	g.dpl=dpl;
-	g.p=1;
+	g.p=1; //Siempre?
 	g.limit_16_19=0; //No necesito tanto tamaño
 	g.l=0; //Siempre 0
 	g.db=0; //Siempre 0
