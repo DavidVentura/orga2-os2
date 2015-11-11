@@ -77,10 +77,11 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 
 	uint dircod=CODIGO_PERROS[index_jugador*2+index_tipo];
 	mmu_mapear_pagina(0x401000, (uint)pdir, dircod,1,1,1); 
-	mmu_mapear_pagina(dircucha, (uint)pdir, dircuchaf,1,1,1);  //FIXME: esto ejecuta antes que paginacion
+	mmu_mapear_pagina(dircucha, (uint)pdir, dircuchaf,1,1,1);
+	mmu_mapear_pagina(dircucha, (uint)KERNEL_PDIR, dircuchaf,0,1,1); //Mapeo temporalmente la cucha para poder escribirla
 
 	mmu_copiar_pagina(dircod,dircucha);
-	//mmu_mapear_pagina(0x401000, (uint)pdir, mmu_xy2fisica(cuchax,cuchay),1,1,1); //FIXME attrs?
+	mmu_unmapear_pagina(dircucha,KERNEL_PDIR);
 
 	//El primer perro lo deja ok, los siguientes rompen dest
 	mmu_mapear_pagina(0x400000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //FIXME a donde va esto? compartida
