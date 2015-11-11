@@ -2,18 +2,12 @@
 
 static char debugEnabled;
 static char onDebug;
-static cpu cpuStatus;
+static cpu* cpuStatus;
 
-void interrupcion_atender(int_stack* interrupcion) {
-	unsigned int num = interrupcion->num;
+void interrupcion_atender(cpu* status) {
+	cpuStatus = status;
 
-//	cpuStatus.ss = interrupcion->ss;
-//	cpuStatus.esp = interrupcion->esp;
-	cpuStatus.eflags = interrupcion->eflags;
-	cpuStatus.cs = interrupcion->cs;
-	cpuStatus.eip = interrupcion->eip;
-
-	switch (num){
+	switch (cpuStatus->intNum){
 		case 32:
 			fin_intr_pic1();
 			screen_actualizar_reloj_global();
@@ -30,31 +24,25 @@ void interrupcion_atender(int_stack* interrupcion) {
 			break;
 		default:
 			print("Int: ", 0, 0, 0xF);
-			print_dec(num, 5, 0, 0x4);
+			print_dec(cpuStatus->intNum, 5, 0, 0x4);
 
 			print("Eflags: ", 12, 0, 0xF);
-			print_hex(interrupcion->eflags, 20, 0, 0x4);
+			print_hex(cpuStatus->eflags, 20, 0, 0x4);
 
 			print("CS: ", 30, 0, 0xF);
-			print_hex(interrupcion->cs, 34, 0, 0x4);
+			print_hex(cpuStatus->cs, 34, 0, 0x4);
 
 			print("EIP: ", 42, 0, 0xF);
-			print_hex(interrupcion->eip, 47, 0, 0x4);
+			print_hex(cpuStatus->eip, 47, 0, 0x4);
 
-			if (num >= 10 && num <= 14) {
-				print("Error Cod: ", 59, 0, 0xF);
-				print_hex(interrupcion->errorCd, 70, 0, 0x4);
-			}
+			print("Error Cod: ", 59, 0, 0xF);
+			print_hex(cpuStatus->errorCd, 70, 0, 0x4);
 
-//			if (interrupcion->ss != NULL) {
-//				print("SS: ", 0, 1, 0xF);
-//				print_hex(interrupcion->ss, 5, 1, 0x4);
-//			}
-//
-//			if (interrupcion->esp != NULL) {
-//				print("ESP: ", 10, 1, 0xF);
-//				print_hex(interrupcion->esp, 14, 1, 0x4);
-//			}
+			print("SS: ", 0, 1, 0xF);
+			print_hex(cpuStatus->ss, 5, 1, 0x4);
+
+			print("ESP: ", 10, 1, 0xF);
+			print_hex(cpuStatus->esp, 14, 1, 0x4);
 
 			// Si está activado el debug, muestro mensaje
 			if (debugEnabled && !onDebug) {
@@ -69,7 +57,6 @@ void interrupcion_atender(int_stack* interrupcion) {
 }
 
 uint int70(uint tipo, uint dir){
-	
 	// Consigo el perro actual
 	perro_t* aPerro = scheduler.tasks[scheduler.current].perro;
 
@@ -140,24 +127,11 @@ void teclado_atender(){
 				else
 					screen_pintar('D', 0x0A, 0, 79);
 				break;
-			case T:		// Force print Debug
-				if (!onDebug) {
-					onDebug = 1;
-					printDebug();
-				}
-				break;
-			case LSHIFT:// Ignoro shift
-				break;
 			default:			
-				screen_pintar(get_ascii(tecla), 15, 0, 0);
 				break;
 		}
 	} else {	// Si se solto una tecla
 		switch(tecla) {
-			case T:
-				onDebug = 0;
-				screen_inicializar();
-				break;
 			default:
 				break;
 		}
@@ -177,12 +151,12 @@ void printDebug() {
 
 	// Imprimo texto de los registros - Columna 1
 	print("eax", startX + 2, startY + 3, 0x70);
-	print("ebx", startX + 2, startY + 5, 0x70);
-	print("ecx", startX + 2, startY + 7, 0x70);
-	print("edx", startX + 2, startY + 9, 0x70);
-	print("esi", startX + 2, startY + 11, 0x70);
-	print("edi", startX + 2, startY + 13, 0x70);
-	print("ebp", startX + 2, startY + 15, 0x70);
+	print("ecx", startX + 2, startY + 5, 0x70);
+	print("edx", startX + 2, startY + 7, 0x70);
+	print("ebx", startX + 2, startY + 9, 0x70);
+	print("ebp", startX + 2, startY + 11, 0x70);
+	print("esi", startX + 2, startY + 13, 0x70);
+	print("edi", startX + 2, startY + 15, 0x70);
 	print("esp", startX + 2, startY + 17, 0x70);
 	print("eip", startX + 2, startY + 19, 0x70);
 	print("cs", startX + 2, startY + 21, 0x70);
@@ -202,53 +176,29 @@ void printDebug() {
 
 
 	// Imprimo valores de los registros
-	print_hex(cpuStatus.eax, startX + 6, startY + 3, 0x7F);
-	print_hex(cpuStatus.ebx, startX + 6, startY + 5, 0x7F);
-	print_hex(cpuStatus.ecx, startX + 6, startY + 7, 0x7F);
-	print_hex(cpuStatus.edx, startX + 6, startY + 9, 0x7F);
-	print_hex(cpuStatus.esi, startX + 6, startY + 11, 0x7F);
-	print_hex(cpuStatus.edi, startX + 6, startY + 13, 0x7F);
-	print_hex(cpuStatus.ebp, startX + 6, startY + 15, 0x7F);
-	print_hex(cpuStatus.esp, startX + 6, startY + 17, 0x7F);
-	print_hex(cpuStatus.eip, startX + 6, startY + 19, 0x7F);
-	print_hex(cpuStatus.cs, startX + 6, startY + 21, 0x7F);
-	print_hex(cpuStatus.ds, startX + 6, startY + 23, 0x7F);
-	print_hex(cpuStatus.es, startX + 6, startY + 25, 0x7F);
-	print_hex(cpuStatus.fs, startX + 6, startY + 27, 0x7F);
-	print_hex(cpuStatus.gs, startX + 6, startY + 29, 0x7F);
-	print_hex(cpuStatus.ss, startX + 6, startY + 31, 0x7F);
-	print_hex(cpuStatus.eflags, startX + 9, startY + 33, 0x7F);
+	print_hex(cpuStatus->eax, startX + 6, startY + 3, 0x7F);
+	print_hex(cpuStatus->ecx, startX + 6, startY + 5, 0x7F);
+	print_hex(cpuStatus->edx, startX + 6, startY + 7, 0x7F);
+	print_hex(cpuStatus->ebx, startX + 6, startY + 9, 0x7F);
+	print_hex(cpuStatus->ebp, startX + 6, startY + 11, 0x7F);
+	print_hex(cpuStatus->esi, startX + 6, startY + 13, 0x7F);
+	print_hex(cpuStatus->edi, startX + 6, startY + 15, 0x7F);
+	print_hex(cpuStatus->esp, startX + 6, startY + 17, 0x7F);
+	print_hex(cpuStatus->eip, startX + 6, startY + 19, 0x7F);
+	print_hex(cpuStatus->cs, startX + 6, startY + 21, 0x7F);
+	print_hex(cpuStatus->ds, startX + 6, startY + 23, 0x7F);
+	print_hex(cpuStatus->es, startX + 6, startY + 25, 0x7F);
+	print_hex(cpuStatus->fs, startX + 6, startY + 27, 0x7F);
+	print_hex(cpuStatus->gs, startX + 6, startY + 29, 0x7F);
+	print_hex(cpuStatus->ss, startX + 6, startY + 31, 0x7F);
+	print_hex(cpuStatus->eflags, startX + 9, startY + 33, 0x7F);
 
 	// Segunda columna
-	print_hex(rcr0(), startX + 20, startY + 3, 0x7F);
-	print_hex(rcr2(), startX + 20, startY + 5, 0x7F);
-	print_hex(rcr3(), startX + 20, startY + 7, 0x7F);
-	print_hex(rcr4(), startX + 20, startY + 9, 0x7F);
+	print_hex(cpuStatus->cr0, startX + 20, startY + 3, 0x7F);
+	print_hex(cpuStatus->cr2, startX + 20, startY + 5, 0x7F);
+	print_hex(cpuStatus->cr3, startX + 20, startY + 7, 0x7F);
+	print_hex(cpuStatus->cr4, startX + 20, startY + 9, 0x7F);
 	int i;
 	for (i = 0; i <= 10; i++)
-		print_hex(rstack(i*4), startX + 22, startY + 19 + i, 0x7F);
-}
-
-// Guardo estado de los registros
-inline void guardar_estado_cpu(unsigned int ebp) {
-	cpuStatus.eax = reax();
-	cpuStatus.ebx = rebx();
-	cpuStatus.ecx = recx();
-	cpuStatus.edx = redx();
-	cpuStatus.esi = resi();
-	cpuStatus.edi = redi();
-	cpuStatus.ebp = ebp;
-	cpuStatus.esp = resp();
-	cpuStatus.eip = reip();
-	cpuStatus.cs = rcs();
-	cpuStatus.ds = rds();
-	cpuStatus.es = res();
-	cpuStatus.fs = rfs();
-	cpuStatus.gs = rgs();
-	cpuStatus.ss = rss();
-	cpuStatus.eflags = reflags();
-	cpuStatus.cr0 = rcr0();
-	cpuStatus.cr2 = rcr2();
-	cpuStatus.cr3 = rcr3();
-	cpuStatus.cr4 = rcr4();
+		print_hex(rstack(cpuStatus->esp + (i*4)), startX + 22, startY + 19 + i, 0x7F);
 }

@@ -55,19 +55,39 @@ _isr%1:
 
 
 _isr_generico:
-	pushad							; Salvo todos los registros grales
+	pushad						; Salvo todos los registros grales
 	
-	push ebp						; Parametro ebp
-	call guardar_estado_cpu			; Salvo registros
-	add esp, 4						; Restauro esp
+	xor eax, eax				; Vacio eax
+	mov ax, gs					; Salvo selectores de segmentos
+	push eax
 
-	lea ebp, [esp + 32]				; Cargo puntero a stack switch
-	push ebp
+	mov ax, fs
+	push eax
+
+	mov ax, es
+	push eax
+
+	mov ax, ds
+	push eax
+
+	mov eax, cr0
+	push eax					; Salvo cr0
+	
+	mov eax, cr2
+	push eax					; Salvo cr2
+
+	mov eax, cr3
+	push eax					; Salvo cr3
+
+	mov eax, cr4
+	push eax					; Salvo cr4
+
+	push esp
 	call interrupcion_atender
-	add esp, 4
+	add esp, 36					; Elimino el push de los selectores y reg de control 
 
-	popad
-	add esp, 8						; Elimino numero de int y erroCode
+	popad						; Recupero registros de proposito gral
+	add esp, 8					; Elimino numero de int y erroCode
 	iret
 
 ;;

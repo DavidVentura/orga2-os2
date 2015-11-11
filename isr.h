@@ -17,44 +17,42 @@ extern void fin_intr_pic1();
 extern void fin_intr_pic2();
 
 typedef struct str_cpu {
-	unsigned int eax;
-	unsigned int ebx;
-	unsigned int ecx;
-	unsigned int edx;
-	unsigned int esi;
-	unsigned int edi;
-	unsigned int ebp;
-	unsigned int esp;
-	unsigned int eip;
-	unsigned short cs;
-	unsigned short ds;
-	unsigned short es;
-	unsigned short fs;
-	unsigned short gs;
-	unsigned short ss;
-	unsigned int eflags;
-
-	unsigned int cr0;
-	unsigned int cr2;
-	unsigned int cr3;
+	// Registros de control
 	unsigned int cr4;
-} cpu;
+	unsigned int cr3;
+	unsigned int cr2;
+	unsigned int cr0;
 
-typedef struct str_int {
-	unsigned int num;
+	// Selectores de segmento
+	unsigned int ds;
+	unsigned int es;
+	unsigned int fs;
+	unsigned int gs;
+
+	// Datos del pushad
+	unsigned int edi;
+	unsigned int esi;
+	unsigned int ebp;
+	unsigned int ignorame;
+	unsigned int ebx;
+	unsigned int edx;
+	unsigned int ecx;
+	unsigned int eax;
+	
+	// Datos de la interrupcion
+	unsigned int intNum;
 	unsigned int errorCd;
 	unsigned int eip;
 	unsigned int cs;
 	unsigned int eflags;
-//	unsigned int esp;
-//	unsigned int ss;
-} __attribute__((__packed__)) int_stack;
+	unsigned int esp;
+	unsigned int ss;
+} cpu;
 
 
-void interrupcion_atender(int_stack* interrupcion);
+void interrupcion_atender(cpu* interrupcion);
 void teclado_atender();
 
-void guardar_estado_cpu(unsigned int ebp);
 void printDebug();
 
 void _isr0();
