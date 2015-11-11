@@ -7,7 +7,7 @@ $$ Result: |30|30|30|255|$$
 \subsubsection{Implementaci\'on C}
 \label{sec:diff_impc}
 Para mantener m\'as limpio el c\'odigo y facilitar la lectura se cre\'o una funci\'on llamada \textbf{\emph{max}} que devuelve el m\'aximo de 3 valores enteros pasados por par\'ametro. En el c\'odigo \ref{diffc_1} se puede ver la funci\'on creada.\\
-\cscript{diffc_1}{diff_c}{Diff C - Funci\'on de comparaci\'on de valores}{6}{12}
+%\cscript{diffc_1}{diff_c}{Diff C - Funci\'on de comparaci\'on de valores}{6}{12}
 
 Antes de iniciar el procesamiento se realiza un casteo de los punteros a im\'agenes recibidos para poder operar con los mismos como matrices. Tambi\'en se declaran las variables que se van a usar para recorrer las imagenes y almacenar el valor del diff. \\
 Se procede a operar con un ciclo \textbf{\emph{for}} para las columnas y dentro otro ciclo \textbf{\emph{for}} para recorrer las filas, dentro de este \'ultimo ciclo se multiplica la cantidad de filas por $4$ y se incrementa el contador de a $4$ para poder avanzar de a 1 pixel.
@@ -15,7 +15,7 @@ Se procede a operar con un ciclo \textbf{\emph{for}} para las columnas y dentro 
 Dentro de ambos for se realiza una resta componente a componente de ambos p\'ixeles de ambas im\'agenes, ignorando el canal alpha. A dicho resultado se le calcula el valor absoluto para remover valores negativos y se llama a la funci\'on \emph{max} para obtener la m\'axima diferencia de los 3 componentes, dicho valor se almacena en una variable.
 
 Luego se escribe en la imagen de destino el mismo valor en los 3 componentes del p\'ixel, para que se vea en blanco y negro, y se utiliza el valor 255 para el canal alpha. En el c\'odigo \ref{diffc_2} se puede obvervar como se almacenan los valores en forma secuencial en cada componente, de nota que para escribir en cada canal se suma el offset correspontiente.
-\cscript{diffc_2}{diff_c}{Diff C - Asignaci\'on en destino de cada componente}{28}{31}
+%\cscript{diffc_2}{diff_c}{Diff C - Asignaci\'on en destino de cada componente}{28}{31}
 
 ~
 ~
@@ -29,10 +29,10 @@ Antes de iniciar el procesamiento se calcula el tama\~no total de la imagen en \
 
 Para facilitar las cuentas y el procesamiento a futuro se carga en un registro el valor \emph{255} para escribir en el canal alpha y se copia a un registro \emph{XMM}, se realiza un shift del valor para que quede en la posición \textbf{correspondiente al valor alpha del \'ultimo pixel} que se lee en memoria, esto se realiz\'o para que coincida con las m\'ascaras que se pueden ver en el c\'odigo \ref{diffasm_1} \\ 
 Duchas m\'ascaras se carga cada uno en un registro \emph{XMM} separado y se realiza un \textbf{xor} de otro registro que va a usarse para desempaquetar los datos.
-\asmscript{diffasm_1}{diff_asm}{Diff ASM - M\'ascaras para realizar shuffle de canales}{14}{23}
+%\asmscript{diffasm_1}{diff_asm}{Diff ASM - M\'ascaras para realizar shuffle de canales}{14}{23}
 
 En el c\'odigo \ref{diffasm_2} puede observarse como se realiza la carga del valor \emph{255} en el registro \textbf{AL}, luego se pasa al registro \textbf{XMM11} y se realiza el \emph{shift} como el valor especificado en los defines en el c\'odigo \ref{diffasm_1}, as\'i como la carga de las  otras m\'ascaras. \\
-\asmscript{diffasm_2}{diff_asm}{Diff ASM - Carga de valor alpha predefinido}{46}{55}
+%\asmscript{diffasm_2}{diff_asm}{Diff ASM - Carga de valor alpha predefinido}{46}{55}
 
 
 \textbf{Lectura imagen 1:} \\
@@ -43,7 +43,7 @@ Se procede a desempaquetar los 4 p\'ixeles 2 veces para poder procesar cada uno 
 
 \textbf{Lectura imagen 2:} \\
 La lectura y desempaquetado de la imagen 2 se realiza de forma similar a la imagen 1, pero se utiliza como puntero el registro \emph{RCX} y se almacenan los p\'ixeles en otros 2 registros \emph{XMM}. En el c\'odigo \ref{diffasm_3} se puede observar las operaciones de desempaquetado para cada im\'agen. 
-\asmscript{diffasm_3}{diff_asm}{Diff ASM - Lectura y desempaquetado de p\'ixeles}{64}{69}
+%\asmscript{diffasm_3}{diff_asm}{Diff ASM - Lectura y desempaquetado de p\'ixeles}{64}{69}
 
 Se realiza la diferencia de los p\'ixeles de cada imagen componente a componente. Como se realiz\'o el desempaquetado del mismo modo, los p\'ixeles quedar\'an alineados con su contraparte en la otra imagen. Como esta operaci\'on puede dar valores negativos, se utiliza la instrucci\'on \textbf{pabsw} para obtener el valor absoluto de dicha diferencia.
 Como se sabe que luego de realizar la diferencia y calcular el valor absoluto, cada canal no puede valer m\'as de $255$, se empaquetan nuevamente como \emph{Byte} saturados sin signo los registros de destino utilizados en la instrucci\'on anterior, con esto se finalizar\'ia el c\'alculo del la diferencia y se procede a calcular el valor m\'aximo.
@@ -57,7 +57,7 @@ al aplicar la m\'ascara \textbf{BLUE\_MASK} se obtendr\'ia: \\
 $$ XMM0 = |99|99|99|255|42|42|42|255|......| $$
 Dicha operaci\'on se realiza para cada componente en los registros auxiliares y luego se obtiene el m\'aximo canal de los 3 registros utilizando la instrucci\'on \emph{pmaxub}. \\
 En  el c\'odigo \ref{diffasm_4} se puede observar las intrucciones para procesar todos los canales.
-\asmscript{diffasm_4}{diff_asm}{Diff ASM - Aplicaci\'on de m\'ascaras y c\'alculo de maximo canal}{77}{85}
+%\asmscript{diffasm_4}{diff_asm}{Diff ASM - Aplicaci\'on de m\'ascaras y c\'alculo de maximo canal}{77}{85}
 
 Para finalizar se escriben los 4 p\'ixeles en memoria, se avanzan los punteros enteros en \emph{16 bytes} y se repite el ciclo hasta que no haya p\'ixeles por procesar.
 

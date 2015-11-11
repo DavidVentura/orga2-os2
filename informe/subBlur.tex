@@ -8,7 +8,7 @@ Para generar la matriz primeramente se calcula el largo de la misma, el cual es 
 Luego se realizan dos ciclos \textbf{\emph{for}} anidados, uno para recorrer las columnas y otro para recorrer las filas. Los valores van desde $-r$ a $r$. Para cada elemento realizo la ecuaci\'on gaussiana en dos dimensiones y lo almaceno en la matriz. \\
 Al finalizar queda la matriz de convoluci\'on con \emph{float}, donde cada elemento de la matriz corresponder\'ia a un p\'ixel. \\
 En el c\'odigo \ref{blurc_1} se puede ver el ejemplo del código que se ejecuta.
-\cscript{blurc_1}{blur_c}{Blur C - Ciclo princip\'al de calculo de matriz de convoluci\'on}{24}{36}
+%\cscript{blurc_1}{blur_c}{Blur C - Ciclo princip\'al de calculo de matriz de convoluci\'on}{24}{36}
 
 Antes de iniciar el procesamiento se realiza un casteo de los punteros a im\'agenes recibidos para poder operar con los mismos como matrices. Tambi\'en se declaran las variables que se van a usar para recorrer la imagen y la sub-matriz. Se llama a la funci\'on para obtener la matriz de convoluci\'on y se almacena el puntero a la misma.\\
 Se procede a recorrer la imagen con dos ciclos \textbf{\emph{for}} anidados, los mismos van desde \emph{Radio} hasta $Filas-Radio"$ y $Columnas-Radio$, esto produce que no se recorran ni procecen los bordes de la im\'agen.
@@ -20,7 +20,7 @@ Para cada ciclo interno, luego de reiniciars las variables se realizan otros dos
 Luego se multiplica cada componente del p\'ixel que se recorre por la matriz de convoluci\'on en la misma posici\'on, se almacena en el acumulador y antes de terminar el ciclo se aumenta la posici\'on de la matriz de convoluci\'on. Esta operaci\'on se realiza por cada elemento de la sub-matriz (por los ciclos \emph{for}).
 
 Al finalizar la sumatoria de la sub-matriz se guardan los valores de la sumatoria en cada canal del pixel actual en la imagen de destino y se contin\'ua con el ciclo. En el c\'odigo \ref{blurc_2} puede verse la operaci\'on de almacenamiento de cada componente en la imagen de destino.
-\cscript{blurc_2}{blur_c}{Blur C - Ciclo princip\'al de calculo de matriz de convoluci\'on}{61}{64}
+%\cscript{blurc_2}{blur_c}{Blur C - Ciclo princip\'al de calculo de matriz de convoluci\'on}{61}{64}
 Luego de finalizado el ciclo principal se procede a llamar a la funci\'on \textbf{free} y liberar la memoria utilizada por la matriz de convoluci\'on.
 
 
@@ -28,7 +28,7 @@ Luego de finalizado el ciclo principal se procede a llamar a la funci\'on \textb
 \label{sec:blur_impasm}
 
 Para minimizar confusion renombramos los registros \\
-\asmscript{Defines}{blur_asm}{Define}{9}{22}
+%\asmscript{Defines}{blur_asm}{Define}{9}{22}
 
 Al iniciar el filtro, se \emph{pushean} los registros \emph{XMM0,src,dst,cols,filas,radius}, para resguardarlos al llamar a convolucion\_matrix, el resultado de esta funcion se guarda en \emph{matriz y r15} \\
 Calculamos el tama\-no correspondiente de la imagen en bytes(ancho) o pixeles(alto) y luego avanzamos \emph{radius} filas para no tener en cuenta los bordes; tambien los restamos del alto y ancho total de la imagen. \\
@@ -47,6 +47,6 @@ El procesamiento de dentro de la matriz de convoluci\'on es el siguiente:
 \end{itemize}
 
 *Nunca leemos fuera de la memoria asignada, porque en caso de que nos queden menos de 16 bytes por leer, retrocedemos esta diferencia en los punteros y luego volvemos cero a los factores repetidos para evitar a\-nadirlos dos veces al resultado. \\
-\asmscript{Retroceso}{blur_asm}{Retroceso}{185}{188}
+%\asmscript{Retroceso}{blur_asm}{Retroceso}{185}{188}
 
 Una vez que, para un pixel dado, recorremos completamente la matriz de convolucion, guardamos el resultado acumulado y avanzamos los punteros \emph{src y dst}. Seguimos iterando hasta recorrer la imagen de forma completa.
