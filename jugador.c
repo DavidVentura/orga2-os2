@@ -75,13 +75,13 @@ uint game_jugador_moverse(jugador_t *j, int x, int y)
 	j->x+=x;
 	j->y+=y;
 
-	if(j->x>80)
+	if(j->x>=79)
 		j->x=79;
-	if(j->x<0)
+	if(j->x<=0)
 		j->x=0;
-	if(j->y>44)
+	if(j->y>=44)
 		j->y=43;
-	if(j->y<0)
+	if(j->y<=0)
 		j->y=0;
 	screen_pintar_jugador(j);
 
