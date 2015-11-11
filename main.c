@@ -16,7 +16,6 @@ void kmain() {
 	idt_inicializar(); 
 
 	// Cargar IDT
-	// FIXME: Pasar por parametro el puntero al descriptor no funciona bien
 	idt_cargar();
 	
 	// Cargo el teclado en memoria
@@ -35,10 +34,7 @@ void kmain() {
 	tss_inicializar();
     // Cargar tarea inicial
     // Saltar a la primera tarea: Idle
-	breakpoint();
 	tarea(DTSS_IDLE<<3);
-
-//	__asm("int $0x46");
 
 
 }

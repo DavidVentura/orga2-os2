@@ -57,9 +57,6 @@ void sched_agregar_tarea(perro_t *perro) {
 	scheduler.tasks[libre].gdt_index = gdt_index;
 
 	scheduler.current=libre;
-	cr3_cargar(perro->cr3);
-	breakpoint();
-	tarea(gdt_index<<3);
 }
 
 void sched_remover_tarea(unsigned int gdt_index) {
@@ -74,10 +71,17 @@ uint sched_proxima_a_ejecutar() {
 	// Busco el siguiente
 	while (next != scheduler.current && scheduler.tasks[next].gdt_index == 0) {
 		if(currentPlayer != scheduler.tasks[next].perro->jugador->index) {
+			if (scheduler.tasks[next].perro->vivo==TRUE){
+
+			}
 			//TODO: Ver si el perro está vivo
 			break;
 		}
 		next = (next + 1) % MAX_CANT_TAREAS_VIVAS;
+		if (next==scheduler.current){
+		//	HALT_AND_CATCH_FIRE();
+			return 0;
+		}
 	}
 	return next;
 }
@@ -91,8 +95,13 @@ ushort sched_atender_tick() {
 //		return 0;
 //	scheduler.current=prox;
 //	tarea(scheduler.current<<3);
-	screen_pintar_perro(scheduler.tasks[scheduler.current].perro);
-	screen_pintar_reloj_perro(scheduler.tasks[scheduler.current].perro);
-    return scheduler.tasks[scheduler.current].gdt_index;
-//	return 1;
+
+	uint proximo=sched_proxima_a_ejecutar();
+	breakpoint();
+	if (proximo==scheduler.current)
+		return 0;
+	perro_t* p=scheduler.tasks[proximo].perro;
+	cr3_cargar(p->cr3);
+	tarea(scheduler.tasks[scheduler.current].gdt_index<<3);
+	return 1;
 }
