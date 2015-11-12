@@ -13,8 +13,10 @@
 
 #ifndef __ISR_H__
 #define __ISR_H__
+
 extern void fin_intr_pic1();
 extern void fin_intr_pic2();
+extern perro_t* game_jugador_dame_perro_libre(jugador_t *j);
 
 typedef struct str_cpu {
 	// Registros de control
@@ -53,8 +55,9 @@ typedef struct str_cpu {
 void interrupcion_atender(cpu* interrupcion);
 void teclado_atender();
 
-void printDebug();
+void printDebug(unsigned int interrupcion, unsigned int errorCode);
 
+// Handlers de las interrupciones
 void _isr0();
 void _isr1();
 void _isr2();
@@ -85,5 +88,4 @@ void _isr33();
 uint _isr70();
 uint int70();
 
-extern perro_t* game_jugador_dame_perro_libre(jugador_t *j);
 #endif  /* !__ISR_H__ */

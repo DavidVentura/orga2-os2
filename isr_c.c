@@ -47,8 +47,11 @@ void interrupcion_atender(cpu* status) {
 
 			// Si está activado el debug, muestro mensaje
 			if (debugEnabled && !onDebug) {
+				// TODO: Mover 
+				print("Int: ", 0, 0, 0xF);
+				print_dec(cpuStatus->intNum, 5, 0, 0x4);
 				onDebug = 1;
-				printDebug();
+				printDebug(cpuStatus->intNum, cpuStatus->errorCd);
 				tarea(DTSS_IDLE<<3);
 			}
 			
@@ -166,16 +169,24 @@ void teclado_atender(){
 	}
 }
 
-void printDebug() {
+void printDebug(unsigned int interrupcion, unsigned int errorCode) {
 	int startX, startY, ancho, alto;
-	startY = 5; startX = 25; ancho = 30; alto  = 36;
+	startY = 4; startX = 25; ancho = 30; alto  = 36;
 
 	// Imprimo cuadrado raro
 	screen_pintar_rect(0, 0x77, startY, startX, alto, ancho);
 	screen_pintar_linea_h(0, 0, startY, startX, ancho);
+	screen_pintar_linea_h(0, 0x44, startY + 1, startX + 1, ancho - 1);
 	screen_pintar_linea_h(0, 0, startY + alto, startX, ancho);
 	screen_pintar_linea_v(0, 0, startY, startX, alto);
 	screen_pintar_linea_v(0, 0, startY, startX + ancho, alto + 1);
+
+	// Imprimo interrupción causada y código de error
+	print("INT ", startX + 2, startY + 1, 0x4F);
+	print_dec(interrupcion, startX + 6, startY + 1, 0x4F);
+
+	print("Error Cod ", startX + 16, startY + 1, 0x4F);
+	print_dec(errorCode, startX + 26, startY + 1, 0x4F);
 
 	// Imprimo texto de los registros - Columna 1
 	print("eax", startX + 2, startY + 3, 0x70);
