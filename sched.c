@@ -125,17 +125,18 @@ ushort sched_atender_tick() {
 		return 0;
 
 
+//	breakpoint();
 	// Consigo proximo perro a ejecutar
 	uint proximo = sched_proxima_a_ejecutar();
 	// Si el proximo es el mismo, no vuelvo a saltar
 	perro_t* p = scheduler.tasks[proximo].perro;
+	screen_actualizar_reloj_perro (p);
+	screen_pintar_reloj_perro(p);
 	if ((p->id<<3) == rtr())
 		return 0;
 
 	scheduler.current = proximo;
 	// Actualizo reloj 
-	screen_actualizar_reloj_perro (p);
-	screen_pintar_reloj_perro(p);
 
 
 	// Sino salto al siguiente perro
