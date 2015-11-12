@@ -86,6 +86,6 @@ void _isr33();
 
 // Software
 uint _isr70();
-uint int70();
+uint int70(uint tipo, uint dir);
 
 #endif  /* !__ISR_H__ */

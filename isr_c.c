@@ -19,9 +19,6 @@ void interrupcion_atender(cpu* status) {
 			fin_intr_pic1();
 			teclado_atender();
 			break;
-		case 70:
-			int70();
-			break;
 		default:
 			// TODO: Mover dentro del debug
 			print("Int: ", 0, 0, 0xF);
