@@ -48,15 +48,12 @@ Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
 
 ###Descriptores de TSS
 
-+------------+-------------+-----+--------+---------+---------+---+---+---+---+
 | Descriptor | Comentario  | SS0 | ESP0   | CR3     | EIP     | SS| CS|DS |SS |
-+============+=============+=====+========+=========+=========+===+===+===+===+
+|------------|-------------|-----|--------|---------|---------|---|---|---|---|
 | Inicial    | Inválido    | 0   | 0      | 0       | 0       | 0 | 0 | 0 | 0 |
-+------------+-------------+-----+--------+---------+---------+---+---+---+---+
 | Idle       | Modo Kernel | 8   | 0x27000| 0x28000 | 0x16000 | 8 | 9 | 8 | 8 | 
-+------------+-------------+-----+--------+---------+---------+---+----+---+--+
 | Perro      | Dinámica    | A   |Dinámico| Dinámico|Dinámico | A | B | A | A | 
-+------------+-------------+-----+--------+---------+---------+---+----+---+--+
+
 
 ##IDT
 
@@ -104,7 +101,7 @@ Esto se encarga de
 * Inicializa la primer tabla de páginas con identity mapping y el bit de presente activado.
 
 ##Activar la paginación
-....
+Consiste simplemente en activar el bit mas alto del registro cr0.
 
 ##Mapear la memoria de video
 ....
@@ -132,6 +129,8 @@ Para poder lograr nuestro próximo objetivo (Saltar a una tarea) necesitamos:
 * Un TSS con valores reales para la tarea Idle. Esta tarea corre en modo Kernel, por lo que utiliza todos los selectores de segmento de modo kernel. **FIXME explicar esto bien**
 * Un descriptor de TSS asociado al segmento idle, para poder referenciarlo al hacer el salto.
 
+#Habilitando el scheduler
+
 #Tarea idle: "EL SALTO"
 Una vez que tenemos todas las estructuras de datos necesarias para poder hacer un Task Switch, simplemente tenemos que hacer un **far jump** al offset correspondiente de la GDT.
 
@@ -140,24 +139,32 @@ Una vez que saltamos, el kernel se queda a la espera de interrupciones.
 
 
 #Interrupciones
+Una vez que el kernel se encargó de lanzar una tarea, se queda a la espera de ser llamado a través de interrupciones, que pueden ser de hardware o software.
+
+##Hardware
+
+###Clock
+Esta interrupción la usamos para cambiar de tarea con el scheduler y hacer girar los relojes.
+
+###Teclado
+Esta interrupción controla el flujo del juego, nos deja mover a los jugadores y lanzar perros. También puede entrar a modo debug.
 
 
 
+#El jueguito
 
 
+~~~~~~~{#codigo .c .numberLines startFrom="30"}
+if (a > 3) {
+  moveShip(5 * gravity, DOWN);
+}
+~~~~~~~
 
-
-
-
-
-
-
-
-
-
-
-
-
+~~~~~~~asm
+mov eax, 0x0
+mov esp, eax
+lea ebx, [esp]
+~~~~~~~
 
 
 
