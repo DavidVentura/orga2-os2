@@ -24,7 +24,7 @@ Además el compilador nos advertía de cambios en la aridad de funciones u otros
 #Estructuras de datos del procesador
 A continuación damos una pequeña explicación de los descriptores utilizados para el Sistema Operativo y las estructuras de datos que se utilizaron para representarlos en el código.
 
-##GDT
+##GDT {#GDT}
 En este TP utilizamos la GDT para almacenar:
 
 * Descriptores de segmento
@@ -163,14 +163,14 @@ En el código [**IDT Entry Macro**](#idtEntryMacro) se ve la estructura nueva de
 
 **IDT Entry Macro**
 
-~~~~~~~{#gdtEntryMacro .c .numberLines startFrom="21"}
-#define IDT_ENTRY(numero, _dpl, type)                                                                        \
-    idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);   \
-    idt[numero].segsel = (unsigned short) 0x08 ;                                                            \
-    idt[numero].tipo = type;                                                                           \
-    idt[numero].dpl = _dpl;                                                                                  \
-    idt[numero].p = 1;                                                                                      \
-    idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
+~~~~~~~{#idtEntryMacro .c .numberLines startFrom="21"}
+#define IDT_ENTRY(numero, _dpl, type)                                               \
+    idt[numero].offset_0_15 = (ushort) ((uint)(&_isr ## numero) & (uint) 0xFFFF);   \
+    idt[numero].segsel = (ushort) 0x08 ;                                            \
+    idt[numero].tipo = type;                                                        \
+    idt[numero].dpl = _dpl;                                                         \
+    idt[numero].p = 1;                                                              \
+    idt[numero].offset_16_31 = (ushort) ((uint)(&_isr ## numero) >> 16 & (uint) 0xFFFF);
 
 
 void idt_inicializar() {
@@ -191,10 +191,11 @@ Se añadieron las funciones *uint crear_tss(...)* y *uint cargar_tss_en_gdt(uint
 Se aprovecha las estucturas utilizadas en la GDT para que sea fácil cargar los datos de la entrada de la TSS.
 En el código [**TSS Cargar**](#tssCargar) se ve la carga de una TSS en la GDT.
 
+Los bits s/l/db deben ser 0. No utilizamos páginas grandes por lo que g también es 0. La parte alta del límite la mantenemos en 0 dado que el tamaño de cada TSS es 0x67.
+
 **TSS Cargar**
 
 ~~~~~~~{#tssCargar .c .numberLines startFrom="58"}
-#define IDT_ENTRY(numero, _dpl, type)                                                                        \
   uint cargar_tss_en_gdt(uint base, char dpl) {
 	gdt_entry g;
 	
@@ -202,12 +203,12 @@ En el código [**TSS Cargar**](#tssCargar) se ve la carga de una TSS en la GDT.
 	g.base_0_15=(base & 0xFFFF);
 	g.base_23_16=(base & 0xFF0000) >>16;
 	g.type=0b1001;
-	g.s=0; //Siempre 0
+	g.s=0;
 	g.dpl=dpl;
-	g.p=1; //Siempre?
-	g.limit_16_19=0; //No necesito tanto tamaño
-	g.l=0; //Siempre 0
-	g.db=0; //Siempre 0
+	g.p=1;
+	g.limit_16_19=0;
+	g.l=0;
+	g.db=0;
 	g.g=0;
 	g.base_31_24=(base >> 24);
 
@@ -264,7 +265,7 @@ Esto se encarga de
 Consiste simplemente en activar el bit mas alto del registro cr0.
 
 ##Mapear la memoria de video
-....
+Como nos pide el enunciado, mapeamos para el kernel 0x200000 a 0xB8000 con r/w.
 
 #Interrupciones
 ##Manejo de IDT
@@ -274,7 +275,7 @@ Definimos nuestra IDT como un array de 255 entradas de tipo idt\_entry.
 
 ###Cargando la IDT
 
-Abusamos del macro IDT\_ENTRY, provisto por la cátedra, para cargar en la tabla las interrupciones [0..19],32,33,70.
+Abusamos del macro [**IDT\_ENTRY**](#idtEntryMacro), provisto por la cátedra, para cargar en la tabla las interrupciones [0..19],32,33,70.
 Solo la interrupción #70 tiene DPL 3, el resto tiene DPL 0.
 
 El código de las interrupciones lo generamos a partir de dos macros, ISRE e ISR (la segunda ajusta el stack haciendo un `push 0` para simular el código de error), las cuales pushean el número de interrupción y llaman a `_isr_generico`, que se encarga de pushear todos los selectores de segmento, registros de control y registros de propósito general, para la pantalla de debug.
@@ -369,8 +370,7 @@ LS_INLINE void interrupciones_activar(void) {
     __asm __volatile("sti" : :);
 }
 ~~~~~~~
-
-## Manejo de Interrupciones
+## Manejo de Interrupciones {#inthandler}
 El handler genérico de interrupciones (*interrupcion_atender*) dentro de *isr_c.c* contiene un *switch-case* según el tipo de interrupción.
 Una vez que el kernel se encargó de lanzar una tarea, se queda a la espera de ser llamado a través de interrupciones, que pueden ser de hardware o software.
 Las interrupciones manejadas son:
@@ -396,7 +396,7 @@ Para poder lograr nuestro próximo objetivo (Saltar a una tarea) necesitamos:
 
 * Un TSS basura, donde el procesador va a guardar su contexto "actual" en el momento de hacer el cambio de tarea
 * Un descriptor de TSS asociado al segmento basura, para poder referenciarlo
-* Un TSS con valores reales para la tarea Idle. Esta tarea corre en modo Kernel, por lo que utiliza todos los selectores de segmento de modo kernel. **FIXME explicar esto bien**
+* Un TSS con valores reales para la tarea Idle. Esta tarea corre en modo Kernel, por lo que utiliza todos los selectores de segmento de modo kernel (8 y 9, ver [**GDT**](#GDT)). 
 * Un descriptor de TSS asociado al segmento idle, para poder referenciarlo al hacer el salto.
 
 #Scheduler
@@ -409,11 +409,11 @@ Esto quiere decir que todas las tareas del **jugador 0** van a ir en posiciones 
 Se destacan los siguientes métodos dentro del scheduler:
 
 ### Inicializar Scheduler
-Función: *void sched_inicializar()* se encarga de inicializar las estructuras de memoria internas del scheduler.
+Función: *sched_inicializar()* se encarga de inicializar las estructuras de memoria internas del scheduler.
 Se reccore el array de tareas y se carga un puntero a perro *NULL* y gdt_index *0*.
 También se establece como tarea actual algúna tarea inválida. Esto permite que cuando el scheduler atienda un tick de la primera tarea, pueda saltar a la misma.
 
-**Inicializar Scheduler**
+\newpage
 
 ~~~~~~~{#schedInit .c .numberLines startFrom="16"}
 void sched_inicializar() {
@@ -434,7 +434,7 @@ void sched_inicializar() {
 #Tarea idle: "EL SALTO"
 Una vez que tenemos todas las estructuras de datos necesarias para poder hacer un Task Switch, simplemente tenemos que hacer un **far jump** al offset correspondiente de la GDT.
 
-Una vez que saltamos, el kernel se queda a la espera de interrupciones.
+Una vez que saltamos, el kernel se queda a la espera de interrupciones (Ver [**Manejo de interrupciones**](#inthandler)).
 
 
 
