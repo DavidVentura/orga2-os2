@@ -220,7 +220,23 @@ Los bits s/l/db deben ser 0. No utilizamos páginas grandes por lo que g tambié
 
 
 #Disposición de la memoria
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+##Por la cátedra
+![memoria](imagenes/memcatedra.png "Memoria")
+
+\newpage
+
+
+##Por decisión propia
+
+| Descripción               | Valor                        | Motivo                                    | 
+|----------------------------|------------------------------|-------------------------------------------|
+| Inicio TSS                 | 0x180000                     | Nos parecio un buen número               | 
+| Tabla de pág. del kernel  | 0x100000                     | Primer página disponible del área libre | 
+| Base para pág. de usuario | 0x101000                     | Siguiente a tabla de pág. de kernel      | 
+| Pág. compartida de perros | 0x300000+0x1000\*id\_jugador | Justo en el medio del área libre         | 
+
+
+
 
 # Pasos de cración del S.O.
 
@@ -233,7 +249,7 @@ Tomando en cuenta que el procesador inicia en modo real y asi no nos sirve de na
 * Prendemos el bit de modo protegido en el CR0
 * Saltamos a modo protegido
 
-De yapa, cambiamos el modo de video y mostramos un mensaje muy *chulo*<sup>[1]</sup> que nos indica que estamos en este tan útil modo.
+De yapa, cambiamos el modo de video y mostramos un mensaje muy *chulo* ^[1]^ que nos indica que estamos en este tan útil modo.
 
 ##Modo protegido
 Una vez que el procesador alcanza un estado útil configuramos los selectores de segmento a valores correspondientes (ver [GDT](#GDT)) y también cargamos el valor pedido (0x27000) en el stack pointer.
@@ -245,8 +261,7 @@ Esta funcion reemplaza al *start* de *kernel.asm*, donde se van a centralizar to
 
 **Inicializar Game y Screen**
 Como primera instancia se inicializa el juego llamando a la función *game_inicializar()*. Luego se invoca a *screen_inicializar()* que dibuja el tablero de juego otros detalles.
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-Dichas funciones no se modificaron.
+Dichas funciones, provistas por la cátedra, no se modificaron.
 
 #MMU
 La unidad de manejo de memoria que hicimos se encarga de:
@@ -375,7 +390,7 @@ El handler genérico de interrupciones (*interrupcion_atender*) dentro de *isr_c
 Una vez que el kernel se encargó de lanzar una tarea, se queda a la espera de ser llamado a través de interrupciones, que pueden ser de hardware o software.
 Las interrupciones manejadas son:
 
-###Clock
+###Clock{#clock}
 Esta interrupción la usamos para cambiar de tarea con el scheduler y hacer girar los relojes.
 
 ###Teclado
@@ -413,7 +428,6 @@ Función: *sched_inicializar()* se encarga de inicializar las estructuras de mem
 Se reccore el array de tareas y se carga un puntero a perro *NULL* y gdt_index *0*.
 También se establece como tarea actual algúna tarea inválida. Esto permite que cuando el scheduler atienda un tick de la primera tarea, pueda saltar a la misma.
 
-\newpage
 
 ~~~~~~~{#schedInit .c .numberLines startFrom="16"}
 void sched_inicializar() {
@@ -428,7 +442,26 @@ void sched_inicializar() {
 ~~~~~~~
 
 
-### TODO
+### Planificando tareas
+Una vez que el scheduler está inicializado, simplemente espera a ser llamado (por el [**clock**](#clock), o por el [**teclado**](#teclado)) para planificar las tareas.
+
+Al scheduler puede pedirsele que agregue una nueva tarea a su lista (con un máximo de 16), y se encargará de:
+
+* Obtener una página de memoria libre para utilizar como stack de kernel (para interrupciones).
+* Mapear esta página al cr3 (pre-asignado a la tarea durante su inicialización) correspondiente a la tarea.
+* Crear un TSS con entradas correspondientes ( SS0: KDATA, ESP0: nueva\_pagina, CR3: Pre-asignado a la tarea, EIP: 0x401000, ESP: 0x402000-12, CS: UCODE (dpl:3), DS,SS: UDATA (dpl:3).
+* Crear un descriptor de TSS y cargarlo en la GDT.
+* Buscar un indice libre en el array de tareas del scheduler.
+* Asignar esta tarea al array de tareas.
+* En caso de que esta sea la primer tarea del scheduler, activar el procesamiento del scheduler\_tick
+
+
+También puede pedirsele que atienda un tick de reloj, con lo que se encargará de:
+
+* Si no hay tareas activas, ignorar el pedido.
+* Obtener la próxima tarea a ejecutar y verificar si es igual a la actual, en cuyo caso ignorar el pedido.
+* Asignar como tarea actual la próxima tarea a ejecutar.
+* Saltar a la **nueva** tarea actual.
 
 
 #Tarea idle: "EL SALTO"
@@ -442,18 +475,6 @@ Una vez que saltamos, el kernel se queda a la espera de interrupciones (Ver [**M
 #El jueguito
 
 
-~~~~~~~{#codigo .c .numberLines startFrom="30"}
-if (a > 3) {
-  moveShip(5 * gravity, DOWN);
-}
-~~~~~~~
+??????????
 
-~~~~~~~asm
-mov eax, 0x0
-mov esp, eax
-lea ebx, [esp]
-~~~~~~~
-
-
-
-[1] ![Chulisimo](imagenes/chulo.png "Titulo")
+[1] ![Chulisimo](imagenes/chulo.png)
