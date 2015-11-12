@@ -39,7 +39,6 @@ typedef struct perro_t
 	uint id;     // id unica tarea
 	uint tipo;   // raza del perro
     uint libre;  // libre: -true- slot disponible para lanzar perro  / -false- ya hay un perro vivo
-	uint vivo; // ?
 
     uint x;
     uint y;

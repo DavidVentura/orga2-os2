@@ -30,7 +30,7 @@ void game_atender_tick()
 {
 //	screen_inicializar();
 	perro_t* p = scheduler.tasks[scheduler.current].perro;
-	if(p->vivo==1)
+	if(!p->libre)
 		game_perro_ver_si_en_cucha(p);
 	screen_actualizar_reloj_global();
     ultimo_cambio--;

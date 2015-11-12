@@ -26,7 +26,6 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 	perro->x = j->x_cucha;
 	perro->y = j->y_cucha;
 	perro->tipo = tipo;
-	perro->libre = FALSE;
 
 	// ahora debo llamar a rutinas que inicialicen un nuevo mapa de
 	// memoria para el nuevo perro, que carguen su tss correspondiente,
@@ -40,9 +39,7 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 // el perro descargó sus huesos o realizó una acción no válida y caputó, hay que sacarlo del sistema.
 void game_perro_termino(perro_t *perro)
 {
-	perro->vivo=0;
-	perro->x=-1;
-	perro->y=-1;
+	perro->libre=TRUE;
 }
 
 // transforma código de dirección en valores x e y 

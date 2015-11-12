@@ -61,7 +61,7 @@ void sched_agregar_tarea(perro_t *perro) {
 		return;
 	
 	// It's alive!... IT'S ALIVE!
-	perro->vivo = 1;
+	perro->libre= FALSE;
 	
 	// Preparo nuevo stack y mapeo
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
@@ -100,7 +100,7 @@ uint sched_proxima_a_ejecutar() {
 	next = (scheduler.current + 1) % MAX_CANT_TAREAS_VIVAS;
 	do {
 		sig_perro = scheduler.tasks[next].perro;
-		if (sig_perro != NULL && sig_perro->vivo) {
+		if (sig_perro != NULL && !sig_perro->libre) {
 			return next;
 		}
 		next = (next + 2) % MAX_CANT_TAREAS_VIVAS;
@@ -111,7 +111,7 @@ uint sched_proxima_a_ejecutar() {
 	next = (scheduler.current + 2) % MAX_CANT_TAREAS_VIVAS;
 	while (next != scheduler.current) {
 		sig_perro = scheduler.tasks[next].perro;
-		if (sig_perro != NULL && sig_perro->vivo) {
+		if (sig_perro != NULL && !sig_perro->libre) {
 			return next;
 		}
 		next = (next + 2) % MAX_CANT_TAREAS_VIVAS;
