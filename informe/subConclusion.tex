@@ -1,8 +1,0 @@
-\section{Conclusi\'on}
-Se observ\'o que para el filtro Diferencia de im\'agenes, el tiempo de ejecuci\'on de los algoritmos variaba de forma similar al modificar el tama\~no de la imagen de entrada. Adem\'as se not\'o que las proporciones de la imagen no ten\'ian un impacto significativo al modificarse las proporciones (pero manteniendo constante la cantidad total de p\'ixeles). Finalmente, conjeturamos que la superior eficacia del algoritmo C se debe a una mejor econom\'ia de m\'ascaras y uso \'optimo de los registros que permite realizar menos accesos a memoria y menos saltos condicionales.
-
-Como conclusi\'on se conjetura en los casos del Blur Gaussiano, que aunque la lectura es lo que m\'as perjudica el rendimiento, los saltos condicionales pueden causar una gr\'an p\'erdida de rendimiento. \\
-Pero en procesamientos con radio chico, la cantidad elevada de saltos condicionales a verificar con la implementaci\'on en \emph{Ensamblador} puede perjudicar el performance, pero cuando se aumenta el tama\~no del radio estas verificaciones se tornan pr\'acticamente despreciables y se puede ver un aumento sustanci\'an en los tiempos de ejecuci\'on del algoritmo.
-
-\pagebreak
-
