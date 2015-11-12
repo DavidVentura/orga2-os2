@@ -106,28 +106,117 @@ Consiste simplemente en activar el bit mas alto del registro cr0.
 ##Mapear la memoria de video
 ....
 
-#Inicializando la IDT
+#Interrupciones
+##Manejo de IDT
+###Inicializando la IDT
 Definimos nuestra IDT como un array de 255 entradas de tipo idt\_entry.
 
-#Cargando la idt
+###Cargando la IDT
 Abusamos del macro IDT\_ENTRY, provisto por la cátedra, para cargar en la tabla las interrupciones [0..19],32,33,70.
 Solo la interrupción #70 tiene DPL 3, el resto tiene DPL 0.
 
-El código de las interrupciones lo generamos a partir de dos macros, ISRE e ISR (esta ajusta el stack haciendo un `push 0` para simular el código de error), las cuales pushean el número de interrupción y llaman a `_isr_generico`, que se encarga de pushear todos los selectores de segmento, registros de control y registros de propósito general, para la pantalla de debug.
+El código de las interrupciones lo generamos a partir de dos macros, ISRE e ISR (la segunda ajusta el stack haciendo un `push 0` para simular el código de error), las cuales pushean el número de interrupción y llaman a `_isr_generico`, que se encarga de pushear todos los selectores de segmento, registros de control y registros de propósito general, para la pantalla de debug.
+Se pushean en un orden determinado para coincidir con el struct **str_cpu** definido en *isr.h*, el mismo sirve para poder acceder fácilmente al estado de los registros desde las interrupciones.
 
-#Inicializando el teclado
-Suerte fabian
+##Inicializando el teclado
+Para lo relacionado al manejo del teclado se crearon los archivos *keyboard.h* y *keyboard.c*.
 
-#Reseteando el pic
+### keyboard.h
+En el archivo *keyboard.h* se definen las estructuras de ayuda para la lectura del teclado. Para no tener que andar pasando los scancode entre funciones generamos un *enum __keys__* con los nombres de las teclas para identificarlas. En el enum solo se mapearon las comunes, las funciones u el pad numérico no se mapeó.
+Asimismo generamos un *struct __key__* en el cual almacenamos el valor *ASCII* que le corresponde a dicha tecla (con o sin mayus), el scancode y el estado de la misma (presionado o no).
+Se definió un *array* de *key* llamado **keyboard** donde van a almacenarse cada una de las teclas.
+En el código #keyboard pueden observarse las estructuras definidas para el manejo del teclado.
 
-#Habilitando el pic
-/Suerte fabian
+~~~~~~~{#keyboard .h .numberLines startFrom="5"}
+typedef struct str_key {
+	unsigned char value;
+	unsigned char mValue;
+	unsigned char scancode;
+	unsigned char pressed;
+} key;
 
-#Habilitando interrupciones
+extern key keyboard[];
 
-~~~~~~~{#codigo .asm .numberLines startFrom="1"}
-sti
+typedef enum {
+	ESC = 1,
+	_1, _2, _3, _4, _5, _6, _7, _8, _9, _0,
+	MINUS, EQUALS, BKSP, TAB,
+	Q, W, E, R, T, Y, U, I, O, P, LBRK, RBRK, ENTER, LCTRL,
+	A, S, D, F, G, H, J, K, L, SCOLON, APOS, APOS2,
+	LSHIFT, BSLASH, Z, X, C, V, B, N, M, COMMA, DOT, SLASH
+} keys;
 ~~~~~~~
+
+### keyboard.c
+Dentro de *keyboard.c* se define el arreglo *keyboard* como un arreglo de 128 posiciones.
+Se genera un macro para inicializar cada tecla, el mismo recibe el *scancode*, el *valor ASCII* y *valor ASCII modificado* el mismo corresponde al valor que debe mostrarse cuando se presiona *SHIFT* + *TECLA*. Luego se almacena en la posición *scancode* los valores pasados.
+Dentro de **teclado_inicializar()** se llama a esta macro para cada tecla y de esta forma queda inicializado el teclado. Se utilizan los nombres del enum para mayor claridad.
+En el código #initTeclado se muestran las primeras lineas de inicialización del teclado como ejemplo.
+
+~~~~~~~{#initTeclado .c .numberLines startFrom="43"}
+void teclado_inicializar() {
+	KEY_ENTRY(0,0,0);
+	KEY_ENTRY(ESC, 27, 27);
+	KEY_ENTRY(_1, '1', '!');
+	KEY_ENTRY(_2, '2', '@');
+	KEY_ENTRY(_3, '3', '#');
+	KEY_ENTRY(_4, '4', '$');
+	KEY_ENTRY(_5, '5', '%');
+	...
+~~~~~~~
+
+Las interrupciones obtienen la tecla presionada llamando a la función **keys teclado_leer()**. La misma llama a la función *teclado_l()* definida en *i386.h*, con la que se realiza una lectura del puerto del teclado.
+Luego analiza si el scancode recibido es **mayor** a 128, le resta 128 y en la posición que resulta asigna el estado **0**, en otro caso le asigna el estado *1*. Luego devuelve el la entrada del enum correspondiente.
+De esta forma logramos separar el código *ASCII* de la tecla, para realizar menos comparaciones.
+
+La función *get_ascii(keys tecla)* revisa si el estado de la tecla **SHIFT** es *1*, si es así devuelve el valor en mayúsucla de la tecla. Sino devuelve el valor *ASCII* correspondiente.
+
+
+## Reseteando y habilitando el pic
+El reseteo y habilitación del pic se realiza desde *main.c* antes de activar las interrupciones, para eso se llama a las funciones:
+
+* resetear_pic()
+* habilitar_pic()
+
+Que facilitó la cátedra, las mismas se encuentran en *pic.h*.
+
+
+##Habilitando interrupciones
+La activación o desactivación de las interrupciones se realizan con las instrucciones "*sti*" y "*cli*".
+Para que el código quede más amistoso con C implementamos las funciones *interrupciones_desactivar* e *interrupciones_activar* dentro de **i386.h**.
+Dentro de las funciones se realiza un *inline* con el código en assembler que queremos ejecutar.
+En el código #habilitarInt se ven las funciones inline para habilitar o deshabilitar interrupciones.
+
+~~~~~~~{#habilitarInt .c .numberLines startFrom="116"}
+LS_INLINE void interrupciones_desactivar(void) {
+    __asm __volatile("cli" : :);
+}
+
+LS_INLINE void interrupciones_activar(void) {
+    __asm __volatile("sti" : :);
+}
+~~~~~~~
+
+## Manejo de Interrupciones
+El handler genérico de interrupciones (*interrupcion_atender*) dentro de *isr_c.c* contiene un *switch-case* según el tipo de interrupción.
+Una vez que el kernel se encargó de lanzar una tarea, se queda a la espera de ser llamado a través de interrupciones, que pueden ser de hardware o software.
+Las interrupciones manejadas son:
+
+###Clock
+Esta interrupción la usamos para cambiar de tarea con el scheduler y hacer girar los relojes.
+
+###Teclado
+Esta interrupción controla el flujo del juego, nos deja mover a los jugadores y lanzar perros. También puede entrar a modo debug.
+Informa al pic que se atendió la interrupción y se llama a la función *teclado_atender* dentro del mismo archivo en el cual se lee el valor del teclado y realiza la tarea que corresponda según la tecla que se presione.
+
+###INT46
+Se encarga de atender los pedidos que realizan las tareas.
+Llama a  la función *int70(uint tipo, uint dir)* 
+
+###Default
+El caso default del *switch-case*, si está activado, imprime por pantalla el cartel de debug con el estado del CPU al momento de la interrupción.
+Para imprimirlo se accede al struct *str_cpu* que contiene los valores antes de entrar a la interrupción.
+
 
 #Habilitando tareas
 Para poder lograr nuestro próximo objetivo (Saltar a una tarea) necesitamos:
@@ -144,18 +233,6 @@ Una vez que tenemos todas las estructuras de datos necesarias para poder hacer u
 
 Una vez que saltamos, el kernel se queda a la espera de interrupciones.
 
-
-
-#Interrupciones
-Una vez que el kernel se encargó de lanzar una tarea, se queda a la espera de ser llamado a través de interrupciones, que pueden ser de hardware o software.
-
-##Hardware
-
-###Clock
-Esta interrupción la usamos para cambiar de tarea con el scheduler y hacer girar los relojes.
-
-###Teclado
-Esta interrupción controla el flujo del juego, nos deja mover a los jugadores y lanzar perros. También puede entrar a modo debug.
 
 
 
