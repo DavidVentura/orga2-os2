@@ -27,5 +27,21 @@ void task(int x, int y) {
 // a partir de aqui tenemos la estructura disponible 
 
 
-    while(1) { __asm __volatile("mov $2, %%eax":::"eax"); }
+	__asm __volatile("xchg %%bx, %%bx" : :);
+	syscall_moverse(0x4);
+	syscall_moverse(0x4);
+	syscall_moverse(0x4);
+	syscall_moverse(0x4);
+	syscall_moverse(0x4);
+	syscall_moverse(0x4);
+    while(1) {
+		syscall_moverse(0x4);
+		syscall_moverse(0x4);
+		syscall_moverse(0x7);
+		syscall_moverse(0x7);
+		syscall_moverse(0xA);
+		syscall_moverse(0xA);
+		syscall_moverse(0xD);
+		syscall_moverse(0xD);
+	}
 }
