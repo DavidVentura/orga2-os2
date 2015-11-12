@@ -57,6 +57,28 @@ Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
 
 ##IDT
 
+Los descriptores de segmento de la IDT son todos similares, salvo la interrupción dedicada a la syscall que tiene DPL 3.
+
++---------------+---------------+-----------+-----------+-----------+-----------+
+| Índice		| Selector		| Offset	| DPL		| Tipo		| Prsente	|
++===============+===============+===============+===========+===========+=======+
+| 0		        | 0x08	        | 0			| 0			| 01110b	| 1			|
++---------------+---------------+-----------+-----------------------------------+
+| 1		        | 0x08	        | 0			| 0			| 01110b	| 1			|
++---------------+---------------+-----------+-----------------------------------+
+| 2		        | 0x08	        | 0			| 0			| 01110b	| 1			|
++---------------+---------------+-----------+-----------------------------------+
+| 3		        | 0x08	        | 0			| 0			| 01110b	| 1			|
++---------------+---------------+-----------+-----------------------------------+
+| 										...										|
++---------------+---------------+-----------+-----------------------------------+
+| 32	        | 0x08	        | 0			| 0			| 01110b	| 1			|
++---------------+---------------+-----------+-----------+-----------------------+
+| 33	        | 0x08	        | 0			| 0			| 01110b	| 1			|
++---------------+---------------+-----------+-----------+-----------------------+
+| 70	        | 0x08	        | 0			| **3**		| 01110b	| 1			|
++---------------+---------------+-----------+-----------+-----------------------+
+
 
 #Estructuras de datos del sistema operativo
 
@@ -109,9 +131,11 @@ Consiste simplemente en activar el bit mas alto del registro cr0.
 #Interrupciones
 ##Manejo de IDT
 ###Inicializando la IDT
+
 Definimos nuestra IDT como un array de 255 entradas de tipo idt\_entry.
 
 ###Cargando la IDT
+
 Abusamos del macro IDT\_ENTRY, provisto por la cátedra, para cargar en la tabla las interrupciones [0..19],32,33,70.
 Solo la interrupción #70 tiene DPL 3, el resto tiene DPL 0.
 
@@ -119,15 +143,20 @@ El código de las interrupciones lo generamos a partir de dos macros, ISRE e ISR
 Se pushean en un orden determinado para coincidir con el struct **str_cpu** definido en *isr.h*, el mismo sirve para poder acceder fácilmente al estado de los registros desde las interrupciones.
 
 ##Inicializando el teclado
+
 Para lo relacionado al manejo del teclado se crearon los archivos *keyboard.h* y *keyboard.c*.
 
 ### keyboard.h
+
 En el archivo *keyboard.h* se definen las estructuras de ayuda para la lectura del teclado. Para no tener que andar pasando los scancode entre funciones generamos un *enum __keys__* con los nombres de las teclas para identificarlas. En el enum solo se mapearon las comunes, las funciones u el pad numérico no se mapeó.
 Asimismo generamos un *struct __key__* en el cual almacenamos el valor *ASCII* que le corresponde a dicha tecla (con o sin mayus), el scancode y el estado de la misma (presionado o no).
 Se definió un *array* de *key* llamado **keyboard** donde van a almacenarse cada una de las teclas.
-En el código #keyboard pueden observarse las estructuras definidas para el manejo del teclado.
+En el código [**Keyboard.h**](#keyboard) pueden observarse las estructuras definidas para el manejo del teclado.
 
-~~~~~~~{#keyboard .h .numberLines startFrom="5"}
+
+**Keyboard.h**
+
+~~~~~~~{#keyboard .c .numberLines startFrom="5"}
 typedef struct str_key {
 	unsigned char value;
 	unsigned char mValue;
@@ -151,7 +180,10 @@ typedef enum {
 Dentro de *keyboard.c* se define el arreglo *keyboard* como un arreglo de 128 posiciones.
 Se genera un macro para inicializar cada tecla, el mismo recibe el *scancode*, el *valor ASCII* y *valor ASCII modificado* el mismo corresponde al valor que debe mostrarse cuando se presiona *SHIFT* + *TECLA*. Luego se almacena en la posición *scancode* los valores pasados.
 Dentro de **teclado_inicializar()** se llama a esta macro para cada tecla y de esta forma queda inicializado el teclado. Se utilizan los nombres del enum para mayor claridad.
-En el código #initTeclado se muestran las primeras lineas de inicialización del teclado como ejemplo.
+En el código [**Init Teclado**](#initTeclado) se muestran las primeras lineas de inicialización del teclado como ejemplo.
+
+
+**Init Teclado**
 
 ~~~~~~~{#initTeclado .c .numberLines startFrom="43"}
 void teclado_inicializar() {
@@ -185,7 +217,10 @@ Que facilitó la cátedra, las mismas se encuentran en *pic.h*.
 La activación o desactivación de las interrupciones se realizan con las instrucciones "*sti*" y "*cli*".
 Para que el código quede más amistoso con C implementamos las funciones *interrupciones_desactivar* e *interrupciones_activar* dentro de **i386.h**.
 Dentro de las funciones se realiza un *inline* con el código en assembler que queremos ejecutar.
-En el código #habilitarInt se ven las funciones inline para habilitar o deshabilitar interrupciones.
+En el código [**Habilitar Int**](#habilitarInt) se ven las funciones inline para habilitar o deshabilitar interrupciones.
+
+
+**Habilitar Int**
 
 ~~~~~~~{#habilitarInt .c .numberLines startFrom="116"}
 LS_INLINE void interrupciones_desactivar(void) {
