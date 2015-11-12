@@ -73,18 +73,14 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	(*pdir).dir=((uint)ptab)>>12;
 	(*pdir).p=1;
 
-	uint dircucha	= mmu_xy2virtual(cuchax,cuchay);
-	uint dircuchaf	= mmu_xy2fisica(cuchax,cuchay);
 	uint dircod		= CODIGO_PERROS[index_jugador*2+index_tipo];
 
-	mmu_mapear_pagina(0x402000, (uint)pdir, 0x30A000,1,1,1); 
 	mmu_mapear_pagina(0x401000, (uint)pdir, dircod,1,1,1); 
-	mmu_mapear_pagina(dircucha, (uint)pdir, dircuchaf,1,1,1);
 
 	//Mapeo temporalmente la cucha para poder escribirla
-	mmu_mapear_pagina(dircucha, (uint)KERNEL_PDIR, dircuchaf,0,1,1);
-	mmu_copiar_pagina(dircod,dircucha);
-	mmu_unmapear_pagina(dircucha,KERNEL_PDIR);
+	mmu_mapear_pagina(0x401000, (uint)KERNEL_PDIR, dircod,0,1,1);
+	mmu_copiar_pagina(dircod,0x401000);
+	mmu_unmapear_pagina(0x401000,KERNEL_PDIR);
 
 	mmu_mapear_pagina(0x400000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //compartida
 
