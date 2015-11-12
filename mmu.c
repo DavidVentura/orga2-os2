@@ -59,8 +59,8 @@ void mmu_inicializar_dir_kernel() {
 	}
 }
 
+//Si index_jugador>1 se va todo a la mierda
 void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_tipo, uint cuchax, uint cuchay){
-	//Si index_jugador>1 se va todo a la mierda
 	pde* pdir = (pde*)mmu_proxima_pagina_fisica_libre();
 	pte* ptab = (pte*)mmu_proxima_pagina_fisica_libre();
 	inicializar_pdir(pdir,1,1,0);
@@ -72,25 +72,25 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	(*pdir).dir=((uint)ptab)>>12;
 	(*pdir).p=1;
 
-	uint dircucha=mmu_xy2virtual(cuchax,cuchay);
-	uint dircuchaf=mmu_xy2fisica(cuchax,cuchay);
+	uint dircucha	= mmu_xy2virtual(cuchax,cuchay);
+	uint dircuchaf	= mmu_xy2fisica(cuchax,cuchay);
+	uint dircod		= CODIGO_PERROS[index_jugador*2+index_tipo];
 
-	uint dircod=CODIGO_PERROS[index_jugador*2+index_tipo];
 	mmu_mapear_pagina(0x401000, (uint)pdir, dircod,1,1,1); 
 	mmu_mapear_pagina(dircucha, (uint)pdir, dircuchaf,1,1,1);
-	mmu_mapear_pagina(dircucha, (uint)KERNEL_PDIR, dircuchaf,0,1,1); //Mapeo temporalmente la cucha para poder escribirla
 
+	//Mapeo temporalmente la cucha para poder escribirla
+	mmu_mapear_pagina(dircucha, (uint)KERNEL_PDIR, dircuchaf,0,1,1);
 	mmu_copiar_pagina(dircod,dircucha);
 	mmu_unmapear_pagina(dircucha,KERNEL_PDIR);
 
-	//El primer perro lo deja ok, los siguientes rompen dest
-	mmu_mapear_pagina(0x400000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //FIXME a donde va esto? compartida
+	mmu_mapear_pagina(0x400000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //compartida
 
 	perro->cr3=(uint) pdir;
 }
 
 
-void mmu_inicializar_pagina(uint* pagina){ //No testeado
+void mmu_inicializar_pagina(uint* pagina){
 		int i =0;
 		for(i=0;i<1024;i++)
 			*(pagina+i)=0x0;
@@ -127,8 +127,8 @@ void mmu_mapear_pagina(uint virtual, uint cr3, uint fisica, uint us, uint rw, ui
 	tlbflush();
 
 }
-//Fisica a fisica
-void mmu_copiar_pagina(uint src, uint dst){ //No testeado
+
+void mmu_copiar_pagina(uint src, uint dst){
 	uint  i =0;
 	uint* s =(uint*)src;
 	uint* d =(uint*)dst;
@@ -153,7 +153,7 @@ void inicializar_pdir(pde* base,uint us, uint rw, uint p){
 	pde_entry.us=us;
 	pde_entry.rw=rw;
 	pde_entry.p=p; 
-	pde_entry.dir=0xFFFFF; //Lee algo no inicializado al mapear durante int70
+	pde_entry.dir=0xFFFFF;
 
 	while(curPage<1024){
 		*base=pde_entry;

@@ -64,8 +64,7 @@ void sched_agregar_tarea(perro_t *perro) {
 	uint tss_new =crear_tss(GDT_OFF_KDATA_DESC, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_OFF_UCODE_DESC|3,GDT_OFF_UDATA_DESC|3,GDT_OFF_UDATA_DESC|3);
 	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
 	//pasarle al scheduler la entrada de la gdt
-	breakpoint();
-	perro->id=gdt_index; //FIXME test
+	//breakpoint();
 
 	uint libre = sched_buscar_tarea_libre(perro->jugador->index);
 	scheduler.tasks[libre].perro = perro;
@@ -124,25 +123,23 @@ ushort sched_atender_tick() {
 	if( !ya_hay_una_puta_tarea )
 		return 0;
 
-
 //	breakpoint();
 	// Consigo proximo perro a ejecutar
 	uint proximo = sched_proxima_a_ejecutar();
 	// Si el proximo es el mismo, no vuelvo a saltar
 	perro_t* p = scheduler.tasks[proximo].perro;
+
+	// Actualizo reloj 
 	screen_actualizar_reloj_perro (p);
 	screen_pintar_reloj_perro(p);
 	if ((p->id<<3) == rtr())
 		return 0;
 
 	scheduler.current = proximo;
-	// Actualizo reloj 
-
 
 	// Sino salto al siguiente perro
 	lcr3(p->cr3);
-	//Esta mierda quiere saltar al 48 cuando toco O
-	tarea(p->id<<3);
+	tarea(scheduler.tasks[proximo].gdt_index<<3);
 
 	return 1;
 }

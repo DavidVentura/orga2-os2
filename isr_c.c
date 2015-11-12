@@ -20,6 +20,7 @@ void interrupcion_atender(cpu* status) {
 			teclado_atender();
 			break;
 		default:
+			breakpoint();
 			// TODO: Mover dentro del debug
 			print("Int: ", 0, 0, 0xF);
 			print_dec(cpuStatus->intNum, 5, 0, 0x4);
