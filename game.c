@@ -90,12 +90,14 @@ perro_t* game_perro_en_posicion(uint x, uint y)
 void game_terminar_si_es_hora() {
 	int startX, startY, ancho, alto;
 	startY = 0; startX = 0; ancho = 80; alto  = 45;
+
+	unsigned int cont = 0;
+	unsigned int color = 0;
 	screen_pintar_rect(0, 0x77, startY, startX, alto, ancho);
 	while(1) {
-		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x7F);
-		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x6F);
-		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x5F);
-		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x4F);
-		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x3F);
+		screen_pintar_linea_v(0, color, startY, startX+cont, alto);
+		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x0F);
+		cont = (cont + 1) % ancho;
+		color = (color + 18) & 255;
 	}
 }
