@@ -61,7 +61,7 @@ void sched_agregar_tarea(perro_t *perro) {
 		return;
 	
 	// It's alive!... IT'S ALIVE!
-	perro->libre= FALSE;
+	perro->libre = FALSE;
 	
 	// Preparo nuevo stack y mapeo
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
@@ -127,9 +127,14 @@ ushort sched_atender_tick() {
 //	breakpoint();
 	// Consigo proximo perro a ejecutar
 	uint proximo = sched_proxima_a_ejecutar();
+
 	// Si el proximo es el mismo, no vuelvo a saltar
 	perro_t* p = scheduler.tasks[proximo].perro;
 
+	if (p->libre) {
+		ya_hay_una_puta_tarea = 0;
+		return 0;
+	}
 	//if ((p->id<<3) == rtr())
 	if ((scheduler.tasks[scheduler.current].gdt_index <<3) == rtr())
 		return 0;
