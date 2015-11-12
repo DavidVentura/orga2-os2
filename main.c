@@ -32,6 +32,11 @@ void kmain() {
     // Inicializar tss de la tarea Idle
     // Inicializar el scheduler
 	tss_inicializar();
+
+	
+	// Inicializo scheduler
+	sched_inicializar();
+
     // Cargar tarea inicial
     // Saltar a la primera tarea: Idle
 	tarea(DTSS_IDLE<<3);
