@@ -78,10 +78,14 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 	int nuevo_y = perro->y + y;
 
 
+	if (nuevo_x<1)
+		nuevo_x=1;
 	if (nuevo_x>MAPA_ANCHO-1)
 		nuevo_x=MAPA_ANCHO-1;
 	if (nuevo_y>MAPA_ALTO-1)
 		nuevo_y=MAPA_ALTO-1;
+	if (nuevo_y<1)
+		nuevo_y=1;
 	screen_borrar_perro(perro);
 	perro->x=nuevo_x;
 	perro->y=nuevo_y;

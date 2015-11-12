@@ -27,7 +27,7 @@ void task(int x, int y) {
 // a partir de aqui tenemos la estructura disponible 
 
 
-	__asm __volatile("xchg %%bx, %%bx" : :);
+//	__asm __volatile("xchg %%bx, %%bx" : :);
 	syscall_moverse(0x4);
 	syscall_moverse(0x4);
 	syscall_moverse(0x4);

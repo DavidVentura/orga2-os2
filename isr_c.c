@@ -19,36 +19,35 @@ void interrupcion_atender(cpu* status) {
 			teclado_atender();
 			break;
 		default:
-			breakpoint();
-			// TODO: Mover dentro del debug
-			print("Int: ", 0, 0, 0xF);
-			print_dec(cpuStatus->intNum, 5, 0, 0x4);
-
-			print("Eflags: ", 12, 0, 0xF);
-			print_hex(cpuStatus->eflags, 20, 0, 0x4);
-
-			print("CS: ", 30, 0, 0xF);
-			print_hex(cpuStatus->cs, 34, 0, 0x4);
-
-			print("EIP: ", 42, 0, 0xF);
-			print_hex(cpuStatus->eip, 47, 0, 0x4);
-
-			print("Error Cod: ", 59, 0, 0xF);
-			print_hex(cpuStatus->errorCd, 70, 0, 0x4);
-
-			print("SS: ", 0, 1, 0xF);
-			print_hex(cpuStatus->ss, 5, 1, 0x4);
-
-			print("ESP: ", 10, 1, 0xF);
-			print_hex(cpuStatus->esp, 14, 1, 0x4);
-
-			// Si está activado el debug, muestro mensaje
 			if (debugEnabled && !onDebug) {
+				print("Int: ", 0, 0, 0xF);
+				print_dec(cpuStatus->intNum, 5, 0, 0x4);
+
+				print("Eflags: ", 12, 0, 0xF);
+				print_hex(cpuStatus->eflags, 20, 0, 0x4);
+
+				print("CS: ", 30, 0, 0xF);
+				print_hex(cpuStatus->cs, 34, 0, 0x4);
+
+				print("EIP: ", 42, 0, 0xF);
+				print_hex(cpuStatus->eip, 47, 0, 0x4);
+
+				print("Error Cod: ", 59, 0, 0xF);
+				print_hex(cpuStatus->errorCd, 70, 0, 0x4);
+
+				print("SS: ", 0, 1, 0xF);
+				print_hex(cpuStatus->ss, 5, 1, 0x4);
+
+				print("ESP: ", 10, 1, 0xF);
+				print_hex(cpuStatus->esp, 14, 1, 0x4);
+
+				// Si está activado el debug, muestro mensaje
 				onDebug = 1;
 				printDebug(cpuStatus->intNum, cpuStatus->errorCd);
-				sched_remover_tarea_actual();
-				tarea(DTSS_IDLE<<3);
+				breakpoint();
 			}
+			sched_remover_tarea_actual();
+			tarea(DTSS_IDLE<<3);
 			
 			break;
 	}
@@ -157,7 +156,7 @@ void teclado_atender(){
 
 void printDebug(unsigned int interrupcion, unsigned int errorCode) {
 	int startX, startY, ancho, alto;
-	startY = 4; startX = 25; ancho = 30; alto  = 36;
+	startY = 4; startX = 25; ancho = 33; alto  = 36;
 
 	// Imprimo cuadrado raro
 	screen_pintar_rect(0, 0x77, startY, startX, alto, ancho);

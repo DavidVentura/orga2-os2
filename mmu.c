@@ -86,7 +86,6 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	mmu_copiar_pagina(dircod,dircucha);
 	mmu_unmapear_pagina(dircucha,KERNEL_PDIR);
 
-	breakpoint();
 	mmu_mapear_pagina(0x400000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //compartida
 
 	perro->cr3=(uint) pdir;

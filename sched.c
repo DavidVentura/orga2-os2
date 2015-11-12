@@ -35,7 +35,6 @@ int sched_buscar_indice_tarea(uint gdt_index) {
     return -1;
 }
 
-
 // Busco la proxima tarea libre del jugador que me pasan
 int sched_buscar_tarea_libre(unsigned int jugador) {
 	unsigned int libre = jugador;
@@ -84,9 +83,8 @@ void sched_remover_tarea_actual(){
 }
 
 
-void sched_remover_tarea(unsigned int gdt_index) {
-	int task_index = sched_buscar_indice_tarea(gdt_index);
-	scheduler.tasks[task_index].perro->vivo = 0;
+void sched_remover_tarea(unsigned int index) {
+	scheduler.tasks[index].perro->vivo = 0;
 }
 
 
@@ -132,11 +130,13 @@ ushort sched_atender_tick() {
 	// Si el proximo es el mismo, no vuelvo a saltar
 	perro_t* p = scheduler.tasks[proximo].perro;
 
+	//if ((p->id<<3) == rtr())
+	if ((scheduler.tasks[scheduler.current].gdt_index <<3) == rtr())
+		return 0;
+
 	// Actualizo reloj 
 	screen_actualizar_reloj_perro (p);
 	screen_pintar_reloj_perro(p);
-	if ((p->id<<3) == rtr())
-		return 0;
 
 	scheduler.current = proximo;
 
