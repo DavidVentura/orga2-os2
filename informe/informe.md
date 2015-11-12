@@ -472,7 +472,10 @@ Una vez que saltamos, el kernel se queda a la espera de interrupciones (Ver [**M
 
 
 #El jueguito
-No se que poner acá
+Si hay interrupciones de teclado se manejan como ya se informó en las secciones anteriores.
+En caso de añadirse un perro el scheduler va a proceder a ejecutarlo y saltar entre los distintos perros que haya.
+
+Como limitación el sistema solo le permite a un jugador tener un máximo de *8* perros, no importa si el perro está vivo o muerto.
 
 # Referencias
 
