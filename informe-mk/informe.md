@@ -24,9 +24,6 @@ geometry: margin=2cm
 ##GDT
 En este TP utilizamos la GDT para almacenar:
 
-* Descriptores de segmento
-* Descriptores de TSS
-
 ###Descriptores de segmento
 
 Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
@@ -46,10 +43,20 @@ Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
 | User Code		| B			| 500MB		| 0			| A (RW+X)	|
 +---------------+-----------+-----------------------------------+
 | Video Data	| C			| 4000b		| 0xB800	| 2 (RW)	|
-+---------------+-----------+-----------------------------------+
++---------------+-----------+-----------+-----------------------+
 
 
 ###Descriptores de TSS
+
++------------+-------------+-----+--------+---------+---------+---+---+---+---+
+| Descriptor | Comentario  | SS0 | ESP0   | CR3     | EIP     | SS| CS|DS |SS |
++============+=============+=====+========+=========+=========+===+===+===+===+
+| Inicial    | Inválido    | 0   | 0      | 0       | 0       | 0 | 0 | 0 | 0 |
++------------+-------------+-----+--------+---------+---------+---+---+---+---+
+| Idle       | Modo Kernel | 8   | 0x27000| 0x28000 | 0x16000 | 8 | 9 | 8 | 8 | 
++------------+-------------+-----+--------+---------+---------+---+----+---+--+
+| Perro      | Dinámica    | A   |Dinámico| Dinámico|Dinámico | A | B | A | A | 
++------------+-------------+-----+--------+---------+---------+---+----+---+--+
 
 ##IDT
 
@@ -116,6 +123,7 @@ Suerte fabian
 #Habilitando interrupciones
 
 /Suerte fabian
+
 #Habilitando tareas
 Para poder lograr nuestro próximo objetivo (Saltar a una tarea) necesitamos:
 
