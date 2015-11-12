@@ -44,9 +44,9 @@ void interrupcion_atender(cpu* status) {
 				// Si está activado el debug, muestro mensaje
 				onDebug = 1;
 				printDebug(cpuStatus->intNum, cpuStatus->errorCd);
-				breakpoint();
 			}
 			sched_remover_tarea_actual();
+			breakpoint();
 			tarea(DTSS_IDLE<<3);
 			
 			break;

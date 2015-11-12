@@ -82,11 +82,9 @@ void sched_remover_tarea_actual(){
 	sched_remover_tarea(scheduler.current);
 }
 
-
 void sched_remover_tarea(unsigned int index) {
 	//El perro se pone vivo==0
 	scheduler.tasks[index]=(sched_task_t) { 0, NULL };
-
 }
 
 
@@ -148,5 +146,3 @@ ushort sched_atender_tick() {
 
 	return 1;
 }
-
-

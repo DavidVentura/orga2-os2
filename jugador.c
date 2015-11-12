@@ -52,14 +52,14 @@ perro_t* game_jugador_dame_perro_libre(jugador_t *j) {
 
 
 // debe encargarse de buscar un perro libre, configurarlo, y inicializar su mapeo de memoria, tss, y lugar en el sched
-void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y)
-{
+void game_jugador_lanzar_perro(jugador_t *j, uint tipo, int x, int y) {
 	if (game_perro_en_posicion(x,y) != NULL)
 		return;
 
 	perro_t *perro = game_jugador_dame_perro_libre(j);
-	if (perro == NULL)
+	if (perro == NULL){
 		return;
+	}
 
 	game_perro_reciclar_y_lanzar(perro, tipo);
 }
@@ -86,8 +86,7 @@ uint game_jugador_moverse(jugador_t *j, int x, int y)
 }
 
 // descarga 1 hueso en la cucha y actualiza el screen
-void game_jugador_anotar_punto(jugador_t *j)
-{
+void game_jugador_anotar_punto(jugador_t *j){
     ultimo_cambio = MAX_SIN_CAMBIOS;
 
 	j->puntos++;
@@ -100,8 +99,7 @@ void game_jugador_anotar_punto(jugador_t *j)
 
 
 // guarda la orden en el jugador para que los perros puedan preguntarla luego (mediante un syscall)
-void game_jugador_dar_orden(jugador_t *jugador, int orden)
-{
+void game_jugador_dar_orden(jugador_t *jugador, int orden){
 	jugador->ult_orden=orden;	
 }
 
