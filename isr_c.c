@@ -10,9 +10,8 @@ void interrupcion_atender(cpu* status) {
 	switch (cpuStatus->intNum){
 		case 32:
 			fin_intr_pic1();
-			screen_actualizar_reloj_global();
 			if (!onDebug){
-				sched_atender_tick();
+				game_atender_tick();
 			}
 			break;
 		case 33:
@@ -94,8 +93,7 @@ uint int70(uint tipo, uint dir){
 		case 0x4: //Recibir orden
 			return aPerro->jugador->ult_orden;
 	}
-	//scheduler_desalojame_pls()
-	tarea(DTSS_IDLE<<3);
+	tarea(DTSS_IDLE<<3); //Desalojo a la tarea
 	return 0;
 }
 

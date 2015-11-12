@@ -15,14 +15,11 @@ int rand() {
 }
 
 void task(int x_target, int y_target) {
-    /* Tarea */
   while(1) {
+    /* Tarea 
 	__asm __volatile("xchg %%bx, %%bx" : :);
 
   	syscall_moverse(dir[rand()]);
+*/
   }
 }
-
-
-
-

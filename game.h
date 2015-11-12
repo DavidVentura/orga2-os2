@@ -147,7 +147,7 @@ void game_jugador_dar_orden(jugador_t *jugador, int orden);
 
 // debe atender la interrupción de reloj para actualizar la pantalla y terminar
 // si es hora, recibe el perro que está corriendo actualmente
-void game_atender_tick(perro_t *perro);
+void game_atender_tick();
 
 // devuelve la cantidad de huesos que hay en la posición pasada como parametro
 uint game_huesos_en_posicion(uint x, uint y);

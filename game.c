@@ -89,4 +89,6 @@ perro_t* game_perro_en_posicion(uint x, uint y)
 // termina si se agotaron los huesos o si hace tiempo que no hay ningun cambio
 void game_terminar_si_es_hora()
 {
+	//A implementar
+	breakpoint();
 }

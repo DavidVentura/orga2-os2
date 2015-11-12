@@ -26,8 +26,15 @@ uint game_syscall_manejar(uint syscall, uint param1)
 
 // ~~~ debe atender la interrupción de reloj para actualizar la pantalla y terminar si es hora,
 // ~~~ recibe el perro que está corriendo actualmente
-void game_atender_tick(perro_t *perro)
+void game_atender_tick()
 {
+//	screen_inicializar();
+	screen_actualizar_reloj_global();
+    ultimo_cambio--;
+	if (ultimo_cambio==0)
+		game_terminar_si_es_hora();
+
+	sched_atender_tick();
 }
 
 

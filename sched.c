@@ -74,7 +74,7 @@ void sched_agregar_tarea(perro_t *perro) {
 
 void sched_remover_tarea(unsigned int gdt_index) {
 	int task_index = sched_buscar_indice_tarea(gdt_index);
-	scheduler[task_index].perro->vivo = 0;
+	scheduler.tasks[task_index].perro->vivo = 0;
 	// TODO: Falta
 }
 

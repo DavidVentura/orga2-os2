@@ -33,6 +33,7 @@ void mmu_inicializar(){
 	mmu_inicializar_dir_kernel();
 	paginacion_activar();
 	mmu_mapear_pagina(0x200000,KERNEL_PDIR,0xB800,0,1,1);
+	mmu_unmapear_pagina(0x3FF00, KERNEL_PDIR); //EJ 3.f
 }
 
 void mmu_inicializar_dir_kernel() {
@@ -76,6 +77,7 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	uint dircuchaf	= mmu_xy2fisica(cuchax,cuchay);
 	uint dircod		= CODIGO_PERROS[index_jugador*2+index_tipo];
 
+	mmu_mapear_pagina(0x402000, (uint)pdir, 0x30A000,1,1,1); 
 	mmu_mapear_pagina(0x401000, (uint)pdir, dircod,1,1,1); 
 	mmu_mapear_pagina(dircucha, (uint)pdir, dircuchaf,1,1,1);
 
@@ -84,6 +86,7 @@ void mmu_inicializar_memoria_perro(perro_t *perro, int index_jugador, int index_
 	mmu_copiar_pagina(dircod,dircucha);
 	mmu_unmapear_pagina(dircucha,KERNEL_PDIR);
 
+	breakpoint();
 	mmu_mapear_pagina(0x400000, (uint)pdir, 0x300000+0x1000*index_jugador,1,1,1); //compartida
 
 	perro->cr3=(uint) pdir;
