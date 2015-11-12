@@ -30,7 +30,7 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 
 	// ahora debo llamar a rutinas que inicialicen un nuevo mapa de
 	// memoria para el nuevo perro, que carguen su tss correspondiente,
-	mmu_inicializar_memoria_perro(perro,j->index,perro->index,j->x_cucha,j->y_cucha);
+	mmu_inicializar_memoria_perro(perro,j->index,perro->tipo,j->x_cucha,j->y_cucha);
 	// lo scheduleen y finalmente lo pinten en pantalla
 	sched_agregar_tarea(perro);
 	screen_pintar_perro(perro);
@@ -40,7 +40,9 @@ void game_perro_reciclar_y_lanzar(perro_t *perro, uint tipo)
 // el perro descargó sus huesos o realizó una acción no válida y caputó, hay que sacarlo del sistema.
 void game_perro_termino(perro_t *perro)
 {
-//	~~~ completar ~~~
+	perro->vivo=0;
+	perro->x=-1;
+	perro->y=-1;
 }
 
 // transforma código de dirección en valores x e y 
@@ -91,7 +93,7 @@ uint game_perro_mover(perro_t *perro, direccion dir)
 	perro->y=nuevo_y;
 	
 	screen_pintar_perro(perro);
-    return 0; //res+nuevo_x + nuevo_y + viejo_x + viejo_y; // uso todas las variables para que no tire warning->error.
+    return 0;
 }
 
 // recibe un perro, el cual debe cavar en su posición

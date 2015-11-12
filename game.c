@@ -87,8 +87,15 @@ perro_t* game_perro_en_posicion(uint x, uint y)
 
 
 // termina si se agotaron los huesos o si hace tiempo que no hay ningun cambio
-void game_terminar_si_es_hora()
-{
-	//A implementar
-	breakpoint();
+void game_terminar_si_es_hora() {
+	int startX, startY, ancho, alto;
+	startY = 0; startX = 0; ancho = 80; alto  = 45;
+	screen_pintar_rect(0, 0x77, startY, startX, alto, ancho);
+	while(1) {
+		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x7F);
+		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x6F);
+		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x5F);
+		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x4F);
+		print("FIN DEL JUEGO - NOS QUEDAMOS SIN PRESUPUESTO",17,23,0x3F);
+	}
 }

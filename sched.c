@@ -84,7 +84,9 @@ void sched_remover_tarea_actual(){
 
 
 void sched_remover_tarea(unsigned int index) {
-	scheduler.tasks[index].perro->vivo = 0;
+	//El perro se pone vivo==0
+	scheduler.tasks[index]=(sched_task_t) { 0, NULL };
+
 }
 
 

@@ -117,17 +117,37 @@ void teclado_atender(){
 				game_jugador_moverse(&jugadorB,1,0);
 				break;
 			case P:
-				game_jugador_lanzar_perro(&jugadorB, 1, jugadorB.x, jugadorB.y);
+				game_jugador_lanzar_perro(&jugadorB, 1, jugadorB.x_cucha, jugadorB.y_cucha);
 				break;
 			case O:
-				game_jugador_lanzar_perro(&jugadorB, 0, jugadorB.x, jugadorB.y);
+				game_jugador_lanzar_perro(&jugadorB, 0, jugadorB.x_cucha, jugadorB.y_cucha);
 				break;
 			case E:
-				game_jugador_lanzar_perro(&jugadorA, 1, jugadorA.x, jugadorA.y);
+				game_jugador_lanzar_perro(&jugadorA, 1, jugadorA.x_cucha, jugadorA.y_cucha);
 				break;
 			case Q:
 				game_jugador_lanzar_perro(&jugadorA, 0, jugadorA.x, jugadorA.y);
 				break;
+			case Z:
+				 game_jugador_dar_orden(&jugadorA, 0);
+				break;
+			case X:
+				 game_jugador_dar_orden(&jugadorA, 1);
+				break;
+			case C:
+				 game_jugador_dar_orden(&jugadorA, 2);
+				break;
+
+			case B:
+				 game_jugador_dar_orden(&jugadorB, 0);
+				break;
+			case N:
+				 game_jugador_dar_orden(&jugadorB, 1);
+				break;
+			case M:
+				 game_jugador_dar_orden(&jugadorB, 2);
+				break;
+
 			case Y:		// Toggle Debug
 				debugEnabled = !debugEnabled;
 
@@ -156,7 +176,7 @@ void teclado_atender(){
 
 void printDebug(unsigned int interrupcion, unsigned int errorCode) {
 	int startX, startY, ancho, alto;
-	startY = 4; startX = 25; ancho = 33; alto  = 36;
+	startY = 4; startX = 24; ancho = 33; alto  = 36;
 
 	// Imprimo cuadrado raro
 	screen_pintar_rect(0, 0x77, startY, startX, alto, ancho);

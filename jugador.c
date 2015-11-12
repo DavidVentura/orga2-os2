@@ -31,21 +31,18 @@ void game_jugador_inicializar(jugador_t *j)
 
 
 	int i;
-	for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++)
-	{
-		game_perro_inicializar(&j->perros[i], j, i, i+j->index*8);
+	for (i = 0; i < MAX_CANT_PERROS_VIVOS; i++) {
+		game_perro_inicializar(&j->perros[i], j, i, j->index*8+i);
 	}
 
 }
 
 
 // debe devolver el proximo perro del arreglo que no esté siendo usado actualmente
-perro_t* game_jugador_dame_perro_libre(jugador_t *j)
-{
+perro_t* game_jugador_dame_perro_libre(jugador_t *j) {
 	int i = 0;
 
-	for (; i < MAX_CANT_PERROS_VIVOS; i++)
-	{
+	for (; i < MAX_CANT_PERROS_VIVOS; i++){
 		if (j->perros[i].libre == TRUE)
 			return &j->perros[i];
 	}
