@@ -17,6 +17,8 @@ main
 #include "i386.h"
 #include "keyboard.h"
 #include "tss.h"
+#include "sched.h"
+
 extern void idt_cargar();
 extern void resetear_pic();
 extern void habilitar_pic();
