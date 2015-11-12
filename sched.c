@@ -39,11 +39,13 @@ int sched_buscar_indice_tarea(uint gdt_index) {
 // Busco la proxima tarea libre del jugador que me pasan
 int sched_buscar_tarea_libre(unsigned int jugador) {
 	unsigned int libre = jugador;
+	unsigned int cont = 0;
 
-	while (scheduler.tasks[libre].gdt_index != 0) {
+	while (scheduler.tasks[libre].gdt_index != 0 && cont < MAX_CANT_TAREAS_VIVAS) {
 		libre = (libre + 2) % MAX_CANT_TAREAS_VIVAS;
+		cont++;
 	}
-	return libre;	
+	return cont < MAX_CANT_TAREAS_VIVAS ? libre : -1;	
 }
 
 
@@ -53,21 +55,26 @@ perro_t* sched_tarea_actual() {
 
 
 void sched_agregar_tarea(perro_t *perro) {
+	int libre = sched_buscar_tarea_libre(perro->jugador->index);
+	
+	// Si no hay tareas libres no hago nada
+	if (libre == -1)
+		return;
+	
+	// It's alive!... IT'S ALIVE!
 	perro->vivo = 1;
-
+	
+	// Preparo nuevo stack y mapeo
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
 	mmu_mapear_pagina(nuevo_stack, perro->cr3,nuevo_stack,0,1,1); //pagina de stack para nivel 0 (int)
 
 	//cargar un descriptor de tss y meterlo en gdt
 	uint tss_new =crear_tss(GDT_OFF_KDATA_DESC, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_OFF_UCODE_DESC|3,GDT_OFF_UDATA_DESC|3,GDT_OFF_UDATA_DESC|3);
 	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
-	//pasarle al scheduler la entrada de la gdt
-	//breakpoint();
-
-	uint libre = sched_buscar_tarea_libre(perro->jugador->index);
+	
+	// Lo cargo en el scheduler
 	scheduler.tasks[libre].perro = perro;
 	scheduler.tasks[libre].gdt_index = gdt_index;
-
 	ya_hay_una_puta_tarea = 1;
 }
 
