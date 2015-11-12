@@ -107,19 +107,27 @@ Consiste simplemente en activar el bit mas alto del registro cr0.
 ....
 
 #Inicializando la IDT
-Suerte fabian
+Definimos nuestra IDT como un array de 255 entradas de tipo idt\_entry.
 
 #Cargando la idt
+Abusamos del macro IDT\_ENTRY, provisto por la cátedra, para cargar en la tabla las interrupciones [0..19],32,33,70.
+Solo la interrupción #70 tiene DPL 3, el resto tiene DPL 0.
+
+El código de las interrupciones lo generamos a partir de dos macros, ISRE e ISR (esta ajusta el stack haciendo un `push 0` para simular el código de error), las cuales pushean el número de interrupción y llaman a `_isr_generico`, que se encarga de pushear todos los selectores de segmento, registros de control y registros de propósito general, para la pantalla de debug.
 
 #Inicializando el teclado
+Suerte fabian
 
 #Reseteando el pic
 
 #Habilitando el pic
+/Suerte fabian
 
 #Habilitando interrupciones
 
-/Suerte fabian
+~~~~~~~{#codigo .asm .numberLines startFrom="1"}
+sti
+~~~~~~~
 
 #Habilitando tareas
 Para poder lograr nuestro próximo objetivo (Saltar a una tarea) necesitamos:
