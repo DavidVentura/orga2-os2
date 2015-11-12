@@ -16,7 +16,7 @@ tss tss_jugadorB[MAX_CANT_PERROS_VIVOS];
 uint INICIO_TSS=0x180000;
 
 void tss_inicializar() {
-	uint tss_inicial=crear_tss(GDT_OFF_KDATA_DESC, KSTACK, KERNEL_PDIR, 0x16000, KSTACK, KSTACK,GDT_OFF_KCODE_DESC,GDT_OFF_KDATA_DESC,GDT_OFF_KDATA_DESC);
+	uint tss_inicial=crear_tss(0, 0, 0, 0, 0, 0,0,0,0);
 	uint tss_idle   =crear_tss(GDT_OFF_KDATA_DESC, KSTACK, KERNEL_PDIR, 0x16000, KSTACK, KSTACK,GDT_OFF_KCODE_DESC,GDT_OFF_KDATA_DESC,GDT_OFF_KDATA_DESC);
 	//Magic number?
 
