@@ -42,10 +42,9 @@ uchar screen_valor_actual(uint fila, uint columna)
     return p[fila][columna].c;
 }
 
-void print(const char * text, uint x, uint y, unsigned short attr) {
-    int i;
-    for (i = 0; text[i] != 0; i++)
-     {
+uint print(const char * text, uint x, uint y, unsigned short attr) {
+    uint i;
+    for (i = 0; text[i] != 0; i++) {
         screen_pintar(text[i], attr, y, x);
 
         x++;
@@ -54,6 +53,7 @@ void print(const char * text, uint x, uint y, unsigned short attr) {
             y++;
         }
     }
+	return i;
 }
 
 void print_hex(uint numero, uint x, uint y, unsigned short attr) {
@@ -69,6 +69,13 @@ void print_hex(uint numero, uint x, uint y, unsigned short attr) {
     hexa[5] = letras[ ( numero & 0x00F00000 ) >> 20 ];
     hexa[6] = letras[ ( numero & 0x0F000000 ) >> 24 ];
     hexa[7] = letras[ ( numero & 0xF0000000 ) >> 28 ];
+
+    p[y][x].c = '0';
+    p[y][x].a = attr;
+    p[y][x +1].c = 'x';
+    p[y][x +1].a = attr;
+	x+=2;
+
     for(i = 0; i < size; i++) {
         p[y][x + size - i - 1].c = hexa[i];
         p[y][x + size - i - 1].a = attr;
