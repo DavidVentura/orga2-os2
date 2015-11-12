@@ -29,7 +29,7 @@ uint CODIGO_PERROS[4] = { 0x10000, 0x11000, 0x12000, 0x13000 };
 #define IDENTITY_MAPPING 0x3FFFFF
 
 void mmu_inicializar(){
-	cr3_cargar(KERNEL_PDIR);
+	lcr3(KERNEL_PDIR);
 	mmu_inicializar_dir_kernel();
 	paginacion_activar();
 	mmu_mapear_pagina(0x200000,KERNEL_PDIR,0xB800,0,1,1);

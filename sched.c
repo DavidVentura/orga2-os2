@@ -140,7 +140,7 @@ ushort sched_atender_tick() {
 
 
 	// Sino salto al siguiente perro
-	cr3_cargar(p->cr3);
+	lcr3(p->cr3);
 	//Esta mierda quiere saltar al 48 cuando toco O
 	tarea(p->id<<3);
 

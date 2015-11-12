@@ -20,7 +20,6 @@ global paginacion_activar
 global cosa_loca_paginacion
 global start
 global idt_cargar
-global cr3_cargar
 
 
 ;; Saltear seccion de datos
@@ -114,11 +113,6 @@ paginacion_activar:
 	ret
 idt_cargar:
 	lidt [IDT_DESC]
-	ret
-
-cr3_cargar:
-	mov eax,[esp+4]
-	mov cr3, eax
 	ret
 
 tarea:
