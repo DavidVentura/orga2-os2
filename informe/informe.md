@@ -48,11 +48,11 @@ Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
 
 ###Descriptores de TSS
 
-| Descriptor | Comentario  | SS0 | ESP0   | CR3     | EIP     | SS| CS|DS |SS |
-|------------|-------------|-----|--------|---------|---------|---|---|---|---|
-| Inicial    | Inválido    | 0   | 0      | 0       | 0       | 0 | 0 | 0 | 0 |
-| Idle       | Modo Kernel | 8   | 0x27000| 0x28000 | 0x16000 | 8 | 9 | 8 | 8 | 
-| Perro      | Dinámica    | A   |Dinámico| Dinámico|Dinámico | A | B | A | A | 
+| Descriptor | Comentario  | SS0 | ESP0   | CR3     | EIP     | SS| CS|DS |
+|------------|-------------|-----|--------|---------|---------|---|---|---|
+| Inicial    | Inválido    | 0   | 0      | 0       | 0       | 0 | 0 | 0 |
+| Idle       | Modo Kernel | 8   | 0x27000| 0x28000 | 0x16000 | 8 | 9 | 8 |
+| Perro      | Dinámica    | A   |Dinámico| Dinámico|Dinámico | A | B | A |
 
 
 ##IDT

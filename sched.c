@@ -38,12 +38,12 @@ int sched_buscar_indice_tarea(uint gdt_index) {
 int sched_buscar_tarea_libre(unsigned int jugador) {
 	unsigned int libre = jugador;
 
-	print_dec(libre, 20,20, 0xF);
-	print_dec(scheduler.tasks[libre].gdt_index, 22,22, 0xF);
+	//print_dec(libre, 20,20, 0xF);
+	//print_dec(scheduler.tasks[libre].gdt_index, 22,22, 0xF);
 	while (scheduler.tasks[libre].gdt_index != 0) {
 		breakpoint();
-		print_dec(libre, 20,20, 0xF);
-		print_dec(scheduler.tasks[libre].gdt_index, 22,22, 0xF);
+	//	print_dec(libre, 20,20, 0xF);
+	//	print_dec(scheduler.tasks[libre].gdt_index, 22,22, 0xF);
 		libre = (libre + 2) % MAX_CANT_TAREAS_VIVAS;
 	}
 	return libre;	
@@ -65,7 +65,6 @@ void sched_agregar_tarea(perro_t *perro) {
 	//cargar un descriptor de tss y meterlo en gdt
 	uint tss_new =crear_tss(GDT_OFF_KDATA_DESC, nuevo_stack, perro->cr3, 0x401000, 0x402000-12, 0x402000-12,GDT_OFF_UCODE_DESC|3,GDT_OFF_UDATA_DESC|3,GDT_OFF_UDATA_DESC|3);
 	uint gdt_index=cargar_tss_en_gdt(tss_new,3);
-
 	//pasarle al scheduler la entrada de la gdt
 	uint libre = sched_buscar_tarea_libre(perro->jugador->index);
 	scheduler.tasks[libre].perro = perro;
@@ -100,7 +99,7 @@ uint sched_proxima_a_ejecutar() {
 	// Recorro buscando los del otro jugador
 	next = (scheduler.current + 1) % MAX_CANT_TAREAS_VIVAS;
 	do {
-		print_dec(next, 10,2, 0x8);
+		//print_dec(next, 10,2, 0x8);
 		sig_perro = scheduler.tasks[next].perro;
 		if (sig_perro != NULL && sig_perro->vivo) {
 			return next;
@@ -112,7 +111,7 @@ uint sched_proxima_a_ejecutar() {
 	// Recorro buscando los del mismo jugador
 	next = (scheduler.current + 2) % MAX_CANT_TAREAS_VIVAS;
 	while (next != scheduler.current) {
-		print_dec(next, 10,4, 0x8);
+		//print_dec(next, 10,4, 0x8);
 		sig_perro = scheduler.tasks[next].perro;
 		if (sig_perro != NULL && sig_perro->vivo) {
 			return next;
@@ -129,27 +128,27 @@ ushort sched_atender_tick() {
 	if( !ya_hay_una_puta_tarea )
 		return 0;
 
+
 	// Consigo proximo perro a ejecutar
 	uint proximo = sched_proxima_a_ejecutar();
-	scheduler.current = proximo;
-
-	// Actualizo reloj del proximo
-//	perro_t* p_act = scheduler.tasks[scheduler.current].perro;
-	perro_t* p_act = scheduler.tasks[proximo].perro;
-	screen_actualizar_reloj_perro (p_act);
-	screen_pintar_reloj_perro(p_act);
-	
 	// Si el proximo es el mismo, no vuelvo a saltar
-	print_dec(proximo, 4, 4, 0x4);
-	print_dec(scheduler.current, 8,8, 0xF);
-//	if (proximo == scheduler.current)
-//		return 0;
+	if ((proximo<<3) == rtr())
+		return 0;
+
+	scheduler.current = proximo;
+	// Actualizo reloj 
+	perro_t* p = scheduler.tasks[scheduler.current].perro;
+	screen_actualizar_reloj_perro (p);
+	screen_pintar_reloj_perro(p);
+
 	breakpoint();
 
 	// Sino salto al siguiente perro
-	perro_t* p = scheduler.tasks[scheduler.current].perro;
 	cr3_cargar(p->cr3);
-	tarea(scheduler.tasks[scheduler.current].gdt_index<<3);
+	//Esta mierda quiere saltar al 48 cuando toco O
+	tarea(scheduler.tasks[proximo].gdt_index<<3);
 
 	return 1;
 }
+
+
