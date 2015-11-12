@@ -22,28 +22,26 @@ void sched_inicializar() {
 	for (i = 0; i < MAX_CANT_TAREAS_VIVAS; i++) {
 		scheduler.tasks[i] = task;
 	}
-	// FIXME! AAAA
 	scheduler.current = 8;
 }
 
 
-// TODO: Hay que hacerlo
 int sched_buscar_indice_tarea(uint gdt_index) {
-    return MAX_CANT_TAREAS_VIVAS;
+	int i;
+	for (i = 0; i < MAX_CANT_TAREAS_VIVAS; i++) {
+		if (scheduler.tasks[i].gdt_index == gdt_index){
+			return i;
+		}
+	}
+    return -1;
 }
 
 
 // Busco la proxima tarea libre del jugador que me pasan
-// FIXME: Si se llena la cantidad de perros queda en null
 int sched_buscar_tarea_libre(unsigned int jugador) {
 	unsigned int libre = jugador;
 
-	//print_dec(libre, 20,20, 0xF);
-	//print_dec(scheduler.tasks[libre].gdt_index, 22,22, 0xF);
 	while (scheduler.tasks[libre].gdt_index != 0) {
-		breakpoint();
-	//	print_dec(libre, 20,20, 0xF);
-	//	print_dec(scheduler.tasks[libre].gdt_index, 22,22, 0xF);
 		libre = (libre + 2) % MAX_CANT_TAREAS_VIVAS;
 	}
 	return libre;	
@@ -70,10 +68,7 @@ void sched_agregar_tarea(perro_t *perro) {
 	scheduler.tasks[libre].perro = perro;
 	scheduler.tasks[libre].gdt_index = gdt_index;
 
-	if (!ya_hay_una_puta_tarea){
-	//	scheduler.current=libre;
-		ya_hay_una_puta_tarea = 1;
-	}
+	ya_hay_una_puta_tarea = 1;
 }
 
 // TODO: Falta
@@ -99,7 +94,6 @@ uint sched_proxima_a_ejecutar() {
 	// Recorro buscando los del otro jugador
 	next = (scheduler.current + 1) % MAX_CANT_TAREAS_VIVAS;
 	do {
-		//print_dec(next, 10,2, 0x8);
 		sig_perro = scheduler.tasks[next].perro;
 		if (sig_perro != NULL && sig_perro->vivo) {
 			return next;
@@ -111,7 +105,6 @@ uint sched_proxima_a_ejecutar() {
 	// Recorro buscando los del mismo jugador
 	next = (scheduler.current + 2) % MAX_CANT_TAREAS_VIVAS;
 	while (next != scheduler.current) {
-		//print_dec(next, 10,4, 0x8);
 		sig_perro = scheduler.tasks[next].perro;
 		if (sig_perro != NULL && sig_perro->vivo) {
 			return next;
