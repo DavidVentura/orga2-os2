@@ -39,8 +39,8 @@ int ee_printf(const char *fmt, ...);
 // pinta un "pixel" de la pantalla
 void screen_pintar(unsigned char c, unsigned char color, uint fila, uint columna);
 
-// imprime un string en pantalla
-void print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
+// imprime un string en pantalla, devuelve largo
+uint print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
 
 unsigned int getSize(unsigned int numero, unsigned int base);
 
