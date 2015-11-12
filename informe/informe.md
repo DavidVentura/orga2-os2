@@ -16,18 +16,24 @@ geometry: margin=2cm
 }
 \tableofcontents
 
-#Sobre el TP
-....
+#Sobre el Informe y Trabajo Práctico
+En el presente informe se van a definir y aclarar los cambios que hicimos para la implementación del pequeño Sistema Operativo para el trabajo práctico N°3.
+Como premisa general intentamos mantener la mayoría de las implementaciones en C. Esta decisión la tomamos teniendo en cuenta que las estructuras o lógica del trabajo iban a cambiar mucho durante las implementaciones, y tener el código en C nos permitía ver, en muchas situaciones, más facilmente que había que cambiar.
+Además el compilador nos advertía de cambios en la aridad de funciones u otros detalles que en la implentación en asembler no se notaría hasta el momento de la ejecución.
 
 #Estructuras de datos del procesador
+A continuación damos una pequeña explicación de los descriptores utilizados para el Sistema Operativo y las estructuras de datos que se utilizaron para representarlos en el código.
 
 ##GDT
 En este TP utilizamos la GDT para almacenar:
 
+* Descriptores de segmento
+* Descriptores de TSS
+
+
 ###Descriptores de segmento
 
 Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
-
 
 +---------------+-----------+-----------+-----------+-----------+
 | Descripción   | Índice	| Tamaño	| Base		| Tipo		|
@@ -55,6 +61,57 @@ Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
 | Perro      | Dinámica    | A   |Dinámico| Dinámico|Dinámico | A | B | A |
 
 
+
+###Implementación
+
+Para la implementación de los descriptores se modificaron las estucturas dadas por la cátedra y expandieron para cada propiedad en particular, esto nos da mayor flexibilidad en C y más claridad al definir segmentos, ya que podemos identificar, leer o modificar cada *flag* rápidamente.
+En el código [**GDT Entry**](#gdtEntry) puede verse la estructura utilizada para la representación.
+
+**GDT Entry**
+
+~~~~~~~{#gdtEntry .c .numberLines startFrom="20"}
+typedef struct str_gdt_entry {
+    unsigned short  limit_0_15;
+    unsigned short  base_0_15;
+    unsigned char   base_23_16;
+    unsigned char   type:4;
+    unsigned char   s:1;
+    unsigned char   dpl:2;
+    unsigned char   p:1;
+    unsigned char   limit_16_19:4;
+    unsigned char   avl:1;
+    unsigned char   l:1;
+    unsigned char   db:1;
+    unsigned char   g:1;
+    unsigned char   base_31_24;
+} __attribute__((__packed__, aligned (8))) gdt_entry;
+~~~~~~~
+
+
+En el código [**GDT Entry Ejemplo**](#gdtEntryEjemplo) se ve un ejemplo de como se realiza la carga de una entrada de la GDT. En este caso el selector de código de usuario.
+
+**GDT Entry Ejemplo**
+
+~~~~~~~{#gdtEntry .c .numberLines startFrom="84"}
+[GDT_IDX_UCODE_DESC] = (gdt_entry) {
+        (unsigned short)    0xF400,         /* limit[0:15]  */
+        (unsigned short)    0x0000,         /* base[0:15]   */
+        (unsigned char)     0x00,           /* base[23:16]  */
+        (unsigned char)     0x0A,           /* type         */
+        (unsigned char)     0x01,           /* s            */
+        (unsigned char)     0x03,           /* dpl          */
+        (unsigned char)     0x01,           /* p            */
+        (unsigned char)     0x01,           /* limit[16:19] */
+        (unsigned char)     0x00,           /* avl          */
+        (unsigned char)     0x00,           /* l            */
+        (unsigned char)     0x01,           /* db           */
+        (unsigned char)     0x01,           /* g            */
+        (unsigned char)     0x00,           /* base[31:24]  */
+    },
+} __attribute__((__packed__, aligned (8))) gdt_entry;
+~~~~~~~
+
+
 ##IDT
 
 Los descriptores de segmento de la IDT son todos similares, salvo la interrupción dedicada a la syscall que tiene DPL 3.
@@ -80,14 +137,93 @@ Los descriptores de segmento de la IDT son todos similares, salvo la interrupci�
 +---------------+---------------+-----------+-----------+-----------------------+
 
 
+### Implementación
+Como en la GDT se declaró un nuevo struct que de más flexibilidad para cargar los selectores. En este caso se permitió cargar el tipo de selector por separado, para poder usar la misma estructura para Interrupt Gate, Task Gate, etc.
+En el código [**IDT Entry**](#idtEntry) puede verse la estructura utilizada para la representación.
+
+**IDT Entry**
+
+~~~~~~~{#gdtEntry .c .numberLines startFrom="21"}
+typedef struct str_idt_entry_fld {
+    unsigned int offset_0_15:16;
+	unsigned int ceros:3;
+    unsigned int segsel:13;
+    unsigned int ceros2:8;
+	unsigned int tipo:5;
+	unsigned int dpl:2;
+	unsigned int p:1;
+    unsigned int offset_16_31:16;
+} __attribute__((__packed__, aligned (8))) idt_entry;
+~~~~~~~
+
+
+Luego se adecuó el macro *IDT_ENTRY* para que cargue los nuevos datos y sea más flexible. Como parámetro se le pasa el tipo de entrada que se desea (idt_entry_int o idt_entry_task) y el DPL.
+Como en este caso todos los segmentos se encuentran presentes, el macro los inicializa con valor *1*.
+En el código [**IDT Entry Macro**](#idtEntryMacro) se ve la estructura nueva del macro y unas líneas de ejemplo del funcionamiento.
+
+**IDT Entry Macro**
+
+~~~~~~~{#gdtEntryMacro .c .numberLines startFrom="21"}
+#define IDT_ENTRY(numero, _dpl, type)                                                                        \
+    idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);   \
+    idt[numero].segsel = (unsigned short) 0x08 ;                                                            \
+    idt[numero].tipo = type;                                                                           \
+    idt[numero].dpl = _dpl;                                                                                  \
+    idt[numero].p = 1;                                                                                      \
+    idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
+
+
+void idt_inicializar() {
+    // Excepciones
+	IDT_ENTRY(0, 0, idt_entry_int);
+	IDT_ENTRY(1, 0, idt_entry_int);
+	IDT_ENTRY(2, 0, idt_entry_int);
+	...
+~~~~~~~
+
+
 #Estructuras de datos del sistema operativo
 
 ##TSS
-##???
+
+Siguiendo la misma idea que con la GDT y la IDT se completó el *struct tss* con el formato con el que se guarda la tss.
+Se añadieron las funciones *uint crear_tss(...)* y *uint cargar_tss_en_gdt(uint base, char dpl)* que se encargan de crear e inicializar una tss y luego cargarla en la GDT.
+Se aprovecha las estucturas utilizadas en la GDT para que sea fácil cargar los datos de la entrada de la TSS.
+En el código [**TSS Cargar**](#tssCargar) se ve la carga de una TSS en la GDT.
+
+**TSS Cargar**
+
+~~~~~~~{#tssCargar .c .numberLines startFrom="58"}
+#define IDT_ENTRY(numero, _dpl, type)                                                                        \
+  uint cargar_tss_en_gdt(uint base, char dpl) {
+	gdt_entry g;
+	
+	g.limit_0_15=0x67;
+	g.base_0_15=(base & 0xFFFF);
+	g.base_23_16=(base & 0xFF0000) >>16;
+	g.type=0b1001;
+	g.s=0; //Siempre 0
+	g.dpl=dpl;
+	g.p=1; //Siempre?
+	g.limit_16_19=0; //No necesito tanto tamaño
+	g.l=0; //Siempre 0
+	g.db=0; //Siempre 0
+	g.g=0;
+	g.base_31_24=(base >> 24);
+
+	uint p=prox_gdt_libre();
+	gdt[p]=g;
+	return p;
+}  
+~~~~~~~
+
 
 #Disposición de la memoria
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
-#(Corto) Viaje por modo real
+# Pasos de cración del S.O.
+
+##(Corto) Viaje por modo real
 
 Tomando en cuenta que el procesador inicia en modo real y asi no nos sirve de nada, cambiamos a modo protegido lo antes posible; esto lo logramos en cuatro simples pasos:
 
@@ -98,16 +234,18 @@ Tomando en cuenta que el procesador inicia en modo real y asi no nos sirve de na
 
 De yapa, cambiamos el modo de video y mostramos un mensaje muy *chulo*<sup>[1]</sup> que nos indica que estamos en este tan útil modo.
 
-#Modo protegido
+##Modo protegido
 Una vez que el procesador alcanza un estado útil configuramos los selectores de segmento a valores correspondientes (ver [GDT](#GDT)) y también cargamos el valor pedido (0x27000) en el stack pointer.
 Configurados los registros correspondientes procedemos a escaparnos a C.
 
-#Entrando en C (kmain)
-Esta rutina se encarga de inicializar todas las estructuras relevantes del sistema operativo, cada rutina descripta en su propia sección.
+##Entrando en C
+Una vez finalizado con el código en asembler se salta a la función **kmain()** en *main.c*.
+Esta funcion reemplaza al *start* de *kernel.asm*, donde se van a centralizar todas las inicializaciones restantes y métodos a cargar.
 
-#game
-
-#screen
+**Inicializar Game y Screen**
+Como primera instancia se inicializa el juego llamando a la función *game_inicializar()*. Luego se invoca a *screen_inicializar()* que dibuja el tablero de juego otros detalles.
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+Dichas funciones no se modificaron.
 
 #MMU
 La unidad de manejo de memoria que hicimos se encarga de:
@@ -261,7 +399,37 @@ Para poder lograr nuestro próximo objetivo (Saltar a una tarea) necesitamos:
 * Un TSS con valores reales para la tarea Idle. Esta tarea corre en modo Kernel, por lo que utiliza todos los selectores de segmento de modo kernel. **FIXME explicar esto bien**
 * Un descriptor de TSS asociado al segmento idle, para poder referenciarlo al hacer el salto.
 
-#Habilitando el scheduler
+#Scheduler
+
+## Estructura
+Las estructuras del scheduler no se modificaron respecto a las que dispuso la cátedra. Los cambios más grandes son en los métodos que utiliza el scheduler para el manejo de las tareas.
+Para no añadir nuevas estructuras y explotando que solamente van a haber dos jugadores en juego se dispuso de un ordenamiento *par - impar* de las tareas.
+
+Esto quiere decir que todas las tareas del **jugador 0** van a ir en posiciones **pares** y todas las tareas del **jugador 1** van a ir en posiciones **impares** dentro del array de tareas del scheduler.
+Se destacan los siguientes métodos dentro del scheduler:
+
+### Inicializar Scheduler
+Función: *void sched_inicializar()* se encarga de inicializar las estructuras de memoria internas del scheduler.
+Se reccore el array de tareas y se carga un puntero a perro *NULL* y gdt_index *0*.
+También se establece como tarea actual algúna tarea inválida. Esto permite que cuando el scheduler atienda un tick de la primera tarea, pueda saltar a la misma.
+
+**Inicializar Scheduler**
+
+~~~~~~~{#schedInit .c .numberLines startFrom="16"}
+void sched_inicializar() {
+	sched_task_t task = (sched_task_t) { 0, NULL };
+
+	int i;
+	for (i = 0; i < MAX_CANT_TAREAS_VIVAS; i++) {
+		scheduler.tasks[i] = task;
+	}
+	scheduler.current = 8; // Tarea inválida
+}
+~~~~~~~
+
+
+### TODO
+
 
 #Tarea idle: "EL SALTO"
 Una vez que tenemos todas las estructuras de datos necesarias para poder hacer un Task Switch, simplemente tenemos que hacer un **far jump** al offset correspondiente de la GDT.
