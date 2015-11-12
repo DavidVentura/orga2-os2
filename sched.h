@@ -52,6 +52,9 @@ void sched_agregar_tarea(perro_t *perro);
 // debe remover tareas del scheduler
 void sched_remover_tarea(unsigned int gdt_index);
 
+// remuevo la tarea actual
+void sched_remover_tarea_actual();
+
 // debe devolver el perro correspondiente a la tarea que está corriendo actualmente
 perro_t* sched_tarea_actual();
 

@@ -44,11 +44,9 @@ void interrupcion_atender(cpu* status) {
 
 			// Si está activado el debug, muestro mensaje
 			if (debugEnabled && !onDebug) {
-				// TODO: Mover 
-				print("Int: ", 0, 0, 0xF);
-				print_dec(cpuStatus->intNum, 5, 0, 0x4);
 				onDebug = 1;
 				printDebug(cpuStatus->intNum, cpuStatus->errorCd);
+				sched_remover_tarea_actual();
 				tarea(DTSS_IDLE<<3);
 			}
 			
@@ -59,19 +57,11 @@ void interrupcion_atender(cpu* status) {
 uint int70(uint tipo, uint dir){
 	// Consigo el perro actual
 	perro_t* aPerro = scheduler.tasks[scheduler.current].perro;
-
-
-	// TODO: Temporal, acciones del perro
-	/*
-	print("TIPO: ", 0, 2, 15);
-	print_dec(tipo, 5, 2, 15);
-	print("DIR: ", 0, 3, 15);
-	print_dec(dir, 5, 3, 15);
-	*/
-
+		
 	uint virt_o;
 	uint fisica_o;
 	uint virt_n,fisica_n;
+
 	switch(tipo) {
 		case 0x1: //Moverse
 			virt_o  =mmu_xy2virtual(aPerro->x, aPerro->y);
