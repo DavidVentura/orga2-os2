@@ -3,9 +3,18 @@ title: TP3 - Systems programming
 author: 
 - David Ventura (673/13)
 - Fabian Álvarez (674/13)
-geometry: margin=3cm
+geometry: margin=2cm
 ---
+
 <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+
+\newpage
+
+\hypersetup{
+  colorlinks,
+  linkcolor=black
+}
+\tableofcontents
 
 #Sobre el TP
 ....
@@ -39,13 +48,6 @@ Nuestra GDT tiene, inicialmente, 6 descriptores de segmento:
 | Video Data	| C			| 4000b		| 0xB800	| 2 (RW)	|
 +---------------+-----------+-----------------------------------+
 
-
-* NULL: Segmento con offset 0 que no se utiliza.
-* Kernel data: Segmento con indice 8, de 500MB de tamaño y base 0. El tipo es '2' => R/W
-* Kernel code: Segmento con indice 9, de 500MB de tamaño y base 0. El tipo es 'A' => R/W,EX
-* User  data: Segmento con indice 10, de 500MB de tamaño y base 0. El tipo es '2' => R/W
-* User  code: Segmento con indice 11, de 500MB de tamaño y base 0. El tipo es 'A' => R/W,EX
-* Video data: Segmento con indice 12, de 4000b de tamaño y base 0xB800. El tipo es '2' => R/W
 
 ###Descriptores de TSS
 
