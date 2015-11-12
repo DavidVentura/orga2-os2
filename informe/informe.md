@@ -16,6 +16,8 @@ geometry: margin=2cm
 }
 \tableofcontents
 
+\newpage
+
 #Sobre el Informe y Trabajo Práctico
 En el presente informe se van a definir y aclarar los cambios que hicimos para la implementación del pequeño Sistema Operativo para el trabajo práctico N°3.
 Como premisa general intentamos mantener la mayoría de las implementaciones en C. Esta decisión la tomamos teniendo en cuenta que las estructuras o lógica del trabajo iban a cambiar mucho durante las implementaciones, y tener el código en C nos permitía ver, en muchas situaciones, más facilmente que había que cambiar.
@@ -251,6 +253,8 @@ Tomando en cuenta que el procesador inicia en modo real y asi no nos sirve de na
 
 De yapa, cambiamos el modo de video y mostramos un mensaje muy *chulo* ^[1]^ que nos indica que estamos en este tan útil modo.
 
+[1] ![Chulisimo](imagenes/chulo.png)
+
 ##Modo protegido
 Una vez que el procesador alcanza un estado útil configuramos los selectores de segmento a valores correspondientes (ver [GDT](#GDT)) y también cargamos el valor pedido (0x27000) en el stack pointer.
 Configurados los registros correspondientes procedemos a escaparnos a C.
@@ -421,13 +425,11 @@ Las estructuras del scheduler no se modificaron respecto a las que dispuso la c�
 Para no añadir nuevas estructuras y explotando que solamente van a haber dos jugadores en juego se dispuso de un ordenamiento *par - impar* de las tareas.
 
 Esto quiere decir que todas las tareas del **jugador 0** van a ir en posiciones **pares** y todas las tareas del **jugador 1** van a ir en posiciones **impares** dentro del array de tareas del scheduler.
-Se destacan los siguientes métodos dentro del scheduler:
 
-### Inicializar Scheduler
-Función: *sched_inicializar()* se encarga de inicializar las estructuras de memoria internas del scheduler.
+La función *sched_inicializar()* se encarga de inicializar las estructuras de memoria internas del scheduler.
 Se reccore el array de tareas y se carga un puntero a perro *NULL* y gdt_index *0*.
 También se establece como tarea actual algúna tarea inválida. Esto permite que cuando el scheduler atienda un tick de la primera tarea, pueda saltar a la misma.
-
+Luego cuando se atienda la tarea por primera vez, el número de la primera tarea va a ser distinto que 8 y eso va a permitir saltar a la misma.
 
 ~~~~~~~{#schedInit .c .numberLines startFrom="16"}
 void sched_inicializar() {
@@ -440,7 +442,6 @@ void sched_inicializar() {
 	scheduler.current = 8; // Tarea inválida
 }
 ~~~~~~~
-
 
 ### Planificando tareas
 Una vez que el scheduler está inicializado, simplemente espera a ser llamado (por el [**clock**](#clock), o por el [**teclado**](#teclado)) para planificar las tareas.
@@ -470,11 +471,11 @@ Una vez que tenemos todas las estructuras de datos necesarias para poder hacer u
 Una vez que saltamos, el kernel se queda a la espera de interrupciones (Ver [**Manejo de interrupciones**](#inthandler)).
 
 
-
-
 #El jueguito
+No se que poner acá
 
+# Referencias
 
-??????????
-
-[1] ![Chulisimo](imagenes/chulo.png)
+* http://wiki.osdev.org/Main_Page
+* https://littleosbook.github.io/
+* https://www.google.com.ar/
