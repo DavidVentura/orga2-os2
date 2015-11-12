@@ -10,8 +10,7 @@ definicion de funciones del scheduler
 #include "screen.h"
 
 sched_t scheduler;
-uint ya_hay_una_puta_tarea=0;
-uint prox_tarea=0;
+uint ya_hay_una_puta_tarea = 0;
 
 
 void sched_inicializar() {
@@ -54,7 +53,6 @@ perro_t* sched_tarea_actual() {
 
 
 void sched_agregar_tarea(perro_t *perro) {
-	// TODO: Esto no debería ir acá
 	perro->vivo = 1;
 
 	uint nuevo_stack=mmu_proxima_pagina_fisica_libre();
@@ -73,18 +71,12 @@ void sched_agregar_tarea(perro_t *perro) {
 	ya_hay_una_puta_tarea = 1;
 }
 
-// TODO: Falta
+
 void sched_remover_tarea(unsigned int gdt_index) {
+	int task_index = sched_buscar_indice_tarea(gdt_index);
+	scheduler[task_index].perro->vivo = 0;
+	// TODO: Falta
 }
-
-
-//uint prox_tarea_valida(){
-//	uint ret=0;
-//	while(scheduler.tasks[ret].gdt_index==0)
-//		ret++;
-//	ya_hay_una_puta_tarea=1;
-//	return ret;
-//}
 
 
 // Busco el siguiente
