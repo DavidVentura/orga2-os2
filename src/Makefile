@@ -24,7 +24,7 @@ OBJ=$(KERNEL_OBJ) gdt.o pic.o idt.o isr.o isr_c.o mmu.o sched.o tss.o screen.o g
 DISK_IMG=diskette.img
 DISK_IMG_BZ=diskette.img.bz2
 
-CFLAGS=-m32 -g -ggdb -Wall -Werror -O0 -fno-zero-initialized-in-bss -fno-stack-protector -ffreestanding -fdump-rtl-expand
+CFLAGS=-m32 -g -ggdb -Wall -Werror -O0 -fno-zero-initialized-in-bss -fno-stack-protector -ffreestanding -fdump-rtl-expand -fno-pie
 
 
 TASKIDLE=idle.tsk
